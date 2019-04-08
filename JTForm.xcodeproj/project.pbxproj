@@ -9,23 +9,46 @@
 /* Begin PBXBuildFile section */
 		1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA28225B6DA000652FE6 /* AppDelegate.m */; };
 		1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA2B225B6DA000652FE6 /* ViewController.m */; };
-		1DDADA2F225B6DA000652FE6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA2D225B6DA000652FE6 /* Main.storyboard */; };
 		1DDADA31225B6DA100652FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA30225B6DA100652FE6 /* Assets.xcassets */; };
 		1DDADA34225B6DA100652FE6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA32225B6DA100652FE6 /* LaunchScreen.storyboard */; };
 		1DDADA37225B6DA100652FE6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA36225B6DA100652FE6 /* main.m */; };
+		1DDADA44225B764F00652FE6 /* JTBaseDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA43225B764F00652FE6 /* JTBaseDescriptor.m */; };
+		1DDADA47225B770000652FE6 /* JTRowDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA46225B770000652FE6 /* JTRowDescriptor.m */; };
+		1DDADA4A225B771800652FE6 /* JTSectionDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA49225B771800652FE6 /* JTSectionDescriptor.m */; };
+		1DDADA4D225B772D00652FE6 /* JTFormDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA4C225B772D00652FE6 /* JTFormDescriptor.m */; };
+		1DDADA4F225B776C00652FE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DDADA4E225B776C00652FE6 /* UIKit.framework */; };
+		1DDADA52225B784700652FE6 /* JTForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA51225B784700652FE6 /* JTForm.m */; };
+		1DDADA55225B897D00652FE6 /* NSObject+JTFormHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA54225B897D00652FE6 /* NSObject+JTFormHelper.m */; };
+		DEBC21F0A336AB3888CC0538 /* libPods-JTForm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1329AD7DFD385D8D2047D783 /* Pods-JTForm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm/Pods-JTForm.debug.xcconfig"; sourceTree = "<group>"; };
 		1DDADA24225B6DA000652FE6 /* JTForm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JTForm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DDADA27225B6DA000652FE6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DDADA28225B6DA000652FE6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1DDADA2A225B6DA000652FE6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		1DDADA2B225B6DA000652FE6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		1DDADA2E225B6DA000652FE6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1DDADA30225B6DA100652FE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1DDADA33225B6DA100652FE6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1DDADA35225B6DA100652FE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1DDADA36225B6DA100652FE6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1DDADA42225B764F00652FE6 /* JTBaseDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTBaseDescriptor.h; sourceTree = "<group>"; };
+		1DDADA43225B764F00652FE6 /* JTBaseDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTBaseDescriptor.m; sourceTree = "<group>"; };
+		1DDADA45225B770000652FE6 /* JTRowDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTRowDescriptor.h; sourceTree = "<group>"; };
+		1DDADA46225B770000652FE6 /* JTRowDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTRowDescriptor.m; sourceTree = "<group>"; };
+		1DDADA48225B771800652FE6 /* JTSectionDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTSectionDescriptor.h; sourceTree = "<group>"; };
+		1DDADA49225B771800652FE6 /* JTSectionDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTSectionDescriptor.m; sourceTree = "<group>"; };
+		1DDADA4B225B772D00652FE6 /* JTFormDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDescriptor.h; sourceTree = "<group>"; };
+		1DDADA4C225B772D00652FE6 /* JTFormDescriptor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormDescriptor.m; sourceTree = "<group>"; };
+		1DDADA4E225B776C00652FE6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1DDADA50225B784700652FE6 /* JTForm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTForm.h; sourceTree = "<group>"; };
+		1DDADA51225B784700652FE6 /* JTForm.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTForm.m; sourceTree = "<group>"; };
+		1DDADA53225B897D00652FE6 /* NSObject+JTFormHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+JTFormHelper.h"; sourceTree = "<group>"; };
+		1DDADA54225B897D00652FE6 /* NSObject+JTFormHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+JTFormHelper.m"; sourceTree = "<group>"; };
+		1DDADA56225B89F900652FE6 /* JTHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTHelper.h; sourceTree = "<group>"; };
+		9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm/Pods-JTForm.release.xcconfig"; sourceTree = "<group>"; };
+		954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JTForm.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DDADA4F225B776C00652FE6 /* UIKit.framework in Frameworks */,
+				DEBC21F0A336AB3888CC0538 /* libPods-JTForm.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +69,8 @@
 			children = (
 				1DDADA26225B6DA000652FE6 /* JTForm */,
 				1DDADA25225B6DA000652FE6 /* Products */,
+				92BE525C210FF88DE5260305 /* Pods */,
+				E9F6AD9409BD784587981FF4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,17 +85,87 @@
 		1DDADA26225B6DA000652FE6 /* JTForm */ = {
 			isa = PBXGroup;
 			children = (
+				1DDADA3D225B6FF800652FE6 /* JTForm */,
 				1DDADA27225B6DA000652FE6 /* AppDelegate.h */,
 				1DDADA28225B6DA000652FE6 /* AppDelegate.m */,
 				1DDADA2A225B6DA000652FE6 /* ViewController.h */,
 				1DDADA2B225B6DA000652FE6 /* ViewController.m */,
-				1DDADA2D225B6DA000652FE6 /* Main.storyboard */,
 				1DDADA30225B6DA100652FE6 /* Assets.xcassets */,
 				1DDADA32225B6DA100652FE6 /* LaunchScreen.storyboard */,
 				1DDADA35225B6DA100652FE6 /* Info.plist */,
 				1DDADA36225B6DA100652FE6 /* main.m */,
 			);
 			path = JTForm;
+			sourceTree = "<group>";
+		};
+		1DDADA3D225B6FF800652FE6 /* JTForm */ = {
+			isa = PBXGroup;
+			children = (
+				1DDADA41225B704F00652FE6 /* delegate */,
+				1DDADA40225B703E00652FE6 /* helper */,
+				1DDADA3F225B703600652FE6 /* cell */,
+				1DDADA3E225B700700652FE6 /* descriptor */,
+				1DDADA50225B784700652FE6 /* JTForm.h */,
+				1DDADA51225B784700652FE6 /* JTForm.m */,
+			);
+			path = JTForm;
+			sourceTree = "<group>";
+		};
+		1DDADA3E225B700700652FE6 /* descriptor */ = {
+			isa = PBXGroup;
+			children = (
+				1DDADA42225B764F00652FE6 /* JTBaseDescriptor.h */,
+				1DDADA43225B764F00652FE6 /* JTBaseDescriptor.m */,
+				1DDADA45225B770000652FE6 /* JTRowDescriptor.h */,
+				1DDADA46225B770000652FE6 /* JTRowDescriptor.m */,
+				1DDADA48225B771800652FE6 /* JTSectionDescriptor.h */,
+				1DDADA49225B771800652FE6 /* JTSectionDescriptor.m */,
+				1DDADA4B225B772D00652FE6 /* JTFormDescriptor.h */,
+				1DDADA4C225B772D00652FE6 /* JTFormDescriptor.m */,
+			);
+			path = descriptor;
+			sourceTree = "<group>";
+		};
+		1DDADA3F225B703600652FE6 /* cell */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = cell;
+			sourceTree = "<group>";
+		};
+		1DDADA40225B703E00652FE6 /* helper */ = {
+			isa = PBXGroup;
+			children = (
+				1DDADA53225B897D00652FE6 /* NSObject+JTFormHelper.h */,
+				1DDADA54225B897D00652FE6 /* NSObject+JTFormHelper.m */,
+				1DDADA56225B89F900652FE6 /* JTHelper.h */,
+			);
+			path = helper;
+			sourceTree = "<group>";
+		};
+		1DDADA41225B704F00652FE6 /* delegate */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = delegate;
+			sourceTree = "<group>";
+		};
+		92BE525C210FF88DE5260305 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1329AD7DFD385D8D2047D783 /* Pods-JTForm.debug.xcconfig */,
+				9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		E9F6AD9409BD784587981FF4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1DDADA4E225B776C00652FE6 /* UIKit.framework */,
+				954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +175,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DDADA3A225B6DA100652FE6 /* Build configuration list for PBXNativeTarget "JTForm" */;
 			buildPhases = (
+				FB8F01B748A368A983B6229C /* [CP] Check Pods Manifest.lock */,
 				1DDADA20225B6DA000652FE6 /* Sources */,
 				1DDADA21225B6DA000652FE6 /* Frameworks */,
 				1DDADA22225B6DA000652FE6 /* Resources */,
@@ -130,19 +228,45 @@
 			files = (
 				1DDADA34225B6DA100652FE6 /* LaunchScreen.storyboard in Resources */,
 				1DDADA31225B6DA100652FE6 /* Assets.xcassets in Resources */,
-				1DDADA2F225B6DA000652FE6 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		FB8F01B748A368A983B6229C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-JTForm-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1DDADA20225B6DA000652FE6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DDADA4A225B771800652FE6 /* JTSectionDescriptor.m in Sources */,
 				1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */,
+				1DDADA55225B897D00652FE6 /* NSObject+JTFormHelper.m in Sources */,
+				1DDADA47225B770000652FE6 /* JTRowDescriptor.m in Sources */,
+				1DDADA44225B764F00652FE6 /* JTBaseDescriptor.m in Sources */,
 				1DDADA37225B6DA100652FE6 /* main.m in Sources */,
+				1DDADA52225B784700652FE6 /* JTForm.m in Sources */,
+				1DDADA4D225B772D00652FE6 /* JTFormDescriptor.m in Sources */,
 				1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -150,14 +274,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		1DDADA2D225B6DA000652FE6 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1DDADA2E225B6DA000652FE6 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		1DDADA32225B6DA100652FE6 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -283,6 +399,7 @@
 		};
 		1DDADA3B225B6DA100652FE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1329AD7DFD385D8D2047D783 /* Pods-JTForm.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -300,6 +417,7 @@
 		};
 		1DDADA3C225B6DA100652FE6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
