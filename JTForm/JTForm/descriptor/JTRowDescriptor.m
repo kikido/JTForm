@@ -7,9 +7,14 @@
 //
 
 #import "JTRowDescriptor.h"
-#import "JTHelper.h"
 
 @implementation JTRowDescriptor
+
+- (instancetype)init
+{
+    @throw [NSException exceptionWithName:NSGenericException reason:@"`-init` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
+    return nil;
+}
 
 + (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title
 {
@@ -23,10 +28,16 @@
         NSAssert([rowType jt_isEmpty], @"rowType can not empty");
         
         _title = title;
-        _
+        
     }
     return self;
 }
 
+#pragma mark -
+
+@end
+
+
+@implementation JTRowAction
 
 @end

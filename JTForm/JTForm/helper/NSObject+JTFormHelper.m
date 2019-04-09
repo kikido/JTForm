@@ -15,7 +15,7 @@
     return nil;
 }
 
-- (BOOL)jt_isEmpty
+- (BOOL)jt_isNotEmpty
 {
     return false;
 }

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id)valueData;
 
-- (BOOL)jt_isEmpty;
+- (BOOL)jt_isNotEmpty;
 
 - (NSString *)displayText;
 @end

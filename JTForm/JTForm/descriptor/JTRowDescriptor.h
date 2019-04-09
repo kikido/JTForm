@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class JTRowAction;
+@class JTSectionDescriptor;
+
 @interface JTRowDescriptor : JTBaseDescriptor
 
 /** 单元行的标题 */
@@ -30,15 +33,27 @@ NS_ASSUME_NONNULL_BEGIN
 /** 单元行样式 */
 @property (nonatomic, assign) id       cellClass;
 
-/** 是否隐藏单元行 */
-@property (nonatomic, assign) BOOL     hidden;
+@property (nonatomic, weak) JTSectionDescriptor *sectionDescriptor;
 
-/** 是否禁用单元行。如果禁用则仅仅展示，类似于info */
-@property (nonatomic, assign) BOOL     disable;
+/** 单元行的响应Block */
+@property (nonatomic, strong) JTRowAction *action;
+
+// 初始化
+///||| -----------------------------------
 
 + (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
 
 - (instancetype)initWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title NS_DESIGNATED_INITIALIZER;
+
+///||| --------------------------
+
+
+@end
+
+
+@interface JTRowAction : NSObject
+
+@property (nonatomic, copy) void(^rowBlock)(JTRowDescriptor *sender);
 
 @end
 
