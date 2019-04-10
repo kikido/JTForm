@@ -11,23 +11,57 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol JTFormDescriptorDelegate;
+
 @interface JTFormDescriptor : JTBaseDescriptor
 
 /** 当前表单所有能看到section的集合(不包括隐藏掉的section) */
-@property (nonatomic, strong) NSMutableArray *formSections;
+@property (nonatomic, strong, readonly) NSMutableArray *formSections;
 
 /** 当前表单所有包含着的section集合(包括隐藏掉的，但不包括移除掉的) */
-@property (nonatomic, strong) NSMutableArray *allSections;
+@property (nonatomic, strong, readonly) NSMutableArray *allSections;
 
 /** 是否在那些必填的单元行的标题前显示一个不同颜色的‘*’符号 */
 @property (nonatomic, assign) BOOL addAsteriskToRequiredRowsTitle;
 
-/** 一个集合，key为单元行的tag值，value为单元行 */
+/** 一个集合，key为单元行的tag值，value为单元行。该属性用来判断哪些必录项还没有值以及获取整个表单的数据 */
 @property (nonatomic, strong) NSMutableDictionary *allRowsByTag;
+
+@property (nonatomic, assign) id<JTFormDescriptorDelegate> delegate;
 
 + (nonnull instancetype)formDescriptor;
 
+
+/**
+ 将单元行添加到属性`allRowsByTag`中
+ 
+ @param row 单元行tag值不能为空
+ */
 - (void)addRowToTagCollection:(JTRowDescriptor *)row;
+
+
+/**
+ 从属性`allRowsByTag中移除单元行`
+
+ @param row 单元行tag值不能为空
+ */
+- (void)removeRowFromTagCollection:(JTRowDescriptor *)row;
+
+
+- (JTRowDescriptor *)findRowByTag:(NSString *)tag;
+
+@end
+
+
+@protocol JTFormDescriptorDelegate <NSObject>
+
+- (void)formSectionHasBeenRemoved:(JTSectionDescriptor *)formSection atIndex:(NSUInteger)index;
+
+- (void)formSectionHasBeenAdded:(JTSectionDescriptor *)formSection atIndex:(NSUInteger)index;
+
+- (void)formRowHasBeenAdded:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath;
+
+- (void)formRowHasBeenRemoved:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

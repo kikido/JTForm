@@ -16,10 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JTSectionDescriptor : JTBaseDescriptor
 
 /** 在表单中，这一节所有显示出来的单元行集合(不包括隐藏的单元行) */
-@property (nonatomic, strong) NSMutableArray *formRows;
+@property (nonatomic, strong, readonly) NSMutableArray *formRows;
 
 /** 这一节所包含的所有单元行(包括隐藏的单元行) */
-@property (nonatomic, strong) NSMutableArray *allRows;
+@property (nonatomic, strong, readonly) NSMutableArray *allRows;
 
 /** 这一节的头标题 */
 @property (nonatomic, copy) NSString *headerTitle;

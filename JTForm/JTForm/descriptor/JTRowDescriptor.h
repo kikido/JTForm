@@ -38,14 +38,11 @@ NS_ASSUME_NONNULL_BEGIN
 /** 单元行的响应Block */
 @property (nonatomic, strong) JTRowAction *action;
 
-// 初始化
-///||| -----------------------------------
 
 + (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
 
 - (instancetype)initWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title NS_DESIGNATED_INITIALIZER;
 
-///||| --------------------------
 
 
 @end
