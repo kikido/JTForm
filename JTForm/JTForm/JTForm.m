@@ -7,9 +7,9 @@
 //
 
 #import "JTForm.h"
+#import "JTBaseCell.h"
 
 @interface JTForm () <ASTableDelegate, ASTableDataSource>
-@property (nonatomic, strong) ASTableNode *tableNode;
 @property (nonatomic, strong) JTFormDescriptor *formDescriptor;
 @end
 
@@ -65,7 +65,11 @@
 
 - (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return nil;
+    JTRowDescriptor *rowDescriptor = [self.formDescriptor formRowAtIndex:indexPath];
+    JTBaseCell *cell = [rowDescriptor cellInForm];
+    [self upadteCell:cell];
+    
+    return cell;
 }
 
 #pragma mark - ASTableDelegate
@@ -75,10 +79,39 @@
     
 }
 
-- (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
+//- (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    CGSize max = CGSizeMake(0, 200);
+//    return ASSizeRangeMake(max);
+//}
+
+#pragma mark - cell
+
+- (void)upadteCell:(JTBaseCell *)cell
 {
-    CGSize max = CGSizeMake(0, 200);
-    return ASSizeRangeMake(max);
+    [cell update];
+    [cell.rowDescriptor.cellConfigAfterUpdate enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [cell setValue:obj == [NSNull null] ? nil : obj forKeyPath:key];
+    }];
+    if (cell.rowDescriptor.disabled) {
+        [cell.rowDescriptor.cellConfigWhenDisabled enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            [cell setValue:(obj == [NSNull null] ? nil : obj) forKeyPath:key];
+        }];
+    }
+}
+
+#pragma mark - Cell Classes
+
++ (NSMutableDictionary *)cellClassesForRowDescriptorTypes
+{
+    static NSMutableDictionary * _cellClassesForRowDescriptorTypes;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _cellClassesForRowDescriptorTypes = @{
+                                              JTFormRowTypeDefault : [JTDefaultCell class]
+                                              }.mutableCopy;
+    });
+    return _cellClassesForRowDescriptorTypes;
 }
 
 

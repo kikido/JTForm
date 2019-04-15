@@ -31,6 +31,39 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nonnull instancetype)formDescriptor;
 
+#pragma mark - section
+
+
+/**
+ 添加段描述
+ 
+ */
+- (void)addFormSection:(JTSectionDescriptor *)section;
+
+/**
+ 添加段描述在指定位置
+ 
+ */
+- (void)addFormSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index;
+
+
+/**
+ 添加段描述在某个段描述之后
+
+ */
+- (void)addFormSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection;
+
+
+/**
+ 添加段描述在某个段描述之前
+
+ */
+- (void)addFormSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
+
+
+- (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section;
+
+#pragma mark - cell
 
 /**
  将单元行添加到属性`allRowsByTag`中
@@ -39,7 +72,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)addRowToTagCollection:(JTRowDescriptor *)row;
 
-
 /**
  从属性`allRowsByTag中移除单元行`
 
@@ -47,8 +79,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)removeRowFromTagCollection:(JTRowDescriptor *)row;
 
+- (JTRowDescriptor *)formRowWithTag:(NSString *)tag;
 
-- (JTRowDescriptor *)findRowByTag:(NSString *)tag;
+- (JTRowDescriptor *)formRowAtIndex:(NSIndexPath *)indexPath;
 
 @end
 

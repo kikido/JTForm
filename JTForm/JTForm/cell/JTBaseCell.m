@@ -10,4 +10,28 @@
 
 @implementation JTBaseCell
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        [self config];
+    }
+    return self;
+}
+
+- (void)config
+{
+    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method 'config'" userInfo:nil];
+}
+
+- (void)update
+{
+    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method 'update'" userInfo:nil];
+}
+
+- (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
+{
+    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method 'update'" userInfo:nil];
+}
+
+
 @end

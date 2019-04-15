@@ -9,6 +9,10 @@
 #ifndef JTHelper_h
 #define JTHelper_h
 
+#import <UIKit/UIKit.h>
 #import "NSObject+JTFormHelper.h"
+#import "UIColor+JTFormAdditions.h"
+#import "NSAttributedString+JTFormAdditions.h"
+#import "ASDisplayNode+JTFormAdditions.h"
 
 #endif /* JTHelper_h */

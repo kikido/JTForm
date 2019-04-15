@@ -7,6 +7,10 @@ target 'JTForm' do
 
   # Pods for JTForm
 
+
 pod 'Texture', '~> 2.8'
+pod 'SDWebImage', '~> 3.7.6'
+
+
 
 end

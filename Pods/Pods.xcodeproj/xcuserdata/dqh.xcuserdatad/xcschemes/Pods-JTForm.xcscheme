@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "666A21DF562CF8BBAF5A5A304B193276"
+               BlueprintIdentifier = "5AD247246F28C21A6E0C24199DBBDD61"
                BlueprintName = "Pods-JTForm"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "libPods-JTForm.a">

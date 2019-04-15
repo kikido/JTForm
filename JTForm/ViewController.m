@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "JTForm.h"
 
 @interface ViewController ()
 
@@ -16,6 +17,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
+    JTSectionDescriptor *section = nil;
+    JTRowDescriptor *row = nil;
+    
+    section = [JTSectionDescriptor formSection];
+//    formDescriptor 
+    
+    
     // Do any additional setup after loading the view, typically from a nib.
 }
 

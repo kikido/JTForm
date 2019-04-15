@@ -16,6 +16,8 @@
 
 @implementation JTSectionDescriptor
 
+@synthesize hidden = _hidden;
+
 - (instancetype)init
 {
     if (self = [super init]) {
@@ -110,7 +112,7 @@
 
 - (void)removeFormRowWithTag:(NSString *)tag
 {
-    JTRowDescriptor *row = [self.formDescriptor findRowByTag:tag];
+    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
     [self removeFormRow:row];
 }
 
@@ -181,6 +183,14 @@
     if (index >= 0 && index < self.formRows.count) {
         [self.formRows removeObjectAtIndex:index];
     }
+}
+
+#pragma mark - hidden
+
+- (void)setHidden:(BOOL)hidden
+{
+    _hidden = hidden;
+    [self.formDescriptor evaluateFormSectionIsHidden:self];
 }
 
 @end
