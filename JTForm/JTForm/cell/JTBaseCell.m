@@ -20,12 +20,41 @@
 
 - (void)config
 {
-    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method 'config'" userInfo:nil];
+    self.separatorInset= UIEdgeInsetsMake(0, 15., 0, 0);
+    self.automaticallyManagesSubnodes = YES;
 }
 
 - (void)update
 {
-    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method 'update'" userInfo:nil];
+    
+}
+
+- (void)formCellHighlight
+{
+    
+}
+
+- (void)formCellUnhighlight
+{
+
+}
+
+- (BOOL)formCellCanBecomeFirstResponder
+{
+    return NO;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL result = [super becomeFirstResponder];
+    // fixme
+    return result;
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL result = [super resignFirstResponder];
+    return result;
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize

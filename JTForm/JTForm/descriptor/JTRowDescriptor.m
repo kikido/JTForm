@@ -10,17 +10,24 @@
 #import "JTBaseCell.h"
 #import "JTForm.h"
 
+NSString *const JTFormRowTypeText = @"JTFormRowTypeText";
+NSString *const JTFormRowTypeName = @"JTFormRowTypeName";
+NSString *const JTFormRowTypeEmail = @"JTFormRowTypeEmail";
+NSString *const JTFormRowTypeNumber = @"JTFormRowTypeNumber";
+NSString *const JTFormRowTypeInteger = @"JTFormRowTypeInteger";
+NSString *const JTFormRowTypeDecimal = @"JTFormRowTypeDecimal";
+NSString *const JTFormRowTypePassword = @"JTFormRowTypePassword";
+NSString *const JTFormRowTypePhone = @"JTFormRowTypePhone";
+NSString *const JTFormRowTypeURL = @"JTFormRowTypeURL";
+NSString *const JTFormRowTypeTextView = @"JTFormRowTypeTextView";
+
 @interface JTRowDescriptor ()
 @property (nonatomic, strong) JTBaseCell *cell;
 @end
 
 @implementation JTRowDescriptor
 
-- (instancetype)init
-{
-    @throw [NSException exceptionWithName:NSGenericException reason:@"`-init` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-    return nil;
-}
+@synthesize hidden = _hidden;
 
 + (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title
 {
@@ -30,8 +37,6 @@
 - (instancetype)initWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title
 {
     if (self = [super init]) {
-        NSAssert([rowType jt_isNotEmpty], @"rowType can not empty");
-        
         _title = title;
         _rowType = rowType;
         _tag = tag;        
@@ -66,6 +71,15 @@
     [self.cellConfigAtConfigure enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         [self.cell setValue:(obj == [NSNull null]) ? nil : obj forKeyPath:key];
     }];
+}
+
+#pragma mark - hidden
+
+- (void)setHidden:(BOOL)hidden
+{
+    _hidden = hidden;
+    
+    [self.sectionDescriptor evaluateFormRowIsHidden:self];
 }
 
 @end

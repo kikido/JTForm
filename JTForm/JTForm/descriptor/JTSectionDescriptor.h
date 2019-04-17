@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)formSection;
 
+#pragma mark - row
 
 - (void)addFormRow:(JTRowDescriptor *)row;
 
@@ -49,6 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeFormRowAtIndex:(NSUInteger)index;
 
 - (void)moveRowAtIndexPath:(NSIndexPath *)sourceIndex toIndexPath:(NSIndexPath *)destinationIndex;
+
+- (void)evaluateFormRowIsHidden:(JTRowDescriptor *)row;
 
 @end
 

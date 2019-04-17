@@ -24,6 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 /** Bool值，决定当前控件是否接受响应事件。如果为YES，则不能编辑当前控件内容，仅仅作为展示用 */
 @property (nonatomic, assign) BOOL disabled;
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+
++ (instancetype)new NS_UNAVAILABLE;
+
 @end
 
 NS_ASSUME_NONNULL_END

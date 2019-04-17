@@ -14,6 +14,17 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTSectionDescriptor;
 @class JTBaseCell;
 
+extern NSString *const JTFormRowTypeText;
+extern NSString *const JTFormRowTypeName;
+extern NSString *const JTFormRowTypeEmail;
+extern NSString *const JTFormRowTypeNumber;
+extern NSString *const JTFormRowTypeInteger;
+extern NSString *const JTFormRowTypeDecimal;
+extern NSString *const JTFormRowTypePassword;
+extern NSString *const JTFormRowTypePhone;
+extern NSString *const JTFormRowTypeURL;
+extern NSString *const JTFormRowTypeTextView;
+
 @interface JTRowDescriptor : JTBaseDescriptor
 
 /** 单元行的标题 */
@@ -40,22 +51,30 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JTRowAction *action;
 
 
-///|< 配置cell，当JYForm调用update方法后使用
+///|< 配置cell，当JTForm调用update方法后使用
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigAfterUpdate;
-///|< 配置cell，当JYForm调用update方法后，且disable属性为Yes时被使用
+///|< 配置cell，当JTForm调用update方法后，且disable属性为Yes时被使用
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigWhenDisabled;
 ///|< 配置cell，当cell调用config之后，update方法之前调用
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigAtConfigure;
 ///|< 预留
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellDataDictionary;
+/** 数据模型，可为nil */
+@property (nonatomic, assign) id mode;
 
-
+- (instancetype)init NS_UNAVAILABLE;
 
 + (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
 
-- (instancetype)initWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
 
 - (JTBaseCell *)cellInForm;
+
+#pragma mark - cell config
+
+@property (nonatomic, strong, nullable) NSDictionary<NSString *, id> *titleAttribute;
+
+@property (nonatomic, strong, nullable) NSDictionary<NSString *, id> *contentAttribute;
 
 @end
 
@@ -63,6 +82,21 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JTRowAction : NSObject
 
 @property (nonatomic, copy) void(^rowBlock)(JTRowDescriptor *sender);
+
+@end
+
+@interface JTFormConfigMode : NSObject
+@property (nonatomic, strong, nullable) UIColor *titleColor;
+@property (nonatomic, strong, nullable) UIColor *contentColor;
+@property (nonatomic, strong, nullable) UIColor *placeHolderColor;
+@property (nonatomic, strong, nullable) UIColor *disabledTitleColor;
+@property (nonatomic, strong, nullable) UIColor *disabledContentColor;
+
+@property (nonatomic, strong, nullable) UIFont *titleFont;
+@property (nonatomic, strong, nullable) UIFont *contentFont;
+@property (nonatomic, strong, nullable) UIFont *placeHlderFont;
+@property (nonatomic, strong, nullable) UIFont *disabledFont;
+@property (nonatomic, strong, nullable) UIFont *disabledContentFont;
 
 @end
 

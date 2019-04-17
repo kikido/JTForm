@@ -12,7 +12,7 @@ NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
 
 @interface JTDefaultCell ()
 @property (nonatomic, strong) ASImageNode *imageNode;
-@property (nonatomic, strong) ASTextNode *textNode;
+@property (nonatomic, strong) ASTextNode *titleNode;
 @property (nonatomic, strong) ASTextNode *detailTextNode;
 @end
 
@@ -20,35 +20,46 @@ NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
 
 - (void)config
 {
+    [super config];
+    
     _imageNode = [[ASImageNode alloc] init];
     _imageNode.layerBacked = YES;
     
-    _textNode = [[ASTextNode alloc] init];
-    _textNode.style.flexShrink = 1.0;
-    _textNode.layerBacked = YES;
+    _titleNode = [[ASTextNode alloc] init];
+    _titleNode.style.flexShrink = 1.0;
+    _titleNode.layerBacked = YES;
     
     _detailTextNode = [[ASTextNode alloc] init];
     _detailTextNode.style.flexShrink = 2.0;
-    _detailTextNode.layerBacked = YES;
-    
-    self.automaticallyManagesSubnodes = YES;
+    _detailTextNode.layerBacked = YES;    
 }
 
 - (void)update
 {
-    _imageNode.image = [UIImage imageNamed:@"icon_first_che1"];
+    [super update];
     
-    _textNode.attributedText = [NSAttributedString attributedStringWithString:self.rowDescriptor.title fontSize:15. color:nil firstWordColor:[UIColor jt_colorWithHexString:@"ff3131"]];
+//    _imageNode.image = [UIImage imageNamed:@"icon_first_che1"];
+    
+    _titleNode.attributedText = [NSAttributedString attributedStringWithString:self.rowDescriptor.title fontSize:15. color:nil firstWordColor:[UIColor jt_colorWithHexString:@"ff3131"]];
     
     _detailTextNode.attributedText = [NSAttributedString attributedStringWithString:self.rowDescriptor.value fontSize:15. color:nil firstWordColor:[UIColor jt_colorWithHexString:@"ff3131"]];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
+    
+    ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                           spacing:10.
+                                                                    justifyContent:ASStackLayoutJustifyContentStart
+                                                                        alignItems:ASStackLayoutAlignItemsStart
+                                                                          children:_imageNode.image ? @[_imageNode, _titleNode] : @[_titleNode]];
+    leftStack.style.flexGrow = 1;
+    
     ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                               spacing:15.
                                                                        justifyContent:ASStackLayoutJustifyContentSpaceBetween alignItems:ASStackLayoutAlignItemsStretch
-                                                                             children:@[_imageNode, _textNode, _detailTextNode]];
+                                                                             children:@[leftStack, _detailTextNode]];
+    
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }
 

@@ -17,7 +17,7 @@
 
 - (BOOL)jt_isNotEmpty
 {
-    return false;
+    return YES;
 }
 
 - (NSString *)displayText

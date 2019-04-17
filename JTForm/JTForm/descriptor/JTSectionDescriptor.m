@@ -8,6 +8,7 @@
 
 #import "JTSectionDescriptor.h"
 #import "JTFormDescriptor.h"
+#import "JTBaseCell.h"
 
 @interface JTSectionDescriptor ()
 @property (nonatomic, strong, readwrite) NSMutableArray *formRows;
@@ -70,61 +71,123 @@
     [self removeObserver:self forKeyPath:@"formRows"];
 }
 
-#pragma mark - add form row
+#pragma mark - add row
 
 - (void)addFormRow:(JTRowDescriptor *)row
 {
-    if ([row jt_isNotEmpty]) {
-        [self insertFormRow:row inAllRowsAtIndex:self.allRows.count];
-        [self insertFormRow:row inFormRowsAtIndex:self.formRows.count];
-        [self.formDescriptor addRowToTagCollection:row];
-    }
+    [self insertFormRow:row inAllRowsAtIndex:self.allRows.count];
+    [self evaluateFormRowIsHidden:row];
+}
+
+- (void)addFormRow:(JTRowDescriptor *)row atIndex:(NSInteger)index
+{
+    [self insertFormRow:row inAllRowsAtIndex:index];
+    [self evaluateFormRowIsHidden:row];
 }
 
 - (void)addFormRow:(JTRowDescriptor *)row afterRow:(JTRowDescriptor *)afterRow
 {
-    if ([row jt_isNotEmpty] && [afterRow jt_isNotEmpty]) {
-        [self insertFormRow:row inAllRowsAtIndex:[self.allRows indexOfObject:afterRow] + 1];
-        [self insertFormRow:row inFormRowsAtIndex:[self.formRows indexOfObject:afterRow] + 1];
-        [self.formDescriptor addRowToTagCollection:row];
+    NSUInteger index = [self.allRows indexOfObject:row];
+    NSUInteger afterIndex = [self.allRows indexOfObject:afterRow];;
+    
+    if (index == NSNotFound) {
+        if (afterIndex != NSNotFound) {
+            [self addFormRow:row atIndex:afterIndex + 1];
+        } else {
+            [self addFormRow:row];
+        }
     }
 }
 
 - (void)addFormRow:(JTRowDescriptor *)row beforeRow:(JTRowDescriptor *)beforeRow
 {
-    if ([row jt_isNotEmpty] && [beforeRow jt_isNotEmpty]) {
-        [self insertFormRow:row inAllRowsAtIndex:[self.allRows indexOfObject:beforeRow] - 1];
-        [self insertFormRow:row inFormRowsAtIndex:[self.formRows indexOfObject:beforeRow] - 1];
-        [self.formDescriptor addRowToTagCollection:row];
+    NSUInteger index = [self.allRows indexOfObject:row];
+    NSUInteger beforeIndex = [self.allRows indexOfObject:row];;
+    
+    if (index == NSNotFound) {
+        if (beforeIndex != NSNotFound) {
+            [self addFormRow:row atIndex:beforeIndex - 1];
+        } else {
+            [self addFormRow:row];
+        }
     }
 }
 
-#pragma mark - remove form row
+#pragma mark - remove row
 
 - (void)removeFormRow:(JTRowDescriptor *)row
 {
-    if ([row jt_isNotEmpty]) {
-        [self removeRowInAllRows:row];
-        [self removeRowInFormRows:row];
-        [self.formDescriptor removeRowFromTagCollection:row];
-    }
-}
-
-- (void)removeFormRowWithTag:(NSString *)tag
-{
-    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
-    [self removeFormRow:row];
+    [self hideFormRow:row];
+    [self removeFormRowInAllRows:row];
 }
 
 - (void)removeFormRowAtIndex:(NSUInteger)index
 {
-    if (index >= 0 && index < self.formRows.count) {
-        JTRowDescriptor *row = [self.formRows objectAtIndex:index];
+    [self hideFormRowsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
+    [self.allRows removeObjectAtIndex:index];
+}
+
+- (void)removeFormRowsAtIndexes:(NSIndexSet *)indexes
+{
+    [self hideFormRowsAtIndexes:indexes];
+    [self.allRows removeObjectsAtIndexes:indexes];
+}
+
+- (void)removeFormRowWithTag:(NSString *)tag
+{
+    if ([tag jt_isNotEmpty]) {
+        JTRowDescriptor *row = self.formDescriptor.allRowsByTag[tag];
         [self removeFormRow:row];
     }
 }
 
-- (void)moveRowAtIndexPath:(NSIndexPath *)sourceIndex toIndexPath:(NSIndexPath *)destinationIndex{}
+
+- (void)moveRowAtIndexPath:(NSIndexPath *)sourceIndex toIndexPath:(NSIndexPath *)destinationIndex
+{
+    // fixme
+}
+
+#pragma mark - hidden or show row
+
+- (void)evaluateFormRowIsHidden:(JTRowDescriptor *)row
+{
+    if (row.hidden) {
+        [self hideFormRow:row];
+    } else {
+        [self showFormRow:row];
+    }
+}
+
+- (void)showFormRow:(JTRowDescriptor *)row
+{
+    NSUInteger formIndex = [self.formRows indexOfObject:row];
+    if (formIndex != NSNotFound) {
+        return;
+    }
+    NSUInteger index = [self.allRows indexOfObject:row];
+    if (index != NSNotFound) {
+        while (formIndex == NSNotFound && index > 0) {
+            JTRowDescriptor *previousRow = [self.allRows objectAtIndex:--index];
+            formIndex = [self.formRows indexOfObject:previousRow];
+        }
+        [self insertFormRow:row inFormRowsAtIndex:formIndex == NSNotFound ? 0 : ++formIndex];
+    }
+}
+
+- (void)hideFormRow:(JTRowDescriptor *)row
+{
+    JTBaseCell *cell = [row cellInForm];
+    [cell resignFirstResponder];
+    [self removeFormRowInFormRows:row];
+}
+
+- (void)hideFormRowsAtIndexes:(NSIndexSet *)indexes
+{
+    NSArray *rows = [self.allRows objectsAtIndexes:indexes];
+    for (JTRowDescriptor *row in rows) {
+        [self hideFormRow:row];
+    }
+}
 
 #pragma mark - all rows
 
@@ -137,52 +200,40 @@
         index = 0;
     }
     if ([self.allRows indexOfObject:row] == NSNotFound) {
+        row.sectionDescriptor = self;
         [self.allRows insertObject:row atIndex:index];
+        
+        [self.formDescriptor addRowToTagCollection:row];
     }
 }
 
-- (void)removeRowInAllRows:(JTRowDescriptor *)row
+- (void)removeFormRowInAllRows:(JTRowDescriptor *)row
 {
     [self.allRows removeObject:row];
+    [self.formDescriptor removeRowFromTagCollection:row];
 }
 
-- (void)removeRowInAllRowsByIndex:(NSUInteger)index
-{
-    // fixme 锁
-    if (index >= 0 && index < self.allRows.count) {
-        [self.allRows removeObjectAtIndex:index];
-    }
-}
 
 #pragma mark - form rows
 
 - (void)insertFormRow:(JTRowDescriptor *)row inFormRowsAtIndex:(NSUInteger)index
 {
-    if (index == NSNotFound) {
-        index = self.formRows.count;
-    }
-    if (index < 0) {
-        index = 0;
-    }
     if (!row.hidden) {
+        if (index == NSNotFound) {
+            index = self.formRows.count;
+        }
+        if (index < 0) {
+            index = 0;
+        }
         if ([self.formRows indexOfObject:row] == NSNotFound) {
-            // fixme
             [self.formRows insertObject:row atIndex:index];
         }
     }
 }
 
-- (void)removeRowInFormRows:(JTRowDescriptor *)row
+- (void)removeFormRowInFormRows:(JTRowDescriptor *)row
 {
     [self.formRows removeObject:row];
-}
-
-- (void)removeRoeInFormRowsByIndex:(NSUInteger)index
-{
-    // fixme 锁
-    if (index >= 0 && index < self.formRows.count) {
-        [self.formRows removeObjectAtIndex:index];
-    }
 }
 
 #pragma mark - hidden

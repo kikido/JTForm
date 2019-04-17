@@ -9,6 +9,7 @@
 #import "JTFormDescriptor.h"
 
 #import "JTDefaultCell.h"
+#import "JTFormTextFieldCell.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,8 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) ASTableNode *tableNode;
 
-
-- (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
 + (NSMutableDictionary *)cellClassesForRowDescriptorTypes;
 @end

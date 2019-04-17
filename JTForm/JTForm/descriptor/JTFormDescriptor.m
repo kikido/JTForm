@@ -57,7 +57,6 @@
             [self.delegate formSectionHasBeenRemoved:section atIndex:indexSet.firstIndex];
         }
     }
-    
 }
 
 - (void)dealloc
@@ -65,36 +64,73 @@
     [self removeObserver:self forKeyPath:@"formSections"];
 }
 
-#pragma mark - section
+#pragma mark - add section
 
 - (void)addFormSection:(JTSectionDescriptor *)section
 {
     [self insertFormSection:section inAllSectionsAtIndex:self.allSections.count];
-    [self insertFormSection:section inAllSectionsAtIndex:self.formSections.count];
+    [self evaluateFormSectionIsHidden:section];
 }
 
 - (void)addFormSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index
 {
-    
+    [self insertFormSection:section inAllSectionsAtIndex:index];
+    [self evaluateFormSectionIsHidden:section];
 }
 
 - (void)addFormSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection
 {
+    NSUInteger index = [self.allSections indexOfObject:section];
+    NSUInteger afterIndex = [self.allSections indexOfObject:afterSection];;
     
+    if (index == NSNotFound) {
+        if (afterIndex != NSNotFound) {
+            [self addFormSection:section atIndex:afterIndex + 1];
+        } else {
+            [self addFormSection:section];
+        }
+    }
 }
 
 - (void)addFormSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection
 {
+    NSUInteger index = [self.allSections indexOfObject:section];
+    NSUInteger beforeIndex = [self.allSections indexOfObject:beforeSection];;
     
+    if (index == NSNotFound) {
+        if (beforeIndex != NSNotFound) {
+            [self addFormSection:section atIndex:beforeIndex - 1];
+        } else {
+            [self addFormSection:section];
+        }
+    }
 }
+
+#pragma mark - remove section
+
+- (void)removeFormSection:(JTSectionDescriptor *)section
+{
+    [self hideFormSection:section];
+    [self removeFormSectionInAllSections:section];
+}
+
+- (void)removeFormSectionAtIndex:(NSUInteger)index
+{
+    [self hideFormSectionsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
+    [self.allSections removeObjectAtIndex:index];
+}
+
+- (void)removeFormSectionsAtIndexes:(NSIndexSet *)indexes
+{
+    [self hideFormSectionsAtIndexes:indexes];
+    [self.allSections removeObjectsAtIndexes:indexes];
+}
+
+#pragma mark - hidden or show section
 
 - (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section
 {
     if (section.hidden) {
-        JTBaseCell *cell = (JTBaseCell *)[((JTForm *)self.delegate).tableNode findFirstResponder];
-        if ([cell isKindOfClass:[JTBaseCell class]]) {
-            [cell resignFirstResponder];
-        }
         [self hideFormSection:section];
     } else {
         [self showFormSection:section];
@@ -119,7 +155,23 @@
 
 - (void)hideFormSection:(JTSectionDescriptor *)section
 {
+    JTBaseCell *cell = (JTBaseCell *)[((JTForm *)self.delegate).tableNode findFirstResponder];
+    if ([cell isKindOfClass:[JTBaseCell class]]) {
+        [cell resignFirstResponder];
+    }
     [self removeFormSectionInFormSections:section];
+}
+
+- (void)hideFormSectionsAtIndexes:(NSIndexSet *)indexes
+{
+    JTBaseCell *cell = (JTBaseCell *)[((JTForm *)self.delegate).tableNode findFirstResponder];
+    if ([cell isKindOfClass:[JTBaseCell class]]) {
+        [cell resignFirstResponder];
+    }
+    NSArray *sections = [self.allSections objectsAtIndexes:indexes];
+    for (JTSectionDescriptor *section in sections) {
+        [self removeFormSectionInFormSections:section];
+    }
 }
 
 #pragma mark - all sections

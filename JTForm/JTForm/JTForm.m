@@ -15,28 +15,30 @@
 
 @implementation JTForm
 
-- (instancetype)init
-{
-    @throw [NSException exceptionWithName:NSGenericException reason:@"`-init` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-    return nil;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    @throw [NSException exceptionWithName:NSGenericException reason:@"`-initWithFrame:` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-    return nil;
-}
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-    @throw [NSException exceptionWithName:NSGenericException reason:@"`-initWithCoder:` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-    return nil;
-}
+//- (instancetype)init
+//{
+//    @throw [NSException exceptionWithName:NSGenericException reason:@"`-init` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
+//    return nil;
+//}
+//
+//- (instancetype)initWithFrame:(CGRect)frame
+//{
+//    @throw [NSException exceptionWithName:NSGenericException reason:@"`-initWithFrame:` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
+//    return nil;
+//}
+//
+//- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder
+//{
+//    @throw [NSException exceptionWithName:NSGenericException reason:@"`-initWithCoder:` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
+//    return nil;
+//}
 
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor
 {
-    if (self = [super init]) {
+    if (self = [super initWithFrame:CGRectZero]) {
+        self.backgroundColor = [UIColor blueColor];
+        _formDescriptor = formDescriptor;
         [self initializeForm];
     }
     return self;
@@ -44,11 +46,42 @@
 
 - (void)initializeForm
 {
-    _tableNode            = [[ASTableNode alloc] init];
+    _tableNode            = [[ASTableNode alloc] initWithStyle:UITableViewStyleGrouped];
     _tableNode.dataSource = self;
     _tableNode.delegate   = self;
     [self addSubnode:_tableNode];
 }
+
+
+// fixme 看看demo是什么时候给frame的
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+    _tableNode.frame = self.frame;
+}
+
+- (void)dealloc
+{
+    self.tableNode.delegate = nil;
+    self.tableNode.dataSource = nil;
+}
+
+- (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 40)];
+    view.backgroundColor = [UIColor redColor];
+    return view;
+}
+
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    return 40.;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+//{
+//    return 0.;
+//}
 
 #pragma mark - ASTableDataSource
 
@@ -108,7 +141,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _cellClassesForRowDescriptorTypes = @{
-                                              JTFormRowTypeDefault : [JTDefaultCell class]
+                                              JTFormRowTypeDefault : [JTDefaultCell class],
+                                              JTFormRowTypeText : [JTFormTextFieldCell class]
                                               }.mutableCopy;
     });
     return _cellClassesForRowDescriptorTypes;

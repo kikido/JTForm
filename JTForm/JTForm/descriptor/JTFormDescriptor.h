@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) id<JTFormDescriptorDelegate> delegate;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 + (nonnull instancetype)formDescriptor;
 
 #pragma mark - section
@@ -41,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addFormSection:(JTSectionDescriptor *)section;
 
 /**
- 添加段描述在指定位置
+ 添加段描述到指定位置
  
  */
 - (void)addFormSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index;
@@ -59,6 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
 
  */
 - (void)addFormSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
+
+- (void)removeFormSection:(JTSectionDescriptor *)section;
+
+- (void)removeFormSectionAtIndex:(NSUInteger)index;
+
+- (void)removeFormSectionsAtIndexes:(NSIndexSet *)indexes;
 
 
 - (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section;
@@ -82,6 +90,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (JTRowDescriptor *)formRowWithTag:(NSString *)tag;
 
 - (JTRowDescriptor *)formRowAtIndex:(NSIndexPath *)indexPath;
+
+@end
+
+
+/**
+ 上啦刷新需要实现的方法
+ */
+@protocol JTFormRefreshDelegate <NSObject>
+
 
 @end
 
