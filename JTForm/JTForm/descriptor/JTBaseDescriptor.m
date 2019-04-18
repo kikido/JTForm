@@ -12,3 +12,8 @@
 @implementation JTBaseDescriptor
 
 @end
+
+
+@implementation JTFormConfigMode
+
+@end

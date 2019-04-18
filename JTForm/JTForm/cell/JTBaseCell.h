@@ -7,8 +7,8 @@
 //
 
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
+#import "JTFormDescriptor.h"
 #import "JTNetworkImageNode.h"
-#import "JTRowDescriptor.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -52,6 +52,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
+当前单元行放弃第一响应者
+
+ */
+- (BOOL)formCellResignFirstResponder;
+
+
+/**
  当前的单元行被选中了
  
  */
@@ -85,6 +92,32 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JTBaseCell : ASCellNode <JTBaseCellDelegate>
 
 @property (nonatomic, weak) JTRowDescriptor *rowDescriptor;
+
+- (JTForm *)jtForm;
+
+- (UIColor *)formCellBgColor;
+
+- (UIColor *)formCellTitleColor;
+
+- (UIColor *)formCellContentColor;
+
+- (UIColor *)formCellPlaceHolderColor;
+
+- (UIColor *)formCellDisabledTitleColor;
+
+- (UIColor *)formCellDisabledContentColor;
+
+- (UIFont *)formCellTitleFont;
+
+- (UIFont *)formCellContentFont;
+
+- (UIFont *)formCellPlaceHlderFont;
+
+- (UIFont *)formCellDisabledTitleFont;
+
+- (UIFont *)formCellDisabledContentFont;
+
+- (UIColor *)highLightTitleColor;
 
 @end
 

@@ -82,6 +82,38 @@ NSString *const JTFormRowTypeTextView = @"JTFormRowTypeTextView";
     [self.sectionDescriptor evaluateFormRowIsHidden:self];
 }
 
+#pragma mark - 文本
+
+- (nullable NSString *)displayContentValue
+{
+    if (self.value) {
+        if (self.valueFormatter) {
+            return [self.valueFormatter stringForObjectValue:self.value];
+        } else {
+            return [self.value displayText];
+        }
+    } else {
+        return nil;
+    }
+}
+
+- (nullable NSString *)editTextValue
+{
+    if (self.value) {
+        if (self.valueFormatter) {
+            if (self.useValueFormatterDuringInput) {
+                return [self displayContentValue];
+            } else {
+                return [self.value displayText];
+            }
+        } else {
+            return [self.value displayText];
+        }
+    } else {
+        return nil;
+    }
+}
+
 @end
 
 

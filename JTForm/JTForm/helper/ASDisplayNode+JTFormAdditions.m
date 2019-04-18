@@ -7,6 +7,7 @@
 //
 
 #import "ASDisplayNode+JTFormAdditions.h"
+#import "JTBaseCell.h"
 
 @implementation ASDisplayNode (JTFormAdditions)
 
@@ -19,6 +20,23 @@
         ASDisplayNode *firstResponder = [subNode findFirstResponder];
         if (firstResponder != nil) {
             return firstResponder;
+        }
+    }
+    return nil;
+}
+
+- (JTBaseCell *)formCell
+{
+    if ([self isKindOfClass:[JTBaseCell class]]) {
+        if ([self conformsToProtocol:@protocol(JTBaseCellDelegate)]){
+            return (JTBaseCell<JTBaseCellDelegate> *)self;
+        }
+        return nil;
+    }
+    if (self.supernode) {
+        JTBaseCell<JTBaseCellDelegate> *cell = [self.supernode formCell];
+        if (cell != nil) {
+            return cell;
         }
     }
     return nil;

@@ -11,7 +11,7 @@
 @implementation NSAttributedString (JTFormAdditions)
 
 + (NSAttributedString *)attributedStringWithString:(NSString *)string
-                                          fontSize:(CGFloat)fontSize
+                                              font:(UIFont *)font
                                              color:(nullable UIColor *)color
                                     firstWordColor:(nullable UIColor *)firstWordColor
 {
@@ -19,7 +19,7 @@
     
     if (string) {
         NSDictionary *attributes = @{NSForegroundColorAttributeName: color ? : [UIColor blackColor],
-                                                NSFontAttributeName: [UIFont systemFontOfSize:fontSize]};
+                                                NSFontAttributeName: font};
         attributedString = [[NSMutableAttributedString alloc] initWithString:string];
         [attributedString addAttributes:attributes range:NSMakeRange(0, string.length)];
         

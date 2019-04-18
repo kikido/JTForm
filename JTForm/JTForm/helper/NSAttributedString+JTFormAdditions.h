@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSAttributedString (JTFormAdditions)
 
 + (NSAttributedString *)attributedStringWithString:(NSString *)string
-                                          fontSize:(CGFloat)fontSize
+                                              font:(UIFont *)font
                                              color:(nullable UIColor *)color
                                     firstWordColor:(nullable UIColor *)firstWordColor;
 

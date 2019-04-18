@@ -37,13 +37,13 @@ extern NSString *const JTFormRowTypeTextView;
 @property (nonatomic, assign, readonly) NSString *rowType;
 
 /** 单元行的值 */
-@property (nonatomic, assign) id       value;
+@property (nullable, nonatomic, assign) id       value;
+
+/** 是否是必录项 */
+@property (nonatomic, assign) BOOL required;
 
 /** 单元的高度，如果不设置的话使用默认值 */
 @property (nonatomic, assign) CGFloat  height;
-
-/** 单元行没有值时在子label显示的文本，类似于placeholder */
-@property (nonatomic, copy  ) NSString *noValueDisplayText;
 
 @property (nonatomic, weak) JTSectionDescriptor *sectionDescriptor;
 
@@ -72,9 +72,25 @@ extern NSString *const JTFormRowTypeTextView;
 
 #pragma mark - cell config
 
-@property (nonatomic, strong, nullable) NSDictionary<NSString *, id> *titleAttribute;
 
-@property (nonatomic, strong, nullable) NSDictionary<NSString *, id> *contentAttribute;
+#pragma mark - text
+
+/** 在输入文本的时候也使用文本格式转换 */
+@property (nonatomic, assign) BOOL useValueFormatterDuringInput;
+/** 文本格式转换，可以将数据格式化为一种易读的格式。‘NSFormatter’是一个抽象类，我们只使用它的子类 */
+@property (nullable, nonatomic, strong) NSFormatter *valueFormatter;
+/** fixme */
+@property (nullable, nonatomic, assign) Class valueTransformer;
+/** 内容详情的占位符 */
+@property (nullable, nonatomic, copy) NSString *placeHolder;
+/** 能输入最大的字符数 */
+@property (nullable, nonatomic, assign) NSNumber *maxNumberOfCharacters;
+
+
+- (nullable NSString *)displayContentValue;
+
+- (nullable NSString *)editTextValue;
+
 
 @end
 
@@ -82,21 +98,6 @@ extern NSString *const JTFormRowTypeTextView;
 @interface JTRowAction : NSObject
 
 @property (nonatomic, copy) void(^rowBlock)(JTRowDescriptor *sender);
-
-@end
-
-@interface JTFormConfigMode : NSObject
-@property (nonatomic, strong, nullable) UIColor *titleColor;
-@property (nonatomic, strong, nullable) UIColor *contentColor;
-@property (nonatomic, strong, nullable) UIColor *placeHolderColor;
-@property (nonatomic, strong, nullable) UIColor *disabledTitleColor;
-@property (nonatomic, strong, nullable) UIColor *disabledContentColor;
-
-@property (nonatomic, strong, nullable) UIFont *titleFont;
-@property (nonatomic, strong, nullable) UIFont *contentFont;
-@property (nonatomic, strong, nullable) UIFont *placeHlderFont;
-@property (nonatomic, strong, nullable) UIFont *disabledFont;
-@property (nonatomic, strong, nullable) UIFont *disabledContentFont;
 
 @end
 

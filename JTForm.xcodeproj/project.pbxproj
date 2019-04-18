@@ -25,6 +25,7 @@
 		1DDADA8622647CDA00652FE6 /* UIColor+JTFormAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA8522647CDA00652FE6 /* UIColor+JTFormAdditions.m */; };
 		1DDADA892264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA882264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m */; };
 		1DDADA902266FD2600652FE6 /* JTFormTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA8F2266FD2600652FE6 /* JTFormTextFieldCell.m */; };
+		1DDADA942268756600652FE6 /* JTFormNavigationAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA932268756600652FE6 /* JTFormNavigationAccessoryView.m */; };
 		63158622A2B8881B48124F8C /* libPods-JTForm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +67,8 @@
 		1DDADA882264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ASDisplayNode+JTFormAdditions.m"; sourceTree = "<group>"; };
 		1DDADA8E2266FD2600652FE6 /* JTFormTextFieldCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormTextFieldCell.h; sourceTree = "<group>"; };
 		1DDADA8F2266FD2600652FE6 /* JTFormTextFieldCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormTextFieldCell.m; sourceTree = "<group>"; };
+		1DDADA922268756600652FE6 /* JTFormNavigationAccessoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormNavigationAccessoryView.h; sourceTree = "<group>"; };
+		1DDADA932268756600652FE6 /* JTFormNavigationAccessoryView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormNavigationAccessoryView.m; sourceTree = "<group>"; };
 		9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm/Pods-JTForm.release.xcconfig"; sourceTree = "<group>"; };
 		954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JTForm.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -119,6 +122,7 @@
 		1DDADA3D225B6FF800652FE6 /* JTForm */ = {
 			isa = PBXGroup;
 			children = (
+				1DDADA912268753F00652FE6 /* view */,
 				1DDADA7A22646BD100652FE6 /* asnode */,
 				1DDADA41225B704F00652FE6 /* delegate */,
 				1DDADA40225B703E00652FE6 /* helper */,
@@ -188,6 +192,15 @@
 				1DDADA7F22646E7700652FE6 /* JTNetworkImageNode.m */,
 			);
 			path = asnode;
+			sourceTree = "<group>";
+		};
+		1DDADA912268753F00652FE6 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				1DDADA922268756600652FE6 /* JTFormNavigationAccessoryView.h */,
+				1DDADA932268756600652FE6 /* JTFormNavigationAccessoryView.m */,
+			);
+			path = view;
 			sourceTree = "<group>";
 		};
 		92BE525C210FF88DE5260305 /* Pods */ = {
@@ -312,6 +325,7 @@
 				1DDADA902266FD2600652FE6 /* JTFormTextFieldCell.m in Sources */,
 				1DDADA8322647ABA00652FE6 /* NSAttributedString+JTFormAdditions.m in Sources */,
 				1DDADA52225B784700652FE6 /* JTForm.m in Sources */,
+				1DDADA942268756600652FE6 /* JTFormNavigationAccessoryView.m in Sources */,
 				1DDADA4D225B772D00652FE6 /* JTFormDescriptor.m in Sources */,
 				1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */,
 			);

@@ -7,7 +7,9 @@
 //
 
 #import "JTFormDescriptor.h"
-#import "JTForm.h"
+#import "JTBaseCell.h"
+#import "JTDefaultCell.h"
+#import "JTFormTextFieldCell.h"
 
 @interface JTFormDescriptor ()
 @property (nonatomic, strong, readwrite) NSMutableArray *formSections;
@@ -257,4 +259,47 @@
     }
     return nil;
 }
+
+#pragma mark - row
+
+- (JTRowDescriptor *)nextRowDescriptorForRow:(JTRowDescriptor *)currentRow
+{
+    NSUInteger indexOfRow = [currentRow.sectionDescriptor.formRows indexOfObject:currentRow];
+    if (indexOfRow != NSNotFound) {
+        if ((indexOfRow+1) < currentRow.sectionDescriptor.formRows.count) {
+            return [currentRow.sectionDescriptor.formRows objectAtIndex:indexOfRow+1];
+        } else {
+            NSUInteger sectionIndex = [self.formSections indexOfObject:currentRow.sectionDescriptor];
+            if (sectionIndex != NSNotFound && (sectionIndex + 1) < self.formSections.count) {
+                JTSectionDescriptor *nextSection = self.formSections[++sectionIndex];
+                while (nextSection.formRows.count == 0 && (sectionIndex + 1) < self.formSections.count) {
+                    nextSection = [self.formSections objectAtIndex:++sectionIndex];
+                }
+                return nextSection.formRows.firstObject;
+            }
+        }
+    }
+    return nil;
+}
+
+- (JTRowDescriptor *)previousRowDescriptorForRow:(JTRowDescriptor *)currentRow
+{
+    NSUInteger indexOfRow = [currentRow.sectionDescriptor.formRows indexOfObject:currentRow];
+    if (indexOfRow != NSNotFound) {
+        if (indexOfRow > 0) {
+            return [currentRow.sectionDescriptor.formRows objectAtIndex:indexOfRow - 1];
+        } else {
+            NSUInteger sectionIndex = [self.formSections indexOfObject:currentRow.sectionDescriptor];
+            if (sectionIndex != NSNotFound && sectionIndex > 0) {
+                JTSectionDescriptor *previousSection = [self.formSections objectAtIndex:--sectionIndex];
+                while (previousSection.formRows.count == 0 && sectionIndex > 0) {
+                    previousSection = [self.formSections objectAtIndex:--sectionIndex];
+                }
+                return previousSection.formRows.lastObject;
+            }
+        }
+    }
+    return nil;
+}
+
 @end

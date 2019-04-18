@@ -52,14 +52,14 @@
     section = [JTSectionDescriptor formSection];
     [formDescriptor addFormSection:section];
     for (NSInteger i = 0; i < 6; i++) {
-        row = [JTRowDescriptor formRowDescriptorWithTag:[NSString stringWithFormat:@"1_%ld",i+6] rowType:JTFormRowTypeText title:@"标题yiha"];
+        row = [JTRowDescriptor formRowDescriptorWithTag:@(i+1).description rowType:JTFormRowTypeText title:@"kittens"];
 //        row.value = @"哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔";
         [section addFormRow:row];
     }
     
     JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
-//    form.frame = self.view.bounds;
-    form.frame = CGRectMake(0, 0, 200, 500);
+    form.frame = self.view.bounds;
+//    form.frame = CGRectMake(0, 0, 200, 500);
     [self.view addSubview:form];
     
     

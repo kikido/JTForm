@@ -10,8 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface UIColor (JTFormAdditions)
+#ifndef UIColorHex
+#define UIColorHex(_hex_)   [UIColor jt_colorWithHexString:((__bridge NSString *)CFSTR(#_hex_))]
+#endif
 
+@interface UIColor (JTFormAdditions)
 
 /**
  支持下面几种格式

@@ -8,18 +8,29 @@
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import "JTFormDescriptor.h"
 
-#import "JTDefaultCell.h"
-#import "JTFormTextFieldCell.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JTForm : UIView
+@class JTFormDescriptor;
+@class JTRowDescriptor;
+
+@interface JTForm : UIView <ASEditableTextNodeDelegate>
 
 @property (nonatomic, strong) ASTableNode *tableNode;
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
 + (NSMutableDictionary *)cellClassesForRowDescriptorTypes;
+
++ (NSMutableDictionary *)inlineRowDescriptorTypesForRowDescriptorTypes;
+
+#pragma mark -
+
+#pragma mark - edit text
+
+- (void)beginEditing:(JTRowDescriptor *)row;
+
+- (void)endEditing:(JTRowDescriptor *)row;
+
 @end
 
 NS_ASSUME_NONNULL_END
