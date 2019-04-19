@@ -14,5 +14,6 @@
 #import "UIColor+JTFormAdditions.h"
 #import "NSAttributedString+JTFormAdditions.h"
 #import "ASDisplayNode+JTFormAdditions.h"
+#import "JTFormCellLayout.h"
 
 #endif /* JTHelper_h */

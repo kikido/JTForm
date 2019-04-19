@@ -21,6 +21,10 @@ NSString *const JTFormRowTypePhone = @"JTFormRowTypePhone";
 NSString *const JTFormRowTypeURL = @"JTFormRowTypeURL";
 NSString *const JTFormRowTypeTextView = @"JTFormRowTypeTextView";
 
+CGFloat const JTFormRowInitialHeight = -2.0;
+CGFloat const JTFormUnspecifiedCellHeight = -3.0;
+
+
 @interface JTRowDescriptor ()
 @property (nonatomic, strong) JTBaseCell *cell;
 @end
@@ -39,7 +43,8 @@ NSString *const JTFormRowTypeTextView = @"JTFormRowTypeTextView";
     if (self = [super init]) {
         _title = title;
         _rowType = rowType;
-        _tag = tag;        
+        _tag = tag;
+        _height = JTFormRowInitialHeight;
     }
     return self;
 }
@@ -73,6 +78,18 @@ NSString *const JTFormRowTypeTextView = @"JTFormRowTypeTextView";
     }];
 }
 
+- (CGFloat)height
+{
+    if (_height == JTFormRowInitialHeight) {
+        if ([[self.cell class] respondsToSelector:@selector(formCellHeightForRowDescriptor:)]) {
+            return [[self.cell class] formCellHeightForRowDescriptor:self];
+        } else {
+            //没有指定高度
+            return JTFormUnspecifiedCellHeight;
+        }
+    }
+    return _height;
+}
 #pragma mark - hidden
 
 - (void)setHidden:(BOOL)hidden

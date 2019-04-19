@@ -20,28 +20,13 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 @interface JTForm () <ASTableDelegate, ASTableDataSource, JTFormDescriptorDelegate>
 @property (nonatomic, strong) JTFormDescriptor *formDescriptor;
 @property (nonatomic, strong) JTFormNavigationAccessoryView *navigationAccessoryView;
+
+@property (nonatomic, strong) NSNumber *oldBottomTableMargin;
+@property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
+@property (nonatomic, assign) BOOL firstShowKeyBoard;
 @end
 
 @implementation JTForm
-
-//- (instancetype)init
-//{
-//    @throw [NSException exceptionWithName:NSGenericException reason:@"`-init` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-//    return nil;
-//}
-//
-//- (instancetype)initWithFrame:(CGRect)frame
-//{
-//    @throw [NSException exceptionWithName:NSGenericException reason:@"`-initWithFrame:` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-//    return nil;
-//}
-//
-//- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder
-//{
-//    @throw [NSException exceptionWithName:NSGenericException reason:@"`-initWithCoder:` unavailable. Use `-formRowDescriptorWithTag:rowType:title:` instead" userInfo:nil];
-//    return nil;
-//}
-
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor
 {
@@ -84,10 +69,10 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     return view;
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    return 40.;
-//}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 40.;
+}
 //
 //- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 //{
@@ -119,51 +104,48 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    JTBaseCell *cell = [self.tableNode nodeForRowAtIndexPath:self.tableNode.indexPathForSelectedRow];
-
-    if (cell) {
+    if (self.tableNode.indexPathForSelectedRow) {
         NSDictionary *keyboardInfo = notification.userInfo;
         CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-        
-//        CGRect convertTableFrame = [self.tableView.superview convertRect:self.tableView.frame toView:self.table.window];
-//        CGFloat nowBottomMargin = CGRectGetMaxY(convertTableFrame) - CGRectGetMinY(keybordFrame) + (_oldBottomTableMargin ? _oldBottomTableMargin.doubleValue : 0);
-//        UIEdgeInsets tableContentInset = self.tableView.contentInset;
-//        UIEdgeInsets tableScrollIndicatorInsets = self.tableView.scrollIndicatorInsets;
-//        _oldTopTableInset = _oldTopTableInset ?: @(tableContentInset.top);
-//
-//        if (nowBottomMargin > 0) {
-//            _oldBottomTableMargin = @(nowBottomMargin);
-//            tableContentInset.top = nowBottomMargin;
-//            tableScrollIndicatorInsets.top = nowBottomMargin;
-//
-//            self.tableView.contentInset = tableContentInset;
-//            self.tableView.scrollIndicatorInsets = tableContentInset;
-//
-//            [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
-//                self.transform = CGAffineTransformIdentity;
-//                self.transform = CGAffineTransformMakeTranslation(0, -nowBottomMargin);
-//
-//                NSIndexPath *selectRow = [self.tableView indexPathForCell:cell];
-//                [self.tableView scrollToRowAtIndexPath:selectRow atScrollPosition:UITableViewScrollPositionNone animated:NO];
-//            } completion:nil];
-//        }
+        CGRect convertTableFrame = [self convertRect:self.tableNode.view.frame toView:self.window];
+        // 如果该值小于0，就不需要去设置inset和transform
+        CGFloat bottomMargin = CGRectGetMaxY(convertTableFrame) - CGRectGetMinY(keybordFrame);
+        if (bottomMargin <= 0) {
+            return;
+        }
+        UIEdgeInsets tableContentInset = self.tableNode.contentInset;
+        if (!_firstShowKeyBoard) {
+            _firstShowKeyBoard = YES;
+            _orginTableContentInset = self.tableNode.contentInset;
+        }
+        // 当tb.min - transform.y小于0时，需要设置一下inset，不然tb顶部的内容会被遮掉
+        if (CGRectGetMinY(convertTableFrame) - bottomMargin < 0) {
+            tableContentInset.top += bottomMargin;
+            self.tableNode.contentInset = tableContentInset;
+        }
+        if (_oldBottomTableMargin) {
+            bottomMargin += [_oldBottomTableMargin doubleValue];
+        }
+
+        if (bottomMargin > 0) {
+            _oldBottomTableMargin = @(bottomMargin);
+
+            [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+                self.transform = CGAffineTransformIdentity;
+                self.transform = CGAffineTransformMakeTranslation(0, - bottomMargin);
+                [self.tableNode scrollToRowAtIndexPath:self.tableNode.indexPathForSelectedRow atScrollPosition:UITableViewScrollPositionNone animated:NO];
+            } completion:nil];
+        }
     }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-//    UIEdgeInsets tableContentInset = self.tableView.contentInset;
-//    UIEdgeInsets tableScrollIndicatorInsets = self.tableView.scrollIndicatorInsets;
-//
-//    tableContentInset.top = [_oldTopTableInset floatValue];
-//    tableScrollIndicatorInsets.top = [_oldTopTableInset floatValue];
-//    _oldTopTableInset = nil;
-//    _oldBottomTableMargin = nil;
-//
-//    self.tableView.contentInset = tableContentInset;
-//    self.tableView.scrollIndicatorInsets = tableScrollIndicatorInsets;
-//
-//    self.transform = CGAffineTransformIdentity;
+    self.tableNode.contentInset = _orginTableContentInset;
+    self.transform = CGAffineTransformIdentity;
+    
+    _orginTableContentInset = UIEdgeInsetsZero;
+    _oldBottomTableMargin = nil;
 }
 
 
@@ -196,11 +178,20 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     
 }
 
-//- (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    CGSize max = CGSizeMake(0, 200);
-//    return ASSizeRangeMake(max);
-//}
+- (BOOL)tableNode:(ASTableNode *)tableNode shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    JTRowDescriptor *row = [self.formDescriptor formRowAtIndex:indexPath];
+    if (row.height == JTFormUnspecifiedCellHeight || row.height <= 0) {
+        return ASSizeRangeUnconstrained;
+    } else {
+        return ASSizeRangeMake(CGSizeMake(0, row.height));
+    }
+}
 
 #pragma mark - cell
 
@@ -226,7 +217,16 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     dispatch_once(&onceToken, ^{
         _cellClassesForRowDescriptorTypes = @{
                                               JTFormRowTypeDefault : [JTDefaultCell class],
-                                              JTFormRowTypeText : [JTFormTextFieldCell class]
+                                              JTFormRowTypeText : [JTFormTextFieldCell class],
+                                              JTFormRowTypeName : [JTFormTextFieldCell class],
+                                              JTFormRowTypeEmail : [JTFormTextFieldCell class],
+                                              JTFormRowTypeNumber : [JTFormTextFieldCell class],
+                                              JTFormRowTypeInteger : [JTFormTextFieldCell class],
+                                              JTFormRowTypeDecimal : [JTFormTextFieldCell class],
+                                              JTFormRowTypePassword : [JTFormTextFieldCell class],
+                                              JTFormRowTypePhone : [JTFormTextFieldCell class],
+                                              JTFormRowTypeURL : [JTFormTextFieldCell class],
+                                              JTFormRowTypeTextView : [JTFormTextFieldCell class]
                                               }.mutableCopy;
     });
     return _cellClassesForRowDescriptorTypes;

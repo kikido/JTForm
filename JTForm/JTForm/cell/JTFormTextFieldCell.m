@@ -13,6 +13,9 @@
 @property (nonatomic, strong) JTNetworkImageNode *imageNode;
 @property (nonatomic, strong) ASTextNode *titleNode;
 @property (nonatomic, strong) ASEditableTextNode *textViewNode;
+@property (nonatomic, strong) ASDisplayNode *textFieldNode;
+/** 需要给textview设定一个最小值，但是因为‘ASDisplayNode.style.minHeight’属性会覆盖‘maxHeight’和‘height’属性，所以使用一个空的node来撑起最小值 */
+@property (nonatomic, strong) ASDisplayNode *tempNode;
 
 @end
 
@@ -36,16 +39,24 @@
     _titleNode.layerBacked = YES;
     
     _textViewNode = [[ASEditableTextNode alloc] init];
+    _textViewNode.textContainerInset = UIEdgeInsetsMake(7, 0, INFINITY, 0);
     _textViewNode.delegate = self;
-    _textViewNode.style.preferredSize = CGSizeMake(100, 30.);
-    _textViewNode.textContainerInset = UIEdgeInsetsMake(8, 0, 8, 0);
-    _textViewNode.scrollEnabled = YES;
+    _textViewNode.scrollEnabled = false;
     _textViewNode.textView.textAlignment = NSTextAlignmentRight;
     _textViewNode.backgroundColor = [UIColor blueColor];
     _textViewNode.autocorrectionType = UITextAutocorrectionTypeNo;
     _textViewNode.autocapitalizationType = UITextAutocapitalizationTypeNone;
     
-    [self addSubnode:_textViewNode];
+    _textFieldNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
+        UITextField *textField = [[UITextField alloc] init];
+        return textField;
+    }];
+    
+    
+    // test
+    _textViewNode.maximumLinesToDisplay = 1;
+    
+    _tempNode = [[ASDisplayNode alloc] init];
 }
 
 - (void)update
@@ -78,6 +89,8 @@
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeURL]) {
         _textViewNode.keyboardType = UIKeyboardTypeURL;
+    } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {
+        _textViewNode.textContainerInset = UIEdgeInsetsZero;
     }
     
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
@@ -108,12 +121,33 @@
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsStart
                                                                           children:_imageNode.image ? @[_imageNode, _titleNode] : @[_titleNode]];
-    _textViewNode.style.flexGrow = 1;
-    _textViewNode.style.flexShrink = 2.;
-    leftStack.style.flexShrink = 1.;
-    _titleNode.style.flexShrink = 1.;
     
-    ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal spacing:15. justifyContent:ASStackLayoutJustifyContentSpaceBetween alignItems:[self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView] ? ASStackLayoutAlignItemsStart : ASStackLayoutAlignItemsCenter children:@[leftStack, _textViewNode]];
+    ASStackLayoutSpec *rightStack = nil;
+    if (![self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {
+        _titleNode.style.maxHeight = ASDimensionMake(ASDimensionUnitPoints, kJTFormTextFieldCellMaxTitlteHeight);
+        _textViewNode.style.minWidth = ASDimensionMake(ASDimensionUnitPoints, 120.);
+        _textViewNode.style.height = ASDimensionMake(ASDimensionUnitPoints, 30.);
+        
+    } else {
+        _titleNode.style.maxWidth = ASDimensionMake(ASDimensionUnitPoints, kJTFormTextViewCellMaxTitleWidth);
+        _textViewNode.style.alignSelf = ASStackLayoutAlignSelfStretch;
+        
+        _tempNode.style.minHeight = ASDimensionMake(110.);
+        _tempNode.style.width = ASDimensionMake(0.01);
+        rightStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                             spacing:0.
+                                                      justifyContent:ASStackLayoutJustifyContentStart
+                                                          alignItems:ASStackLayoutAlignItemsStart
+                                                            children:@[_textViewNode, _tempNode]];
+        rightStack.style.alignSelf = ASStackLayoutAlignSelfStretch;
+        rightStack.style.flexGrow = 1.;
+    }
+    
+    _titleNode.style.flexShrink = 1.;
+    leftStack.style.flexShrink = 1.;
+    _textViewNode.style.flexGrow = 1.;
+    
+    ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal spacing:15. justifyContent:ASStackLayoutJustifyContentSpaceBetween alignItems:[self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView] ? ASStackLayoutAlignItemsStart : ASStackLayoutAlignItemsCenter children:@[leftStack, rightStack ? rightStack : _textViewNode]];
     
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }
@@ -139,6 +173,14 @@
 {
     // fixme
     [super formCellHighlight];
+//    _textViewNode.scrollEnabled = YES;
+}
+
+- (void)formCellUnhighlight
+{
+    [super formCellUnhighlight];
+//    [_textViewNode.textView scrollRangeToVisible:NSMakeRange(0, 1)];
+//    _textViewNode.scrollEnabled = false;
 }
 
 #pragma mark - ASEditableTextNodeDelegate

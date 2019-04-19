@@ -21,41 +21,53 @@
     JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
-        
-//    section = [JTSectionDescriptor formSection];
-//    [formDescriptor addFormSection:section];
-//
-//    row = [JTRowDescriptor formRowDescriptorWithTag:@"01" rowType:JTFormRowTypeDefault title:@"标题1"];
-//    row.value = @"哈哈哈哈哈哈";
-//    [section addFormRow:row];
-//
-//    row = [JTRowDescriptor formRowDescriptorWithTag:@"02" rowType:JTFormRowTypeDefault title:@"标题2"];
-//    row.value = @"哈哈哈哈哈哈";
-//    [section addFormRow:row];
-//
-//    row = [JTRowDescriptor formRowDescriptorWithTag:@"03" rowType:JTFormRowTypeDefault title:@"标题3"];
-//    row.value = @"哈哈哈哈哈哈";
-//    [section addFormRow:row];
-//
-//    row = [JTRowDescriptor formRowDescriptorWithTag:@"04" rowType:JTFormRowTypeDefault title:@"标题4"];
-//    row.value = @"哈哈哈哈哈哈";
-//    [section addFormRow:row];
-//
-//    row = [JTRowDescriptor formRowDescriptorWithTag:@"05" rowType:JTFormRowTypeDefault title:@"标题5"];
-//    row.value = @"哈哈哈哈哈哈";
-//    [section addFormRow:row];
-//
-//    row = [JTRowDescriptor formRowDescriptorWithTag:@"06" rowType:JTFormRowTypeDefault title:@"标题6"];
-//    row.value = @"哈哈哈哈哈哈";
-//    [section addFormRow:row];
+    
+    #pragma mark - text field
     
     section = [JTSectionDescriptor formSection];
     [formDescriptor addFormSection:section];
-    for (NSInteger i = 0; i < 6; i++) {
-        row = [JTRowDescriptor formRowDescriptorWithTag:@(i+1).description rowType:JTFormRowTypeText title:@"kittens"];
-//        row.value = @"哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔哈哈哈哈哈咔咔咔咔咔咔";
-        [section addFormRow:row];
-    }
+    
+    extern NSString *const JTFormRowTypeName;
+    extern NSString *const JTFormRowTypeEmail;
+    extern NSString *const JTFormRowTypeNumber;
+    extern NSString *const JTFormRowTypeInteger;
+    extern NSString *const JTFormRowTypeDecimal;
+    extern NSString *const JTFormRowTypePassword;
+    extern NSString *const JTFormRowTypePhone;
+    extern NSString *const JTFormRowTypeURL;
+    extern NSString *const JTFormRowTypeTextView;
+    
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"name"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeEmail rowType:JTFormRowTypeEmail title:@"email"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeNumber rowType:JTFormRowTypeNumber title:@"number"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeInteger rowType:JTFormRowTypeInteger title:@"integer"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDecimal rowType:JTFormRowTypeDecimal title:@"decimal"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePassword rowType:JTFormRowTypePassword title:@"password"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePhone rowType:JTFormRowTypePhone title:@"phone"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"name"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeURL rowType:JTFormRowTypeURL title:@"url"];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTextView rowType:JTFormRowTypeTextView title:@"kittenskittenskittenskittenskittenskittenskittenskittens"];
+    [section addFormRow:row];
+
     
     JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
     form.frame = self.view.bounds;

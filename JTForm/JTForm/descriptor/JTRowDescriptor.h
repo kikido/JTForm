@@ -25,6 +25,8 @@ extern NSString *const JTFormRowTypePhone;
 extern NSString *const JTFormRowTypeURL;
 extern NSString *const JTFormRowTypeTextView;
 
+extern CGFloat const JTFormUnspecifiedCellHeight;
+
 @interface JTRowDescriptor : JTBaseDescriptor
 
 /** 单元行的标题 */
@@ -42,7 +44,7 @@ extern NSString *const JTFormRowTypeTextView;
 /** 是否是必录项 */
 @property (nonatomic, assign) BOOL required;
 
-/** 单元的高度，如果不设置的话使用默认值 */
+/** 单元的高度，如果不设置的话则自动布局 */
 @property (nonatomic, assign) CGFloat  height;
 
 @property (nonatomic, weak) JTSectionDescriptor *sectionDescriptor;
