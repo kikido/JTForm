@@ -22,6 +22,13 @@
 {
     self.separatorInset= UIEdgeInsetsMake(0, 15., 0, 0);
     self.automaticallyManagesSubnodes = YES;
+    
+    _titleNode = [[ASTextNode alloc] init];
+    _titleNode.layerBacked = YES;
+    _titleNode.style.flexShrink = 1.;
+    
+    _imageNode = [[JTNetworkImageNode alloc] init];
+    _imageNode.layerBacked = YES;
 }
 
 - (void)update
@@ -173,7 +180,7 @@
             return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor;
         }
     } else {
-        return UIColorHex(333333);
+        return UIColorHex(dbdbdb);
     }
 }
 

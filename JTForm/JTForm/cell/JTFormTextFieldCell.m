@@ -8,14 +8,10 @@
 
 #import "JTFormTextFieldCell.h"
 
-@interface JTFormTextFieldCell () <ASEditableTextNodeDelegate, ASTextNodeDelegate>
+@interface JTFormTextFieldCell () <ASEditableTextNodeDelegate, ASTextNodeDelegate, UITextFieldDelegate>
 
-@property (nonatomic, strong) JTNetworkImageNode *imageNode;
-@property (nonatomic, strong) ASTextNode *titleNode;
-@property (nonatomic, strong) ASEditableTextNode *textViewNode;
+//@property (nonatomic, strong) ASEditableTextNode *textViewNode;
 @property (nonatomic, strong) ASDisplayNode *textFieldNode;
-/** 需要给textview设定一个最小值，但是因为‘ASDisplayNode.style.minHeight’属性会覆盖‘maxHeight’和‘height’属性，所以使用一个空的node来撑起最小值 */
-@property (nonatomic, strong) ASDisplayNode *tempNode;
 
 @end
 
@@ -32,86 +28,64 @@
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    _imageNode = [[JTNetworkImageNode alloc] init];
-    _imageNode.layerBacked = YES;
-    
-    _titleNode = [[ASTextNode alloc] init];
-    _titleNode.layerBacked = YES;
-    
-    _textViewNode = [[ASEditableTextNode alloc] init];
-    _textViewNode.textContainerInset = UIEdgeInsetsMake(7, 0, INFINITY, 0);
-    _textViewNode.delegate = self;
-    _textViewNode.scrollEnabled = false;
-    _textViewNode.textView.textAlignment = NSTextAlignmentRight;
-    _textViewNode.backgroundColor = [UIColor blueColor];
-    _textViewNode.autocorrectionType = UITextAutocorrectionTypeNo;
-    _textViewNode.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    
     _textFieldNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UITextField *textField = [[UITextField alloc] init];
+        textField.delegate = self;
+        [textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         return textField;
     }];
-    
-    
-    // test
-    _textViewNode.maximumLinesToDisplay = 1;
-    
-    _tempNode = [[ASDisplayNode alloc] init];
 }
 
 - (void)update
 {
     [super update];
 
+    UITextField *textField = (UITextField *)self.textFieldNode.view;
+    textField.backgroundColor = [UIColor yellowColor];
+    textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeText]) {
-        _textViewNode.autocapitalizationType = UITextAutocapitalizationTypeSentences;
-        _textViewNode.autocorrectionType = UITextAutocorrectionTypeDefault;
+        textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+        textField.autocorrectionType = UITextAutocorrectionTypeDefault;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeName]) {
-        _textViewNode.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeEmail]) {
-        _textViewNode.keyboardType = UIKeyboardTypeEmailAddress;
+        textField.keyboardType = UIKeyboardTypeEmailAddress;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber]) {
-        _textViewNode.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+        textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInteger] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypePhone]) {
-        _textViewNode.keyboardType = UIKeyboardTypeNumberPad;
+        textField.keyboardType = UIKeyboardTypeNumberPad;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
-        _textViewNode.keyboardType = UIKeyboardTypeDecimalPad;
+        textField.keyboardType = UIKeyboardTypeDecimalPad;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePassword]) {
-        _textViewNode.keyboardType = UIKeyboardTypeASCIICapable;
-        _textViewNode.secureTextEntry = YES;
+        textField.keyboardType = UIKeyboardTypeASCIICapable;
+        textField.secureTextEntry = YES;
     }
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeURL]) {
-        _textViewNode.keyboardType = UIKeyboardTypeURL;
-    } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {
-        _textViewNode.textContainerInset = UIEdgeInsetsZero;
+        textField.keyboardType = UIKeyboardTypeURL;
     }
     
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    _titleNode.attributedText = [NSAttributedString
-                                 attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"" : @"*", self.rowDescriptor.title]
+    self.titleNode.attributedText = [NSAttributedString
+                                 attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
                                  font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
                                  color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                 firstWordColor:required ? UIColorHex(ff3131) : nil];
+                                 firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
     
-    NSMutableParagraphStyle *paragraphStyle = NSMutableParagraphStyle.new;
-    paragraphStyle.alignment                = NSTextAlignmentRight;
-    _textViewNode.typingAttributes = @{
-                                       NSFontAttributeName : self.rowDescriptor.disabled ? [self formCellContentFont] : [self formCellDisabledContentFont],
-                                       NSForegroundColorAttributeName : self.rowDescriptor.disabled ? [self formCellContentColor] : [self formCellDisabledContentColor],
-                                       NSParagraphStyleAttributeName : paragraphStyle
-                                       };
-    _textViewNode.textView.text = [self.rowDescriptor displayContentValue];
-    _textViewNode.attributedPlaceholderText = [NSAttributedString attributedStringWithString:self.rowDescriptor.placeHolder
-                                                                                        font:[self formCellDisabledContentFont]
-                                                                                       color:[self formCellDisabledContentColor]
-                                                                              firstWordColor:nil];
+    textField.font = self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont];
+    textField.textColor = self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor];
+    textField.textAlignment = NSTextAlignmentRight;
+    textField.text = [self.rowDescriptor displayContentValue];
+    textField.attributedPlaceholder = [NSAttributedString attributedStringWithString:self.rowDescriptor.placeHolder
+                                                                                font:[self formCellDisabledContentFont]
+                                                                               color:[self formCellDisabledContentColor]
+                                                                      firstWordColor:nil];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
@@ -120,35 +94,22 @@
                                                                            spacing:10.
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsStart
-                                                                          children:_imageNode.image ? @[_imageNode, _titleNode] : @[_titleNode]];
+                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     
-    ASStackLayoutSpec *rightStack = nil;
-    if (![self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {
-        _titleNode.style.maxHeight = ASDimensionMake(ASDimensionUnitPoints, kJTFormTextFieldCellMaxTitlteHeight);
-        _textViewNode.style.minWidth = ASDimensionMake(ASDimensionUnitPoints, 120.);
-        _textViewNode.style.height = ASDimensionMake(ASDimensionUnitPoints, 30.);
-        
-    } else {
-        _titleNode.style.maxWidth = ASDimensionMake(ASDimensionUnitPoints, kJTFormTextViewCellMaxTitleWidth);
-        _textViewNode.style.alignSelf = ASStackLayoutAlignSelfStretch;
-        
-        _tempNode.style.minHeight = ASDimensionMake(110.);
-        _tempNode.style.width = ASDimensionMake(0.01);
-        rightStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
-                                                             spacing:0.
-                                                      justifyContent:ASStackLayoutJustifyContentStart
-                                                          alignItems:ASStackLayoutAlignItemsStart
-                                                            children:@[_textViewNode, _tempNode]];
-        rightStack.style.alignSelf = ASStackLayoutAlignSelfStretch;
-        rightStack.style.flexGrow = 1.;
-    }
+    _textFieldNode.style.minWidth = ASDimensionMakeWithFraction(.6);
+    _textFieldNode.style.height = ASDimensionMake(30.);
+    _textFieldNode.style.flexGrow = 1.;
     
-    _titleNode.style.flexShrink = 1.;
-    leftStack.style.flexShrink = 1.;
-    _textViewNode.style.flexGrow = 1.;
+    self.titleNode.style.maxHeight = ASDimensionMake(kJTFormTextFieldCellMaxTitlteHeight);
+    self.titleNode.style.flexShrink = 2.;
     
-    ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal spacing:15. justifyContent:ASStackLayoutJustifyContentSpaceBetween alignItems:[self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView] ? ASStackLayoutAlignItemsStart : ASStackLayoutAlignItemsCenter children:@[leftStack, rightStack ? rightStack : _textViewNode]];
+    leftStack.style.flexShrink = 2.;
     
+    ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                              spacing:15.
+                                                                       justifyContent:ASStackLayoutJustifyContentSpaceBetween
+                                                                           alignItems:ASStackLayoutAlignItemsCenter
+                                                                             children:@[leftStack, _textFieldNode]];
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }
 
@@ -161,12 +122,12 @@
 
 - (BOOL)formCellBecomeFirstResponder
 {
-    return [_textViewNode becomeFirstResponder];
+    return [_textFieldNode.view becomeFirstResponder];
 }
 
 - (BOOL)formCellResignFirstResponder
 {
-    return [_textViewNode resignFirstResponder];
+    return [_textFieldNode.view resignFirstResponder];
 }
 
 - (void)formCellHighlight
@@ -179,81 +140,57 @@
 - (void)formCellUnhighlight
 {
     [super formCellUnhighlight];
-//    [_textViewNode.textView scrollRangeToVisible:NSMakeRange(0, 1)];
-//    _textViewNode.scrollEnabled = false;
 }
 
-#pragma mark - ASEditableTextNodeDelegate
+#pragma mark - Action
 
-- (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
+- (void)textFieldDidChange:(UITextField *)textField
 {
-    return [self.jtForm editableTextNodeShouldBeginEditing:editableTextNode];
-}
-
-- (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
-{
-    [self.jtForm beginEditing:self.rowDescriptor];
-    [self.jtForm editableTextNodeDidBeginEditing:editableTextNode];
-    if (self.rowDescriptor.valueFormatter) {
-        _textViewNode.textView.text = [self.rowDescriptor editTextValue];
-    }
-}
-
-- (BOOL)editableTextNode:(ASEditableTextNode *)editableTextNode shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    if (self.rowDescriptor.maxNumberOfCharacters) {
-        NSString *newString = [editableTextNode.textView.text stringByReplacingCharactersInRange:range withString:text];
-        if (newString.length > [self.rowDescriptor.maxNumberOfCharacters integerValue]) {
-            return NO;
-        }
-    }
-    return YES;
-}
-
-- (void)editableTextNodeDidChangeSelection:(ASEditableTextNode *)editableTextNode fromSelectedRange:(NSRange)fromSelectedRange toSelectedRange:(NSRange)toSelectedRange dueToEditing:(BOOL)dueToEditing
-{
-   
-}
-
-- (void)editableTextNodeDidUpdateText:(ASEditableTextNode *)editableTextNode
-{
-    if (editableTextNode.textView.text.length > 0) {
-        BOOL didUseFormatter = NO;
-        
-        if (self.rowDescriptor.valueFormatter && self.rowDescriptor.useValueFormatterDuringInput) {
-            NSString *errorDescription = nil;
-            NSString *objectValue = nil;
-            
-            if ([self.rowDescriptor.valueFormatter getObjectValue:&objectValue forString:editableTextNode.textView.text errorDescription:&errorDescription]) {
-                if (!errorDescription) {
-                    NSString *formatterValue = [self.rowDescriptor.valueFormatter stringForObjectValue:objectValue];
-                    self.rowDescriptor.value = objectValue;
-                    editableTextNode.textView.text = formatterValue;
-                    didUseFormatter = YES;
-                }
-            }
-        }
-        if (didUseFormatter) {
-            if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
-                self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:editableTextNode.textView.text locale:NSLocale.currentLocale];
-            } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInteger]) {
-                self.rowDescriptor.value = @([editableTextNode.textView.text integerValue]);
-            } else {
-                self.rowDescriptor.value = editableTextNode.textView.text;
-            }
+    if (textField.text.length > 0) {
+        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
+            self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:textField.text locale:NSLocale.currentLocale];
+        } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInteger]) {
+            self.rowDescriptor.value = @([textField.text integerValue]);
+        } else {
+            self.rowDescriptor.value = textField.text;
         }
     } else {
         self.rowDescriptor.value = nil;
     }
 }
 
-- (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    return [self.jtForm editableTextShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (self.rowDescriptor.maxNumberOfCharacters) {
+        NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        if (newString.length > self.rowDescriptor.maxNumberOfCharacters.integerValue) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    [self.jtForm editableTextDidBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    if (self.rowDescriptor.valueFormatter) {
+        textField.text = [self.rowDescriptor editTextValue];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if (self.rowDescriptor.valueFormatter) {
-        _textViewNode.textView.text = [self.rowDescriptor displayContentValue];
+        textField.text = [self.rowDescriptor displayContentValue];
     }
-    [self.jtForm endEditing:self.rowDescriptor];
-    [self.jtForm editableTextNodeDidFinishEditing:editableTextNode];
+    [self.jtForm editableTextDidEndEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 @end

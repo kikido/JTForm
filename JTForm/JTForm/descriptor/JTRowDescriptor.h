@@ -23,7 +23,16 @@ extern NSString *const JTFormRowTypeDecimal;
 extern NSString *const JTFormRowTypePassword;
 extern NSString *const JTFormRowTypePhone;
 extern NSString *const JTFormRowTypeURL;
+
 extern NSString *const JTFormRowTypeTextView;
+extern NSString *const JTFormRowTypeInfo;
+
+extern NSString *const JTFormRowTypePushSelect;
+extern NSString *const JTFormRowTypeMultipleSelect;
+extern NSString *const JTFormRowTypeSheetSelect;
+extern NSString *const JTFormRowTypeAlertSelect;
+extern NSString *const JTFormRowTypePickerSelect;
+
 
 extern CGFloat const JTFormUnspecifiedCellHeight;
 
@@ -77,22 +86,26 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 
 #pragma mark - text
 
-/** 在输入文本的时候也使用文本格式转换 */
-@property (nonatomic, assign) BOOL useValueFormatterDuringInput;
 /** 文本格式转换，可以将数据格式化为一种易读的格式。‘NSFormatter’是一个抽象类，我们只使用它的子类 */
 @property (nullable, nonatomic, strong) NSFormatter *valueFormatter;
-/** fixme */
-@property (nullable, nonatomic, assign) Class valueTransformer;
+/** ‘NSValueTransformer’的子类，用于把一个值转换成另一个值。它指定了可以处理哪类输入，并且合适时甚至支持反向的转换。 */
+@property (nullable, nonatomic, assign) Class       valueTransformer;
 /** 内容详情的占位符 */
-@property (nullable, nonatomic, copy) NSString *placeHolder;
+@property (nullable, nonatomic, copy  ) NSString    *placeHolder;
 /** 能输入最大的字符数 */
-@property (nullable, nonatomic, assign) NSNumber *maxNumberOfCharacters;
-
+@property (nullable, nonatomic, assign) NSNumber    *maxNumberOfCharacters;
 
 - (nullable NSString *)displayContentValue;
 
 - (nullable NSString *)editTextValue;
 
+#pragma mark - select
+
+// fixme
+/** 对于选择行来说，我们需要提前知道可以选择的数据。 */
+@property (nullable, nonatomic, copy) NSArray *selectorOptions;
+
+@property (nullable, nonatomic, copy) NSString *selectorTitle;
 
 @end
 

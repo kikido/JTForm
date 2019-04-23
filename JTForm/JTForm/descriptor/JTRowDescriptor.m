@@ -19,7 +19,15 @@ NSString *const JTFormRowTypeDecimal = @"JTFormRowTypeDecimal";
 NSString *const JTFormRowTypePassword = @"JTFormRowTypePassword";
 NSString *const JTFormRowTypePhone = @"JTFormRowTypePhone";
 NSString *const JTFormRowTypeURL = @"JTFormRowTypeURL";
+
 NSString *const JTFormRowTypeTextView = @"JTFormRowTypeTextView";
+NSString *const JTFormRowTypeInfo = @"JTFormRowTypeInfo";
+
+NSString *const JTFormRowTypePushSelect = @"JTFormRowTypePushSelect";
+NSString *const JTFormRowTypeMultipleSelect = @"JTFormRowTypeMultipleSelect";
+NSString *const JTFormRowTypeSheetSelect = @"JTFormRowTypeSheetSelect";
+NSString *const JTFormRowTypeAlertSelect = @"JTFormRowTypeAlertSelect";
+NSString *const JTFormRowTypePickerSelect = @"JTFormRowTypePickerSelect";
 
 CGFloat const JTFormRowInitialHeight = -2.0;
 CGFloat const JTFormUnspecifiedCellHeight = -3.0;
@@ -117,15 +125,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 - (nullable NSString *)editTextValue
 {
     if (self.value) {
-        if (self.valueFormatter) {
-            if (self.useValueFormatterDuringInput) {
-                return [self displayContentValue];
-            } else {
-                return [self.value displayText];
-            }
-        } else {
-            return [self.value displayText];
-        }
+        return [self.value displayText];
     } else {
         return nil;
     }

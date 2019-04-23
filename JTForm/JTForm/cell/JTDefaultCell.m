@@ -11,8 +11,6 @@
 NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
 
 @interface JTDefaultCell ()
-@property (nonatomic, strong) ASImageNode *imageNode;
-@property (nonatomic, strong) ASTextNode *titleNode;
 @property (nonatomic, strong) ASTextNode *detailTextNode;
 @end
 
@@ -21,13 +19,6 @@ NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
 - (void)config
 {
     [super config];
-    
-    _imageNode = [[ASImageNode alloc] init];
-    _imageNode.layerBacked = YES;
-    
-    _titleNode = [[ASTextNode alloc] init];
-    _titleNode.style.flexShrink = 1.0;
-    _titleNode.layerBacked = YES;
     
     _detailTextNode = [[ASTextNode alloc] init];
     _detailTextNode.style.flexShrink = 2.0;
@@ -52,7 +43,7 @@ NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
                                                                            spacing:10.
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsStart
-                                                                          children:_imageNode.image ? @[_imageNode, _titleNode] : @[_titleNode]];
+                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     leftStack.style.flexGrow = 1;
     
     ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal

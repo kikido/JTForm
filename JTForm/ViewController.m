@@ -39,6 +39,7 @@
     
     
     row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"name"];
+    row.value = @"adadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaaadadandandjaaaaa";
     [section addFormRow:row];
     
     row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeEmail rowType:JTFormRowTypeEmail title:@"email"];
@@ -48,6 +49,7 @@
     [section addFormRow:row];
     
     row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeInteger rowType:JTFormRowTypeInteger title:@"integer"];
+    row.valueFormatter = [NSByteCountFormatter new];
     [section addFormRow:row];
     
     row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDecimal rowType:JTFormRowTypeDecimal title:@"decimal"];
@@ -65,7 +67,12 @@
     row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeURL rowType:JTFormRowTypeURL title:@"url"];
     [section addFormRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTextView rowType:JTFormRowTypeTextView title:@"kittenskittenskittenskittenskittenskittenskittenskittens"];
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTextView rowType:JTFormRowTypeTextView title:@"JTFormRowTypeTextView"];
+    row.value = @"niadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnvniadadadadn";
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeInfo rowType:JTFormRowTypeInfo title:@"JTFormRowTypeInfo"];
+    row.value = @"niadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnvniadadadadn";
     [section addFormRow:row];
 
     
@@ -75,10 +82,18 @@
     [self.view addSubview:form];
     
     
+    [self test];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-
+- (void)test
+{
+    NSString *a = @"1";
+    NSNumber *b = @1;
+    
+    BOOL result = [a isEqual:b];
+    NSLog(@"result = %d", result);
+}
 
 
 @end

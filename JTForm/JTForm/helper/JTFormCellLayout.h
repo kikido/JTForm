@@ -12,8 +12,13 @@
 /** textfield类单元行标题的最大高度 */
 #define kJTFormTextFieldCellMaxTitlteHeight 100.
 
-/** textfield类单元行标题的最大宽度 */
-#define kJTFormTextViewCellMaxTitleWidth 100.
+/** textview类单元行标题的最大宽度占整行的比例 */
+#define kJTFormTextViewCellMaxTitleWidthFraction 0.3
 
+/** textview类型单元行textview的最小高度 */
+#define kJTFormMinTextViewHeight 100.
+
+/** 必填项‘*’号的颜色 */
+#define kJTFormRequiredCellFirstWordColor UIColorHex(ff3131)
 
 #endif /* JTFormCellLayout_h */

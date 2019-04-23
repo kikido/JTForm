@@ -13,7 +13,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol JTBaseCellDelegate <NSObject>
-
 @required
 
 /**
@@ -92,6 +91,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JTBaseCell : ASCellNode <JTBaseCellDelegate>
 
 @property (nonatomic, weak) JTRowDescriptor *rowDescriptor;
+
+@property (nonatomic, strong) ASTextNode *titleNode;
+@property (nonatomic, strong) JTNetworkImageNode *imageNode;
 
 - (JTForm *)jtForm;
 

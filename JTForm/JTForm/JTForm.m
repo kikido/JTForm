@@ -10,6 +10,8 @@
 #import "JTBaseCell.h"
 #import "JTDefaultCell.h"
 #import "JTFormTextFieldCell.h"
+#import "JTFormTextViewCell.h"
+#import "JTFormSelectCell.h"
 #import "JTFormNavigationAccessoryView.h"
 
 typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
@@ -226,48 +228,83 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
                                               JTFormRowTypePassword : [JTFormTextFieldCell class],
                                               JTFormRowTypePhone : [JTFormTextFieldCell class],
                                               JTFormRowTypeURL : [JTFormTextFieldCell class],
-                                              JTFormRowTypeTextView : [JTFormTextFieldCell class]
+                                              
+                                              JTFormRowTypeTextView : [JTFormTextViewCell class],
+                                              JTFormRowTypeInfo : [JTFormTextViewCell class],
+                                              
+                                              JTFormRowTypePushSelect : [JTFormSelectCell class],
+                                              JTFormRowTypeMultipleSelect : [JTFormSelectCell class],
+                                              JTFormRowTypeSheetSelect : [JTFormSelectCell class],
+                                              JTFormRowTypeAlertSelect : [JTFormSelectCell class],
+                                              JTFormRowTypePickerSelect : [JTFormSelectCell class]
                                               }.mutableCopy;
     });
     return _cellClassesForRowDescriptorTypes;
 }
 
-#pragma mark -  ASEditableTextNodeDelegate
+//#pragma mark -  ASEditableTextNodeDelegate
+//
+//- (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
+//{
+//    JTBaseCell *cell = [editableTextNode formCell];
+//    cell.selected = YES;
+//    editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
+//    return YES;
+//}
+//
+//- (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
+//{
+//    
+//}
+//
+//- (BOOL)editableTextNode:(ASEditableTextNode *)editableTextNode shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+//{
+//    return YES;
+//}
+//
+//- (void)editableTextNodeDidChangeSelection:(ASEditableTextNode *)editableTextNode fromSelectedRange:(NSRange)fromSelectedRange toSelectedRange:(NSRange)toSelectedRange dueToEditing:(BOOL)dueToEditing
+//{
+//    
+//}
+//
+//- (void)editableTextNodeDidUpdateText:(ASEditableTextNode *)editableTextNode
+//{
+//    
+//}
+//
+//- (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
+//{
+//    
+//}
 
-- (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
+#pragma mark - edit text delegate
+
+- (BOOL)editableTextShouldBeginEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    JTBaseCell *cell = [editableTextNode formCell];
+    JTBaseCell *cell = [row cellInForm];
     cell.selected = YES;
-    editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
+    if (editableTextNode) {
+        editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
+    } else {
+        textField.inputAccessoryView = [self inputAccessoryViewForCell:cell];;
+    }
     return YES;
 }
 
-- (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
+- (void)editableTextDidBeginEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    
+    [self beginEditing:row];
 }
 
-- (BOOL)editableTextNode:(ASEditableTextNode *)editableTextNode shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+- (BOOL)editableTextNode:(nullable ASEditableTextNode *)editableTextNode textField:(nullable UITextField *)textField shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     return YES;
 }
 
-- (void)editableTextNodeDidChangeSelection:(ASEditableTextNode *)editableTextNode fromSelectedRange:(NSRange)fromSelectedRange toSelectedRange:(NSRange)toSelectedRange dueToEditing:(BOOL)dueToEditing
+- (void)editableTextDidEndEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    
+    [self endEditing:row];
 }
-
-- (void)editableTextNodeDidUpdateText:(ASEditableTextNode *)editableTextNode
-{
-    
-}
-
-- (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
-{
-    
-}
-
-#pragma mark - edit text
 
 - (void)beginEditing:(JTRowDescriptor *)row
 {
