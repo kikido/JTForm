@@ -83,6 +83,8 @@
     }
     else if ([object isKindOfClass:[NSArray class]]) {
         return [(NSArray *)object isEqualToArray:(NSArray *)self];
+    } else if ([object isKindOfClass:[JTOptionObject class]]) {
+        return [(JTOptionObject *)object isEqualToOptionObject:(JTOptionObject *)self];
     } else {
         return [self isEqual:object];
     }

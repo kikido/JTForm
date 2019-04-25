@@ -16,6 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) id formValue;
 
++(JTOptionObject *)formOptionsObjectWithValue:(nonnull id)value displayText:(nonnull NSString *)displayText;
+
++ (NSArray<JTOptionObject *> *)formOptionsObjectsWithValues:(nonnull NSArray *)values displayTexts:(nonnull NSArray *)displayTexts;
+
+- (BOOL)isEqualToOptionObject:(JTOptionObject *)optionObject;
+
 @end
 
 NS_ASSUME_NONNULL_END

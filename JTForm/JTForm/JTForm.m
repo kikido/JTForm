@@ -12,6 +12,8 @@
 #import "JTFormTextFieldCell.h"
 #import "JTFormTextViewCell.h"
 #import "JTFormSelectCell.h"
+#import "JTFormDateCell.h"
+#import "JTFormDateInlineCell.h"
 #import "JTFormNavigationAccessoryView.h"
 
 typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
@@ -177,7 +179,27 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)tableNode:(ASTableNode *)tableNode didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    JTRowDescriptor *rowDescriptor = [self.formDescriptor formRowAtIndex:indexPath];
+    if (rowDescriptor.disabled) {
+        return;
+    }
+    JTBaseCell *cellNode = [rowDescriptor cellInForm];
+    if (!([cellNode formCellCanBecomeFirstResponder] && [cellNode formCellBecomeFirstResponder])) {
+        // fixme
+//        [self.tableNode.view endEditing:YES];
+    } else {
+//        if ([cellNode respondsToSelector:@selector(jtFormCellInputView)]) {
+//            UITableViewCell *cell = [tableNode cellForRowAtIndexPath:indexPath];
+//            UIView *inputView = [cellNode jtFormCellInputView];
+//            if (inputView) {
+//                cell.inputView
+//                cell.inputView = inputView;
+//            }
+//        }
+    }
+    if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
+        [cellNode formCellDidSelected];
+    }
 }
 
 - (BOOL)tableNode:(ASTableNode *)tableNode shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
@@ -210,72 +232,59 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     }
 }
 
-#pragma mark - Cell Classes
+#pragma mark - row type
 
-+ (NSMutableDictionary *)cellClassesForRowDescriptorTypes
++ (NSMutableDictionary *)cellClassesForRowTypes
 {
-    static NSMutableDictionary * _cellClassesForRowDescriptorTypes;
+    static NSMutableDictionary * _cellClassesForRowTypes;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _cellClassesForRowDescriptorTypes = @{
-                                              JTFormRowTypeDefault : [JTDefaultCell class],
-                                              JTFormRowTypeText : [JTFormTextFieldCell class],
-                                              JTFormRowTypeName : [JTFormTextFieldCell class],
-                                              JTFormRowTypeEmail : [JTFormTextFieldCell class],
-                                              JTFormRowTypeNumber : [JTFormTextFieldCell class],
-                                              JTFormRowTypeInteger : [JTFormTextFieldCell class],
-                                              JTFormRowTypeDecimal : [JTFormTextFieldCell class],
-                                              JTFormRowTypePassword : [JTFormTextFieldCell class],
-                                              JTFormRowTypePhone : [JTFormTextFieldCell class],
-                                              JTFormRowTypeURL : [JTFormTextFieldCell class],
-                                              
-                                              JTFormRowTypeTextView : [JTFormTextViewCell class],
-                                              JTFormRowTypeInfo : [JTFormTextViewCell class],
-                                              
-                                              JTFormRowTypePushSelect : [JTFormSelectCell class],
-                                              JTFormRowTypeMultipleSelect : [JTFormSelectCell class],
-                                              JTFormRowTypeSheetSelect : [JTFormSelectCell class],
-                                              JTFormRowTypeAlertSelect : [JTFormSelectCell class],
-                                              JTFormRowTypePickerSelect : [JTFormSelectCell class]
-                                              }.mutableCopy;
+        _cellClassesForRowTypes = @{
+                                    JTFormRowTypeDefault : [JTDefaultCell class],
+                                    JTFormRowTypeText : [JTFormTextFieldCell class],
+                                    JTFormRowTypeName : [JTFormTextFieldCell class],
+                                    JTFormRowTypeEmail : [JTFormTextFieldCell class],
+                                    JTFormRowTypeNumber : [JTFormTextFieldCell class],
+                                    JTFormRowTypeInteger : [JTFormTextFieldCell class],
+                                    JTFormRowTypeDecimal : [JTFormTextFieldCell class],
+                                    JTFormRowTypePassword : [JTFormTextFieldCell class],
+                                    JTFormRowTypePhone : [JTFormTextFieldCell class],
+                                    JTFormRowTypeURL : [JTFormTextFieldCell class],
+                                      
+                                    JTFormRowTypeTextView : [JTFormTextViewCell class],
+                                    JTFormRowTypeInfo : [JTFormTextViewCell class],
+                                      
+                                    JTFormRowTypePushSelect : [JTFormSelectCell class],
+                                    JTFormRowTypeMultipleSelect : [JTFormSelectCell class],
+                                    JTFormRowTypeSheetSelect : [JTFormSelectCell class],
+                                    JTFormRowTypeAlertSelect : [JTFormSelectCell class],
+                                    JTFormRowTypePickerSelect : [JTFormSelectCell class],
+                                      
+                                    JTFormRowTypeDate : [JTFormDateCell class],
+                                    JTFormRowTypeTime : [JTFormDateCell class],
+                                    JTFormRowTypeDateTime : [JTFormDateCell class],
+                                    JTFormRowTypeCountDownTimer : [JTFormDateCell class],
+                                    JTFormRowTypeDateInline : [JTFormDateCell class],
+                                    JTFormRowTypeInlineDatePicker : [JTFormDateInlineCell class]
+                                    }.mutableCopy;
     });
-    return _cellClassesForRowDescriptorTypes;
+    return _cellClassesForRowTypes;
 }
 
-//#pragma mark -  ASEditableTextNodeDelegate
-//
-//- (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
-//{
-//    JTBaseCell *cell = [editableTextNode formCell];
-//    cell.selected = YES;
-//    editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
-//    return YES;
-//}
-//
-//- (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
-//{
-//    
-//}
-//
-//- (BOOL)editableTextNode:(ASEditableTextNode *)editableTextNode shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-//{
-//    return YES;
-//}
-//
-//- (void)editableTextNodeDidChangeSelection:(ASEditableTextNode *)editableTextNode fromSelectedRange:(NSRange)fromSelectedRange toSelectedRange:(NSRange)toSelectedRange dueToEditing:(BOOL)dueToEditing
-//{
-//    
-//}
-//
-//- (void)editableTextNodeDidUpdateText:(ASEditableTextNode *)editableTextNode
-//{
-//    
-//}
-//
-//- (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
-//{
-//    
-//}
+#pragma mark - inline row type
+
++ (NSMutableDictionary *)inlineRowTypesForRowTypes
+{
+    static NSMutableDictionary *_inlineRowTypesForRowTypes;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _inlineRowTypesForRowTypes = @{
+                                       JTFormRowTypeDateInline : JTFormRowTypeInlineDatePicker
+                                       }.mutableCopy;
+    });
+    return _inlineRowTypesForRowTypes;
+}
+
 
 #pragma mark - edit text delegate
 
@@ -364,10 +373,9 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 - (UIView *)inputAccessoryViewForCell:(JTBaseCell *)cell
 {
     JTRowDescriptor *currentRow = cell.rowDescriptor;
-    // fixme
-//    if ([[JTForm inlineRowDescriptorTypesForRowDescriptorTypes].allKeys containsObject:currentRow.rowType]) {
-//        return nil;
-//    }
+    if ([[JTForm inlineRowTypesForRowTypes].allKeys containsObject:currentRow.rowType]) {
+        return nil;
+    }
     if (![cell formCellCanBecomeFirstResponder]) {
         return  nil;
     }
@@ -395,6 +403,44 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         return nextRow;
     }
     return [self nextRowDescriptorForRow:nextRow direction:direction];
+}
+
+#pragma mark - 001
+
+- (void)didSelectFormRow:(JTRowDescriptor *)rowDescriptor
+{
+    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+    if (indexPath) {
+        [self.tableNode selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        JTBaseCell *cellNode = [rowDescriptor cellInForm];
+        if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
+            [cellNode formCellDidSelected];
+        }
+    }
+}
+
+- (void)deSelectFormRow:(JTRowDescriptor *)rowDescriptor
+{
+    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+    if (indexPath) {
+        [self.tableNode deselectRowAtIndexPath:indexPath animated:YES];
+    }
+}
+
+- (void)updateFormRow:(JTRowDescriptor *)rowDescriptor
+{
+    JTBaseCell *cell = [rowDescriptor cellInForm];
+    [self upadteCell:cell];
+}
+
+- (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor
+{
+    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+    if (indexPath) {
+        [rowDescriptor reloadCell];
+        // fixme 可能有问题
+        [self.tableNode reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    }
 }
 
 @end

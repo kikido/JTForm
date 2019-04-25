@@ -19,11 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
-+ (NSMutableDictionary *)cellClassesForRowDescriptorTypes;
++ (NSMutableDictionary *)cellClassesForRowTypes;
 
-+ (NSMutableDictionary *)inlineRowDescriptorTypesForRowDescriptorTypes;
++ (NSMutableDictionary *)inlineRowTypesForRowTypes;
 
-#pragma mark -
+#pragma mark - 001
+
+- (void)didSelectFormRow:(JTRowDescriptor *)rowDescriptor;
+
+- (void)deSelectFormRow:(JTRowDescriptor *)rowDescriptor;
+
+- (void)updateFormRow:(JTRowDescriptor *)rowDescriptor;
+
+- (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor;
 
 
 #pragma mark - edit text delegate

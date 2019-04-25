@@ -302,4 +302,19 @@
     return nil;
 }
 
+- (NSIndexPath *)indexPathForRowDescriptor:(JTRowDescriptor *)rowDescriptor
+{
+    JTSectionDescriptor *section = rowDescriptor.sectionDescriptor;
+    if (section) {
+        NSUInteger sectionIndex = [self.formSections indexOfObject:section];
+        if (sectionIndex != NSNotFound) {
+            NSUInteger rowIndex = [section.formRows indexOfObject:rowDescriptor];
+            if (rowIndex != NSNotFound) {
+                return [NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex];
+            }
+        }
+    }
+    return nil;
+}
+
 @end

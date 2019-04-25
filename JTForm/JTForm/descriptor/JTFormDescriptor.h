@@ -108,6 +108,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (JTRowDescriptor *)previousRowDescriptorForRow:(JTRowDescriptor *)currentRow;
 
+/** 返回一个‘NSIndexPath’对象，表示行描述代表的单元行在表单中位置 */
+- (NSIndexPath *)indexPathForRowDescriptor:(JTRowDescriptor *)rowDescriptor;
+
 
 #pragma mark - cell
 

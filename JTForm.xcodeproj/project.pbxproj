@@ -11,6 +11,7 @@
 		1D837DEE226D948F00AEF748 /* JTOptionObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DED226D948F00AEF748 /* JTOptionObject.m */; };
 		1D837DF1226EA36000AEF748 /* JTFormSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DF0226EA36000AEF748 /* JTFormSelectCell.m */; };
 		1D837DF6226F418900AEF748 /* JTFormOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DF5226F418900AEF748 /* JTFormOptionsViewController.m */; };
+		1D837DF9226FF58E00AEF748 /* NSString+JTAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DF8226FF58E00AEF748 /* NSString+JTAdd.m */; };
 		1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA28225B6DA000652FE6 /* AppDelegate.m */; };
 		1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA2B225B6DA000652FE6 /* ViewController.m */; };
 		1DDADA31225B6DA100652FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA30225B6DA100652FE6 /* Assets.xcassets */; };
@@ -30,6 +31,9 @@
 		1DDADA892264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA882264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m */; };
 		1DDADA902266FD2600652FE6 /* JTFormTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA8F2266FD2600652FE6 /* JTFormTextFieldCell.m */; };
 		1DDADA942268756600652FE6 /* JTFormNavigationAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA932268756600652FE6 /* JTFormNavigationAccessoryView.m */; };
+		1DF4C2E22271A02500FAEC41 /* JTFormDateCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF4C2E12271A02500FAEC41 /* JTFormDateCell.m */; };
+		1DF4C2E52271D90A00FAEC41 /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF4C2E42271D90A00FAEC41 /* YYFPSLabel.m */; };
+		1DF4C2E82271E50500FAEC41 /* JTFormDateInlineCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF4C2E72271E50500FAEC41 /* JTFormDateInlineCell.m */; };
 		63158622A2B8881B48124F8C /* libPods-JTForm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +49,8 @@
 		1D837DF2226F3F3A00AEF748 /* JTFormSelectViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormSelectViewControllerDelegate.h; sourceTree = "<group>"; };
 		1D837DF4226F418900AEF748 /* JTFormOptionsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormOptionsViewController.h; sourceTree = "<group>"; };
 		1D837DF5226F418900AEF748 /* JTFormOptionsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormOptionsViewController.m; sourceTree = "<group>"; };
+		1D837DF7226FF58E00AEF748 /* NSString+JTAdd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+JTAdd.h"; sourceTree = "<group>"; };
+		1D837DF8226FF58E00AEF748 /* NSString+JTAdd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+JTAdd.m"; sourceTree = "<group>"; };
 		1DDADA24225B6DA000652FE6 /* JTForm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JTForm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DDADA27225B6DA000652FE6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DDADA28225B6DA000652FE6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -83,6 +89,13 @@
 		1DDADA8F2266FD2600652FE6 /* JTFormTextFieldCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormTextFieldCell.m; sourceTree = "<group>"; };
 		1DDADA922268756600652FE6 /* JTFormNavigationAccessoryView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormNavigationAccessoryView.h; sourceTree = "<group>"; };
 		1DDADA932268756600652FE6 /* JTFormNavigationAccessoryView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormNavigationAccessoryView.m; sourceTree = "<group>"; };
+		1DF4C2E02271A02500FAEC41 /* JTFormDateCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDateCell.h; sourceTree = "<group>"; };
+		1DF4C2E12271A02500FAEC41 /* JTFormDateCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormDateCell.m; sourceTree = "<group>"; };
+		1DF4C2E32271D90A00FAEC41 /* YYFPSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYFPSLabel.h; sourceTree = "<group>"; };
+		1DF4C2E42271D90A00FAEC41 /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
+		1DF4C2E62271E50500FAEC41 /* JTFormDateInlineCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDateInlineCell.h; sourceTree = "<group>"; };
+		1DF4C2E72271E50500FAEC41 /* JTFormDateInlineCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormDateInlineCell.m; sourceTree = "<group>"; };
+		1DF4C2E92271EE3E00FAEC41 /* JTFormInlineCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormInlineCellDelegate.h; sourceTree = "<group>"; };
 		9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm/Pods-JTForm.release.xcconfig"; sourceTree = "<group>"; };
 		954795CC68FB13B9D0F28FCC /* libPods-JTForm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JTForm.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -147,6 +160,8 @@
 				1DDADA30225B6DA100652FE6 /* Assets.xcassets */,
 				1DDADA35225B6DA100652FE6 /* Info.plist */,
 				1DDADA36225B6DA100652FE6 /* main.m */,
+				1DF4C2E32271D90A00FAEC41 /* YYFPSLabel.h */,
+				1DF4C2E42271D90A00FAEC41 /* YYFPSLabel.m */,
 			);
 			path = JTForm;
 			sourceTree = "<group>";
@@ -196,6 +211,10 @@
 				1D837DE9226AF61F00AEF748 /* JTFormTextViewCell.m */,
 				1D837DEF226EA36000AEF748 /* JTFormSelectCell.h */,
 				1D837DF0226EA36000AEF748 /* JTFormSelectCell.m */,
+				1DF4C2E02271A02500FAEC41 /* JTFormDateCell.h */,
+				1DF4C2E12271A02500FAEC41 /* JTFormDateCell.m */,
+				1DF4C2E62271E50500FAEC41 /* JTFormDateInlineCell.h */,
+				1DF4C2E72271E50500FAEC41 /* JTFormDateInlineCell.m */,
 			);
 			path = cell;
 			sourceTree = "<group>";
@@ -213,6 +232,8 @@
 				1DDADA882264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m */,
 				1D339BF52269A445002AFEF2 /* JTFormCellLayout.h */,
 				1DDADA56225B89F900652FE6 /* JTHelper.h */,
+				1D837DF7226FF58E00AEF748 /* NSString+JTAdd.h */,
+				1D837DF8226FF58E00AEF748 /* NSString+JTAdd.m */,
 			);
 			path = helper;
 			sourceTree = "<group>";
@@ -221,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				1D837DF2226F3F3A00AEF748 /* JTFormSelectViewControllerDelegate.h */,
+				1DF4C2E92271EE3E00FAEC41 /* JTFormInlineCellDelegate.h */,
 			);
 			path = delegate;
 			sourceTree = "<group>";
@@ -356,6 +378,7 @@
 				1DDADA8022646E7700652FE6 /* JTNetworkImageNode.m in Sources */,
 				1DDADA892264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m in Sources */,
 				1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */,
+				1D837DF9226FF58E00AEF748 /* NSString+JTAdd.m in Sources */,
 				1DDADA6F225E246200652FE6 /* JTBaseCell.m in Sources */,
 				1DDADA55225B897D00652FE6 /* NSObject+JTFormHelper.m in Sources */,
 				1DDADA47225B770000652FE6 /* JTRowDescriptor.m in Sources */,
@@ -365,13 +388,16 @@
 				1DDADA8622647CDA00652FE6 /* UIColor+JTFormAdditions.m in Sources */,
 				1D837DEA226AF61F00AEF748 /* JTFormTextViewCell.m in Sources */,
 				1DDADA902266FD2600652FE6 /* JTFormTextFieldCell.m in Sources */,
+				1DF4C2E22271A02500FAEC41 /* JTFormDateCell.m in Sources */,
 				1D837DEE226D948F00AEF748 /* JTOptionObject.m in Sources */,
 				1DDADA8322647ABA00652FE6 /* NSAttributedString+JTFormAdditions.m in Sources */,
+				1DF4C2E52271D90A00FAEC41 /* YYFPSLabel.m in Sources */,
 				1D837DF1226EA36000AEF748 /* JTFormSelectCell.m in Sources */,
 				1DDADA52225B784700652FE6 /* JTForm.m in Sources */,
 				1DDADA942268756600652FE6 /* JTFormNavigationAccessoryView.m in Sources */,
 				1DDADA4D225B772D00652FE6 /* JTFormDescriptor.m in Sources */,
 				1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */,
+				1DF4C2E82271E50500FAEC41 /* JTFormDateInlineCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -93,9 +93,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) JTRowDescriptor *rowDescriptor;
 
 @property (nonatomic, strong) ASTextNode *titleNode;
+@property (nonatomic, strong) ASTextNode *contentNode;
 @property (nonatomic, strong) JTNetworkImageNode *imageNode;
 
 - (JTForm *)jtForm;
+
+- (UIView *)jtFormCellInputView;
 
 - (UIColor *)formCellBgColor;
 

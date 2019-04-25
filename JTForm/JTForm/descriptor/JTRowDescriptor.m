@@ -29,6 +29,14 @@ NSString *const JTFormRowTypeSheetSelect = @"JTFormRowTypeSheetSelect";
 NSString *const JTFormRowTypeAlertSelect = @"JTFormRowTypeAlertSelect";
 NSString *const JTFormRowTypePickerSelect = @"JTFormRowTypePickerSelect";
 
+NSString *const JTFormRowTypeDate = @"JTFormRowTypeDate";
+NSString *const JTFormRowTypeTime = @"JTFormRowTypeTime";
+NSString *const JTFormRowTypeDateTime = @"JTFormRowTypeDateTime";
+NSString *const JTFormRowTypeCountDownTimer = @"JTFormRowTypeCountDownTimer";
+NSString *const JTFormRowTypeDateInline = @"JTFormRowTypeDateInline";
+
+NSString *const JTFormRowTypeInlineDatePicker = @"JTFormRowTypeInlineDatePicker";
+
 CGFloat const JTFormRowInitialHeight = -2.0;
 CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
@@ -53,16 +61,23 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         _rowType = rowType;
         _tag = tag;
         _height = JTFormRowInitialHeight;
+        _action = [[JTRowAction alloc] init];
     }
     return self;
 }
 
 #pragma mark - cell
 
+- (void)reloadCell
+{
+    _cell = nil;
+    _cell = [self cellInForm];
+}
+
 - (JTBaseCell *)cellInForm
 {
     if (!_cell) {
-        id cellClass = [JTForm cellClassesForRowDescriptorTypes][self.rowType];
+        id cellClass = [JTForm cellClassesForRowTypes][self.rowType];
         NSAssert(cellClass, @"not defined cell like:%@",self.rowType ?: @"null");
         
         if ([cellClass isKindOfClass:[NSString class]]) {

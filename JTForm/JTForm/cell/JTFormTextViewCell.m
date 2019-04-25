@@ -13,9 +13,6 @@
 @property (nonatomic, strong) ASEditableTextNode *textViewNode;
 /** 需要给textview设定一个最小值，但是因为‘ASDisplayNode.style.minHeight’属性会覆盖‘maxHeight’和‘height’属性，所以使用一个空的node来撑起最小值 */
 @property (nonatomic, strong) ASDisplayNode *tempNode;
-
-@property (nonatomic, strong) ASTextNode *contentNode;
-
 @end
 
 @implementation JTFormTextViewCell
@@ -34,8 +31,6 @@
     _textViewNode.autocorrectionType = UITextAutocorrectionTypeNo;
     _textViewNode.autocapitalizationType = UITextAutocapitalizationTypeNone;
     
-    _contentNode = [[ASTextNode alloc] init];
-    _contentNode.layerBacked = YES;
     _tempNode = [[ASDisplayNode alloc] init];
 }
 
@@ -51,10 +46,9 @@
                                      firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
     
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInfo]) {
-        _contentNode.attributedText = [NSAttributedString attributedStringWithString:[self.rowDescriptor displayContentValue]
-                                                                                font:[self formCellDisabledContentFont]
-                                                                               color:[self formCellDisabledContentColor]
-                                                                      firstWordColor:nil];
+        self.contentNode.attributedText = [NSAttributedString rightAttributedStringWithString:[self.rowDescriptor displayContentValue]
+                                                                                     font:[self formCellDisabledContentFont]
+                                                                                    color:[self formCellDisabledContentColor]];
     } else {
         NSMutableParagraphStyle *paragraphStyle = NSMutableParagraphStyle.new;
         paragraphStyle.alignment                = NSTextAlignmentRight;
@@ -83,7 +77,7 @@
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {
         _textViewNode.style.alignSelf = ASStackLayoutAlignSelfStretch;
         _textViewNode.style.flexGrow = 2.;
-        _contentNode.style.flexShrink = 1.;
+        self.contentNode.style.flexShrink = 1.;
         
         _tempNode.style.minHeight = ASDimensionMake(kJTFormMinTextViewHeight);
         _tempNode.style.width = ASDimensionMake(0.01);
@@ -95,8 +89,8 @@
         rightStack.style.alignSelf = ASStackLayoutAlignSelfStretch;
         rightStack.style.flexGrow = 1.;
     } else {
-        _contentNode.style.flexGrow = 1.;
-        _contentNode.style.flexShrink = 1.;
+        self.contentNode.style.flexGrow = 1.;
+        self.contentNode.style.flexShrink = 1.;
     }
     
     self.titleNode.style.flexShrink = 1.;
@@ -108,7 +102,7 @@
                                                                               spacing:15.
                                                                        justifyContent:ASStackLayoutJustifyContentSpaceBetween
                                                                            alignItems: ASStackLayoutAlignItemsStart
-                                                                             children:@[leftStack, rightStack ? rightStack : _contentNode]];
+                                                                             children:@[leftStack, rightStack ? rightStack : self.contentNode]];
 
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }

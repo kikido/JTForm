@@ -27,6 +27,9 @@
     _titleNode.layerBacked = YES;
     _titleNode.style.flexShrink = 1.;
     
+    _contentNode = [[ASTextNode alloc] init];
+    _contentNode.layerBacked = YES;
+    
     _imageNode = [[JTNetworkImageNode alloc] init];
     _imageNode.layerBacked = YES;
 }
@@ -34,6 +37,8 @@
 - (void)update
 {
     self.backgroundColor = [self formCellBgColor];
+    self.selectionStyle = self.rowDescriptor.disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleDefault;
+
 }
 
 - (void)formCellHighlight
@@ -70,6 +75,11 @@
 }
 
 #pragma mark - helper
+
+- (UIView *)cellInputView
+{
+    return nil;
+}
 
 - (JTForm *)jtForm
 {

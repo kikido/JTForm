@@ -7,10 +7,13 @@
 //
 
 #import <Texture/AsyncDisplayKit/AsyncDisplayKit.h>
+#import "JTFormSelectViewControllerDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JTFormOptionsViewController : ASViewController
+@interface JTFormOptionsViewController : ASViewController <JTFormSelectViewControllerDelegate>
+
+- (instancetype)initWithHeaderTitle:(NSString *)headerTitle footerTitle:(NSString *)footerTitle;
 
 @end
 

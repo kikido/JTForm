@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
                                              color:(nullable UIColor *)color
                                     firstWordColor:(nullable UIColor *)firstWordColor;
 
++ (NSAttributedString *)rightAttributedStringWithString:(NSString *)string
+                                                   font:(UIFont *)font
+                                                  color:(nullable UIColor *)color;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -28,7 +28,7 @@
         _footerHeight = 30.;
         _headerHeight = 30.;
         
-        [self addObserver:self forKeyPath:@"formRows" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionOld context:nil];
+        [self addObserver:self forKeyPath:@"formRows" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     }
     return self;
 }

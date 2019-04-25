@@ -31,4 +31,25 @@
     
     return attributedString;
 }
+
++ (NSAttributedString *)rightAttributedStringWithString:(NSString *)string
+                                                   font:(UIFont *)font
+                                                  color:(nullable UIColor *)color
+{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+    
+    if (string) {
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSTextAlignmentRight;
+        NSDictionary *attributes = @{
+                                     NSForegroundColorAttributeName: color ? : [UIColor blackColor],
+                                     NSFontAttributeName: font,
+                                     NSParagraphStyleAttributeName:paragraph
+                                     };
+        attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+        [attributedString addAttributes:attributes range:NSMakeRange(0, string.length)];
+    }
+    
+    return attributedString;
+}
 @end

@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTSectionDescriptor;
 @class JTBaseCell;
 
+//|------ textfield ------------------------------
 extern NSString *const JTFormRowTypeText;
 extern NSString *const JTFormRowTypeName;
 extern NSString *const JTFormRowTypeEmail;
@@ -24,14 +25,26 @@ extern NSString *const JTFormRowTypePassword;
 extern NSString *const JTFormRowTypePhone;
 extern NSString *const JTFormRowTypeURL;
 
+//|------ textview ------------------------------
 extern NSString *const JTFormRowTypeTextView;
 extern NSString *const JTFormRowTypeInfo;
 
+//|------ select ------------------------------
 extern NSString *const JTFormRowTypePushSelect;
 extern NSString *const JTFormRowTypeMultipleSelect;
 extern NSString *const JTFormRowTypeSheetSelect;
 extern NSString *const JTFormRowTypeAlertSelect;
 extern NSString *const JTFormRowTypePickerSelect;
+
+//|------ date ------------------------------
+extern NSString *const JTFormRowTypeDate;
+extern NSString *const JTFormRowTypeTime;
+extern NSString *const JTFormRowTypeDateTime;
+extern NSString *const JTFormRowTypeCountDownTimer;
+extern NSString *const JTFormRowTypeDateInline;
+
+//|------ inline date ------------------------------
+extern NSString *const JTFormRowTypeInlineDatePicker;
 
 
 extern CGFloat const JTFormUnspecifiedCellHeight;
@@ -47,8 +60,9 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 /** 单元行样式 */
 @property (nonatomic, assign, readonly) NSString *rowType;
 
+// fixme 感觉修饰符应该是assign
 /** 单元行的值 */
-@property (nullable, nonatomic, assign) id       value;
+@property (nullable, nonatomic, strong) id       value;
 
 /** 是否是必录项 */
 @property (nonatomic, assign) BOOL required;
@@ -75,9 +89,11 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-+ (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
++ (instancetype)formRowDescriptorWithTag:(nullable NSString *)tag rowType:(nonnull NSString *)rowType title:(nullable NSString *)title;
 
 - (instancetype)initWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title;
+
+- (void)reloadCell;
 
 - (JTBaseCell *)cellInForm;
 
@@ -111,6 +127,8 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 
 
 @interface JTRowAction : NSObject
+/** 指定一个vc类，当在‘select’类型或有跳转到其它视图需求的时候可以使用 */
+@property (nullable, nonatomic, assign) Class viewControllerClass;
 
 @property (nonatomic, copy) void(^rowBlock)(JTRowDescriptor *sender);
 
