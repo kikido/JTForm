@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTSectionDescriptor;
 @class JTBaseCell;
 
+extern NSString *const JTFormRowTypeDefault;
+
 //|------ textfield ------------------------------
 extern NSString *const JTFormRowTypeText;
 extern NSString *const JTFormRowTypeName;

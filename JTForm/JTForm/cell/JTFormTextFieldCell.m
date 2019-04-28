@@ -10,7 +10,6 @@
 
 @interface JTFormTextFieldCell () <ASEditableTextNodeDelegate, ASTextNodeDelegate, UITextFieldDelegate>
 
-//@property (nonatomic, strong) ASEditableTextNode *textViewNode;
 @property (nonatomic, strong) ASDisplayNode *textFieldNode;
 
 @end
@@ -113,7 +112,7 @@
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }
 
-#pragma mark  -
+#pragma mark  - responder
 
 - (BOOL)formCellCanBecomeFirstResponder
 {
@@ -134,7 +133,6 @@
 {
     // fixme
     [super formCellHighlight];
-//    _textViewNode.scrollEnabled = YES;
 }
 
 - (void)formCellUnhighlight

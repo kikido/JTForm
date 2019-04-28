@@ -13,10 +13,19 @@
 #import "YYFPSLabel.h"
 
 @interface ViewController ()
-
+@property (nonatomic, strong) NSMutableArray *tempRows;
 @end
 
 @implementation ViewController
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        _tempRows = @[].mutableCopy;
+//        [self addObserver:self forKeyPath:@"tempRows" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -30,6 +39,14 @@
     
     section = [JTSectionDescriptor formSection];
     [formDescriptor addFormSection:section];
+    
+    
+//    for (NSInteger i =0; i < 10; i++) {
+//        row = [JTRowDescriptor formRowDescriptorWithTag:nil rowType:JTFormRowTypeDefault title:@"JTFormRowTypeDefault"];
+//        row.value = @"hhhhhhhhhhhhh";
+//        [section addFormRow:row];
+//    }
+    
     
     NSDate *now = [[NSDate alloc] init];
     
@@ -138,18 +155,40 @@
     YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(15, 100., 100, 40.)];
     [self.view addSubview:fps];
     
-    
     [self test];
     // Do any additional setup after loading the view, typically from a nib.
 }
 
+#pragma mark - test
+
 - (void)test
 {
-    NSString *a = @"1";
-    NSNumber *b = @1;
-    
-    BOOL result = [a isEqual:b];
-    NSLog(@"result = %d", result);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2. * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"添加了");
+        [[self aa] addObjectsFromArray:@[@1, @2]];
+//        [self.tempArray insertObject:@1 atIndex:0];
+    });
+}
+
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+//{
+//    NSLog(@"dddddddd-dddddddd-dddddddd");
+//    NSLog(@"%@", change);
+//}
+
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+//{
+//    NSLog(@"dddddddd-dddddddd-dddddddd");
+//}
+
+- (void)addTempRows:(NSSet *)objects
+{
+}
+
+- (NSMutableArray *)aa
+{
+    return  [self mutableArrayValueForKey:@"tempRows"];
+
 }
 
 

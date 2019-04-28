@@ -13,7 +13,7 @@
 
 - (ASDisplayNode *)findFirstResponder
 {
-    if (self.isFirstResponder) {
+    if (self.view.isFirstResponder) {
         return self;
     }
     for (ASDisplayNode *subNode in self.subnodes) {
@@ -21,7 +21,7 @@
         if (firstResponder != nil) {
             return firstResponder;
         }
-    }
+    }    
     return nil;
 }
 

@@ -12,7 +12,7 @@
 
 - (instancetype)init
 {
-    if (self = [super init]) {
+    if (self = [super init]) {        
         [self config];
     }
     return self;
@@ -67,6 +67,30 @@
 {
     BOOL result = [super resignFirstResponder];
     return result;
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+    [super canBecomeFirstResponder];
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [super becomeFirstResponder];
+    return YES;
+}
+
+- (BOOL)canResignFirstResponder
+{
+    [super canResignFirstResponder];
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
+    return YES;
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize

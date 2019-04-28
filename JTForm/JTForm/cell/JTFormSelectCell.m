@@ -157,6 +157,8 @@
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:allStack];
 }
 
+#pragma mark - responder
+
 - (BOOL)formCellCanBecomeFirstResponder
 {
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
@@ -171,6 +173,17 @@
         return [_tempNode becomeFirstResponder];
     }
     return NO;
+}
+
+- (void)formCellHighlight
+{
+    // fixme
+    [super formCellHighlight];
+}
+
+- (void)formCellUnhighlight
+{
+    [super formCellUnhighlight];
 }
 
 #pragma mark - property

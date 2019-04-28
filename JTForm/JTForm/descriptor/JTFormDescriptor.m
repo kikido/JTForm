@@ -45,18 +45,17 @@
     if (!self.delegate) {
         return;
     }
+    NSLog(@"dddddddd-dddddddd-dddddddd");
     if ([keyPath isEqualToString:@"formSections"]) {
         if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeInsertion)])
         {
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-            JTSectionDescriptor *section = [self.formSections objectAtIndex:indexSet.firstIndex];
-            [self.delegate formSectionHasBeenAdded:section atIndex:indexSet.firstIndex];
+            [self.delegate formSectionsHaveBeenAddedAtIndexes:indexSet];
         }
         else if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeRemoval)])
         {
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-            JTSectionDescriptor *section = change[NSKeyValueChangeOldKey][0];
-            [self.delegate formSectionHasBeenRemoved:section atIndex:indexSet.firstIndex];
+            [self.delegate formSectionsHaveBeenRemovedAtIndexes:indexSet];
         }
     }
 }
@@ -216,14 +215,14 @@
             index = 0;
         }
         if ([self.formSections indexOfObject:section] == NSNotFound) {
-            [self.formSections insertObject:section atIndex:index];
+            [[self mutableArrayValueForKey:@"formSections"] insertObject:section atIndex:index];
         }
     }
 }
 
 - (void)removeFormSectionInFormSections:(JTSectionDescriptor *)section
 {
-    [self.formSections removeObject:section];
+    [[self mutableArrayValueForKey:@"formSections"] removeObject:section];
 }
 
 

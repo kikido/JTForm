@@ -147,13 +147,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JTFormDescriptorDelegate <NSObject>
 
-- (void)formSectionHasBeenRemoved:(JTSectionDescriptor *)formSection atIndex:(NSUInteger)index;
+- (void)formSectionsHaveBeenRemovedAtIndexes:(NSIndexSet *)indexSet;
 
-- (void)formSectionHasBeenAdded:(JTSectionDescriptor *)formSection atIndex:(NSUInteger)index;
+- (void)formSectionsHaveBeenAddedAtIndexes:(NSIndexSet *)indexSet;
 
-- (void)formRowHasBeenAdded:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath;
+- (void)formRowsHaveBeenAddedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 
-- (void)formRowHasBeenRemoved:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath;
+- (void)formRowsHaveBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 
 @end
 

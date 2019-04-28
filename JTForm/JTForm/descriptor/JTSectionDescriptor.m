@@ -46,21 +46,29 @@
     if (!self.formDescriptor.delegate) {
         return;
     }
+    NSLog(@"dddddddd-dddddddd-dddddddd");
+    NSUInteger sectionIndex = [self.formDescriptor.formSections indexOfObject:object];
+    NSMutableArray *tempArray = @[].mutableCopy;
+
     if ([keyPath isEqualToString:@"formRows"]) {
         if ([self.formDescriptor.formSections containsObject:self]) {            
             if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeInsertion)])
             {
                 NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-                JTRowDescriptor *formRow = [((JTSectionDescriptor *)object).formRows objectAtIndex:indexSet.firstIndex];
-                NSUInteger sectionIndex = [self.formDescriptor.formSections indexOfObject:object];
-                [self.formDescriptor.delegate formRowHasBeenAdded:formRow atIndexPath:[NSIndexPath indexPathForRow:indexSet.firstIndex inSection:sectionIndex]];
+                [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:sectionIndex];
+                    [tempArray addObject:indexPath];
+                }];
+                [self.formDescriptor.delegate formRowsHaveBeenAddedAtIndexPaths:tempArray.copy];
             }
             else if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeRemoval)])
             {
                 NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-                JTRowDescriptor *removedRow = [[change objectForKey:NSKeyValueChangeOldKey] objectAtIndex:0];
-                NSUInteger sectionIndex = [self.formDescriptor.formSections indexOfObject:object];
-                [self.formDescriptor.delegate formRowHasBeenRemoved:removedRow atIndexPath:[NSIndexPath indexPathForRow:indexSet.firstIndex inSection:sectionIndex]];
+                [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:sectionIndex];
+                    [tempArray addObject:indexPath];
+                }];
+                [self.formDescriptor.delegate formRowsHaveBeenRemovedAtIndexPaths:tempArray.copy];
             }
         }
     }
@@ -78,6 +86,7 @@
     [self insertFormRow:row inAllRowsAtIndex:self.allRows.count];
     [self evaluateFormRowIsHidden:row];
 }
+
 
 - (void)addFormRow:(JTRowDescriptor *)row atIndex:(NSInteger)index
 {
@@ -226,14 +235,14 @@
             index = 0;
         }
         if ([self.formRows indexOfObject:row] == NSNotFound) {
-            [self.formRows insertObject:row atIndex:index];
+            [[self mutableArrayValueForKey:@"formRows"] insertObject:row atIndex:index];
         }
     }
 }
 
 - (void)removeFormRowInFormRows:(JTRowDescriptor *)row
 {
-    [self.formRows removeObject:row];
+    [[self mutableArrayValueForKey:@"formRows"] removeObject:row];
 }
 
 #pragma mark - hidden

@@ -28,6 +28,8 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 @property (nonatomic, strong) NSNumber *oldBottomTableMargin;
 @property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
 @property (nonatomic, assign) BOOL firstShowKeyBoard;
+/** 代表第一响应者的那一行 */
+@property (nonatomic, strong) JTBaseCell *firstResponderCell;
 @end
 
 @implementation JTForm
@@ -108,7 +110,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    if (self.tableNode.indexPathForSelectedRow) {
+    if (_firstResponderCell) {
         NSDictionary *keyboardInfo = notification.userInfo;
         CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         CGRect convertTableFrame = [self convertRect:self.tableNode.view.frame toView:self.window];
@@ -137,7 +139,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
             [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
                 self.transform = CGAffineTransformIdentity;
                 self.transform = CGAffineTransformMakeTranslation(0, - bottomMargin);
-                [self.tableNode scrollToRowAtIndexPath:self.tableNode.indexPathForSelectedRow atScrollPosition:UITableViewScrollPositionNone animated:NO];
+                [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
             } completion:nil];
         }
     }
@@ -152,6 +154,35 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     _oldBottomTableMargin = nil;
 }
 
+#pragma mark - JTFormDescriptorDelegate
+
+- (void)formSectionsHaveBeenRemovedAtIndexes:(NSIndexSet *)indexSet
+{
+    [self.tableNode performBatchUpdates:^{
+        [self.tableNode deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    } completion:nil];
+}
+
+- (void)formSectionsHaveBeenAddedAtIndexes:(NSIndexSet *)indexSet
+{
+    [self.tableNode performBatchUpdates:^{
+        [self.tableNode insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    } completion:nil];
+}
+
+- (void)formRowsHaveBeenAddedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
+{
+    [self.tableNode performBatchUpdates:^{
+        [self.tableNode insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    } completion:nil];
+}
+
+- (void)formRowsHaveBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
+{
+    [self.tableNode performBatchUpdates:^{
+        [self.tableNode deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    } completion:nil];
+}
 
 #pragma mark - ASTableDataSource
 
@@ -285,13 +316,22 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     return _inlineRowTypesForRowTypes;
 }
 
+- (void)ensureRowIsVisible:(JTRowDescriptor *)rowDescriptor
+{
+    JTBaseCell *inlineCell = [rowDescriptor cellInForm];
+    if (!inlineCell.isVisible) {
+        NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+        [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    }
+}
 
 #pragma mark - edit text delegate
 
 - (BOOL)editableTextShouldBeginEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
     JTBaseCell *cell = [row cellInForm];
-    cell.selected = YES;
+    _firstResponderCell = cell;
+
     if (editableTextNode) {
         editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
     } else {
@@ -355,7 +395,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)navigateToDirection:(JTFormRowNavigationDirection)direction
 {
-    JTBaseCell *currentCell = [self.tableNode nodeForRowAtIndexPath:self.tableNode.indexPathForSelectedRow];
+    JTBaseCell *currentCell = _firstResponderCell;
     JTRowDescriptor *currentRow = currentCell.rowDescriptor;
     JTRowDescriptor *nextRow = [self nextRowDescriptorForRow:currentRow direction:direction];
     

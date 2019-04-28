@@ -8,8 +8,6 @@
 
 #import "JTDefaultCell.h"
 
-NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
-
 @interface JTDefaultCell ()
 @property (nonatomic, strong) ASTextNode *detailTextNode;
 @end
@@ -52,6 +50,56 @@ NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
                                                                              children:@[leftStack, _detailTextNode]];
     
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
+}
+
+#pragma mark - tst
+
+- (void)formCellDidSelected
+{
+    
+}
+
+- (BOOL)formCellCanBecomeFirstResponder
+{
+    return [self canBecomeFirstResponder];
+}
+
+- (BOOL)formCellBecomeFirstResponder
+{
+    if ([self isFirstResponder]) {
+        return [self resignFirstResponder];
+    }
+//    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+//    UIView *firstResponder = [keyWindow performSelector:@selector(firstResponder)];
+    return [self becomeFirstResponder];
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+    [super canBecomeFirstResponder];
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [super becomeFirstResponder];
+    NSLog(@"become");
+    return  YES;
+//    return [super becomeFirstResponder];
+}
+
+- (BOOL)canResignFirstResponder
+{
+    [super canResignFirstResponder];
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
+    NSLog(@"resign");
+    return YES;
+//    return [super resignFirstResponder];
 }
 
 @end

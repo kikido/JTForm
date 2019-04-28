@@ -21,7 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSMutableDictionary *)cellClassesForRowTypes;
 
+#pragma mark - inline row
+
 + (NSMutableDictionary *)inlineRowTypesForRowTypes;
+
+- (void)ensureRowIsVisible:(JTRowDescriptor *)rowDescriptor;
 
 #pragma mark - 001
 
@@ -32,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor;
 
 - (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor;
+
 
 
 #pragma mark - edit text delegate

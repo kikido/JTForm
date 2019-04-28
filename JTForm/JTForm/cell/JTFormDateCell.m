@@ -29,6 +29,9 @@
     _tempNode.style.preferredSize = CGSizeMake(0.01, 0.01);
     
     self.titleNode.backgroundColor = [UIColor blueColor];
+    
+    
+    
 }
 
 - (void)update
@@ -66,13 +69,31 @@
 //     [[[self jtForm] tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
 }
 
+#pragma mark - responder
+
 - (BOOL)formCellCanBecomeFirstResponder
 {
-    return !self.rowDescriptor.disabled;
+    return [self canBecomeFirstResponder];
 }
 
 - (BOOL)formCellBecomeFirstResponder
 {
+    if ([self isFirstResponder]) {
+        return [self resignFirstResponder];
+    }
+    return [self becomeFirstResponder];
+}
+
+- (BOOL)canBecomeFirstResponder
+{
+    [super canBecomeFirstResponder];
+    return !self.rowDescriptor.disabled;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [super becomeFirstResponder];
+
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
         NSIndexPath *currentIndexPath = [self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor];
         JTSectionDescriptor *section = [self.rowDescriptor.sectionDescriptor.formDescriptor.formSections objectAtIndex:currentIndexPath.section];
@@ -84,14 +105,60 @@
         }
         NSAssert([inlineCell conformsToProtocol:@protocol(JTFormInlineCellDelegate)], @"inline cell must conform to protocol 'JTFormInlineCellDelegate'");
         inlineCell.connectedRowDescriptor = self.rowDescriptor;
-        
+
         [section addFormRow:inlineRow afterRow:self.rowDescriptor];
-//        [self.form ensureRowIsVisible:datePickerRowDescriptor];
-        
-        return YES;
+        [[self jtForm] ensureRowIsVisible:inlineRow];
+
+        BOOL result = [super becomeFirstResponder];
+        if (result) {
+            [[self jtForm] beginEditing:self.rowDescriptor];
+        }
+        return result;
     }
     return [_tempNode becomeFirstResponder];
 }
+
+- (BOOL)canResignFirstResponder
+{
+    BOOL result = [super canResignFirstResponder];
+    return result;
+}
+
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
+        NSIndexPath *currentIndexPath = [self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor];
+        NSIndexPath *nextRowPath = [NSIndexPath indexPathForRow:currentIndexPath.row + 1 inSection:currentIndexPath.section];
+        JTRowDescriptor *inlineRow = [self.rowDescriptor.sectionDescriptor.formDescriptor formRowAtIndex:nextRowPath];
+        if ([inlineRow.rowType isEqualToString:JTFormRowTypeInlineDatePicker]) {
+            [self.rowDescriptor.sectionDescriptor removeFormRow:inlineRow];
+        }
+    }
+    BOOL result = [super resignFirstResponder];
+    if (result) {
+        [[self jtForm] endEditing:self.rowDescriptor];
+    }
+    return result;
+}
+
+- (void)formCellHighlight
+{
+    [super formCellHighlight];
+//    ASDisplayNode *node = [[[self jtForm] tableNode] findFirstResponder];
+//    NSLog(@"node = %@", node);
+//    
+//    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+//    UIView   *firstResponder = [keyWindow performSelector:@selector(firstResponder)];
+//    NSLog(@"view = %@", firstResponder);
+}
+
+- (void)formCellUnhighlight
+{
+    [super formCellUnhighlight];
+}
+
+#pragma mark - layout
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
