@@ -27,9 +27,13 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 @property (nonatomic, strong) NSNumber *oldBottomTableMargin;
 @property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
-@property (nonatomic, assign) BOOL firstShowKeyBoard;
+@property (nonatomic, assign) CGRect orginTableFrame;
+@property (nonatomic, assign) BOOL notFirstShowKeyBoard;
 /** 代表第一响应者的那一行 */
 @property (nonatomic, strong) JTBaseCell *firstResponderCell;
+
+//@property (nonatomic, strong) NSNumber *oldBottomTableMargin;
+@property (nonatomic, strong) NSNumber *oldTopTableInset;
 @end
 
 @implementation JTForm
@@ -110,48 +114,94 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
+//    if (_firstResponderCell) {
+//        NSDictionary *keyboardInfo = notification.userInfo;
+//        CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+//        CGRect convertTableFrame = [self convertRect:self.tableNode.view.frame toView:self.window];
+//        // 如果该值小于0，就不需要去设置inset和transform
+//        CGFloat bottomMargin = CGRectGetMaxY(!_notFirstShowKeyBoard ? convertTableFrame : _orginTableFrame) - CGRectGetMinY(keybordFrame);
+//        NSLog(@"form %@",NSStringFromCGRect(convertTableFrame));
+//        NSLog(@"keyboard %@",NSStringFromCGRect(keybordFrame));
+//        NSLog(@"bottomMargin = %.1f",bottomMargin);
+//        if (bottomMargin <= 0 && !_notFirstShowKeyBoard) {
+//            return;
+//        }
+//        UIEdgeInsets tableContentInset = self.tableNode.contentInset;
+//        if (!_notFirstShowKeyBoard) {
+//            _notFirstShowKeyBoard = YES;
+//            _orginTableContentInset = self.tableNode.contentInset;
+//            _orginTableFrame = convertTableFrame;
+//        }
+//        // 当tb.min - transform.y小于0时，需要设置一下inset，不然tb顶部的内容会被遮掉
+//        tableContentInset.top = bottomMargin - CGRectGetMinY(_orginTableFrame);
+//
+////        if (_oldBottomTableMargin) {
+////            bottomMargin += [_oldBottomTableMargin doubleValue];
+////        }
+////
+////        _oldBottomTableMargin = @(bottomMargin);
+//
+//        [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+//
+//            self.tableNode.contentInset = tableContentInset;
+//            self.transform = CGAffineTransformIdentity;
+//            self.transform = CGAffineTransformMakeTranslation(0, -bottomMargin);
+//
+//
+//        } completion:^(BOOL finished) {
+//            [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
+//        }];
+//    }
+    
+    
     if (_firstResponderCell) {
         NSDictionary *keyboardInfo = notification.userInfo;
         CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-        CGRect convertTableFrame = [self convertRect:self.tableNode.view.frame toView:self.window];
-        // 如果该值小于0，就不需要去设置inset和transform
-        CGFloat bottomMargin = CGRectGetMaxY(convertTableFrame) - CGRectGetMinY(keybordFrame);
-        if (bottomMargin <= 0) {
-            return;
-        }
         UIEdgeInsets tableContentInset = self.tableNode.contentInset;
-        if (!_firstShowKeyBoard) {
-            _firstShowKeyBoard = YES;
+        
+        if (!_notFirstShowKeyBoard) {
+            _notFirstShowKeyBoard = YES;
             _orginTableContentInset = self.tableNode.contentInset;
         }
         // 当tb.min - transform.y小于0时，需要设置一下inset，不然tb顶部的内容会被遮掉
-        if (CGRectGetMinY(convertTableFrame) - bottomMargin < 0) {
-            tableContentInset.top += bottomMargin;
-            self.tableNode.contentInset = tableContentInset;
-        }
-        if (_oldBottomTableMargin) {
-            bottomMargin += [_oldBottomTableMargin doubleValue];
-        }
+        
+        CGFloat ty = self.tableNode.closestViewController.view.bounds.size.height - keybordFrame.origin.y;
+        tableContentInset.top = ty;
+        
 
-        if (bottomMargin > 0) {
-            _oldBottomTableMargin = @(bottomMargin);
+        //        if (_oldBottomTableMargin) {
+        //            bottomMargin += [_oldBottomTableMargin doubleValue];
+        //        }
+        //
+        //        _oldBottomTableMargin = @(bottomMargin);
 
-            [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
-                self.transform = CGAffineTransformIdentity;
-                self.transform = CGAffineTransformMakeTranslation(0, - bottomMargin);
-                [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
-            } completion:nil];
-        }
+        self.tableNode.contentInset = tableContentInset;
+        
+        [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+
+            self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - ty);
+//            self.tableNode.contentOffset = CGPointMake(0, 330);
+            [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
+        } completion:nil];
     }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    self.tableNode.contentInset = _orginTableContentInset;
-    self.transform = CGAffineTransformIdentity;
+//    self.tableNode.contentInset = _orginTableContentInset;
+//    self.transform = CGAffineTransformIdentity;
+//
+//    _orginTableContentInset = UIEdgeInsetsZero;
+//    _oldBottomTableMargin = nil;
+//    _notFirstShowKeyBoard = false;
     
-    _orginTableContentInset = UIEdgeInsetsZero;
-    _oldBottomTableMargin = nil;
+    
+    self.tableNode.contentInset = _orginTableContentInset;
+        self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
+    
+        _orginTableContentInset = UIEdgeInsetsZero;
+        _oldBottomTableMargin = nil;
+        _notFirstShowKeyBoard = false;
 }
 
 #pragma mark - JTFormDescriptorDelegate
