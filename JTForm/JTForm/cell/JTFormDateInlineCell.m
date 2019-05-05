@@ -52,6 +52,10 @@
 
 - (void)datePickerValueChanged:(UIDatePicker *)sender
 {
-    
+    if (self.connectedRowDescriptor) {
+        self.connectedRowDescriptor.value = sender.date;
+        [self.jtForm updateFormRow:self.connectedRowDescriptor];
+    }
 }
+
 @end

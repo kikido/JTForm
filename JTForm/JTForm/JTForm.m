@@ -14,7 +14,11 @@
 #import "JTFormSelectCell.h"
 #import "JTFormDateCell.h"
 #import "JTFormDateInlineCell.h"
+#import "JTFromSwitchCell.h"
+
 #import "JTFormNavigationAccessoryView.h"
+#import "JTFormCheckCell.h"
+#import "JTFormStepCounterCell.h"
 
 typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     JTFormRowNavigationDirectionPrevious = 0,
@@ -34,6 +38,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 //@property (nonatomic, strong) NSNumber *oldBottomTableMargin;
 @property (nonatomic, strong) NSNumber *oldTopTableInset;
+@property (nonatomic, assign) CGFloat temp;
 @end
 
 @implementation JTForm
@@ -74,14 +79,32 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    if (!sectionDescriptor.headerAttributedString) {
+        return nil;
+    }
+    
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 40)];
-    view.backgroundColor = [UIColor redColor];
-    return view;
+    view.backgroundColor = [UIColor greenColor];
+    view.opaque = YES;
+    
+    ASTextNode *textNode = [[ASTextNode alloc] init];
+    textNode.attributedText = sectionDescriptor.headerAttributedString;
+//    textNode.layerBacked = YES;
+//    [textNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
+//        node.style.flexGrow = 1.;
+//        node.style.flexShrink = 1.;
+//        return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 15, 5, 15) child:node];
+//    }];
+
+    [view addSubnode:textNode];
+    
+    return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 40.;
+    return 15.;
 }
 //
 //- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -101,6 +124,10 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(keyboardDidShow:)
+//                                                 name:UIKeyboardDidShowNotification
+//                                               object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
@@ -176,15 +203,29 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         //        _oldBottomTableMargin = @(bottomMargin);
 
         self.tableNode.contentInset = tableContentInset;
+        NSLog(@"fffff");
+        
+        _temp = ty;
         
         [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
 
             self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - ty);
-//            self.tableNode.contentOffset = CGPointMake(0, 330);
             [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
         } completion:nil];
     }
 }
+
+//- (void)keyboardDidShow:(NSNotification *)notification
+//{
+//    NSDictionary *keyboardInfo = notification.userInfo;
+//
+//    [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+//        self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - self.temp);
+//        [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
+//    } completion:nil];
+//
+//    NSLog(@"dddddd");
+//}
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
@@ -346,7 +387,11 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
                                     JTFormRowTypeDateTime : [JTFormDateCell class],
                                     JTFormRowTypeCountDownTimer : [JTFormDateCell class],
                                     JTFormRowTypeDateInline : [JTFormDateCell class],
-                                    JTFormRowTypeInlineDatePicker : [JTFormDateInlineCell class]
+                                    JTFormRowTypeInlineDatePicker : [JTFormDateInlineCell class],
+                                    
+                                    JTFormRowTypeSwitch : [JTFromSwitchCell class],
+                                    JTFormRowTypeCheck : [JTFormCheckCell class],
+                                    JTFormRowTypeStepCounter : [JTFormStepCounterCell class]
                                     }.mutableCopy;
     });
     return _cellClassesForRowTypes;
@@ -452,7 +497,6 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     if (nextRow) {
         JTBaseCell *nextCell = [nextRow cellInForm];
         if ([nextCell formCellCanBecomeFirstResponder]){
-            nextCell.selected = YES;
             NSIndexPath *indexPath = [self.tableNode indexPathForNode:nextCell];
             [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:NO];
             [nextCell formCellBecomeFirstResponder];

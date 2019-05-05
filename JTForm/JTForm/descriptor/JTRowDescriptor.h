@@ -48,6 +48,13 @@ extern NSString *const JTFormRowTypeDateInline;
 //|------ inline date ------------------------------
 extern NSString *const JTFormRowTypeInlineDatePicker;
 
+//|------ other ------------------------------
+extern NSString *const JTFormRowTypeSwitch;
+extern NSString *const JTFormRowTypeCheck;
+extern NSString *const JTFormRowTypeStepCounter;
+extern NSString *const JTFormRowTypeSegmentedControl;
+extern NSString *const JTFormRowTypeSlider;
+extern NSString *const JTFormRowTypeButton;
 
 extern CGFloat const JTFormUnspecifiedCellHeight;
 

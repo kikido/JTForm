@@ -34,10 +34,26 @@
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
     
+    #pragma mark - other
+    section = [JTSectionDescriptor formSection];
+    [formDescriptor addFormSection:section];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounter"];
+    row.value = @100.;
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCheck rowType:JTFormRowTypeCheck title:@"JTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitch"];
+    row.value = @YES;
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSwitch rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitch"];
+    row.value = @YES;
+    [section addFormRow:row];
     
     #pragma mark - date
     
     section = [JTSectionDescriptor formSection];
+    section.headerAttributedString = [NSAttributedString attributedStringWithString:@"adadadaadadadaadadadaadadadaadadadaadadadaadadadaadadadaadadadaadadadaadadadaadadadaadadadaadadada" font:nil color:nil firstWordColor:nil];
     [formDescriptor addFormSection:section];
     
     
@@ -49,58 +65,59 @@
     
     
 //    NSDate *now = [[NSDate alloc] init];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
-//    row.value = now;
-//    row.selectorTitle = @"测试";
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
-//    row.value = now;
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
-//    row.value = now;
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
-//    row.value = now;
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
-//    row.value = now;
-//    [section addFormRow:row];
-//
-//    
-//#pragma mark - select
-//    
-//    section = [JTSectionDescriptor formSection];
-//    [formDescriptor addFormSection:section];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePushSelect rowType:JTFormRowTypePushSelect title:@"JTFormRowTypePushSelect"];
-//    row.selectorTitle = @"测试";
-//    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeMultipleSelect rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
-//    row.selectorTitle = @"测试";
-//    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSheetSelect rowType:JTFormRowTypeSheetSelect title:@"JTFormRowTypeSheetSelect"];
-//    row.selectorTitle = @"测试";
-//    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeAlertSelect rowType:JTFormRowTypeAlertSelect title:@"JTFormRowTypeAlertSelect"];
-//    row.selectorTitle = @"测试";
-//    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
-//    [section addFormRow:row];
-//    
-//    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePickerSelect rowType:JTFormRowTypePickerSelect title:@"hhhh"];
-//    row.selectorTitle = @"测试";
-//    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
-//    [section addFormRow:row];
+    NSDate *now = nil;
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
+    row.value = now;
+    row.selectorTitle = @"测试";
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
+    row.value = now;
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
+    row.value = now;
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
+    row.value = now;
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
+    row.value = now;
+    [section addFormRow:row];
+
+    
+#pragma mark - select
+    
+    section = [JTSectionDescriptor formSection];
+    [formDescriptor addFormSection:section];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePushSelect rowType:JTFormRowTypePushSelect title:@"JTFormRowTypePushSelect"];
+    row.selectorTitle = @"测试";
+    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeMultipleSelect rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
+    row.selectorTitle = @"测试";
+    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSheetSelect rowType:JTFormRowTypeSheetSelect title:@"JTFormRowTypeSheetSelect"];
+    row.selectorTitle = @"测试";
+    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeAlertSelect rowType:JTFormRowTypeAlertSelect title:@"JTFormRowTypeAlertSelect"];
+    row.selectorTitle = @"测试";
+    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePickerSelect rowType:JTFormRowTypePickerSelect title:@"hhhh"];
+    row.selectorTitle = @"测试";
+    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"测试1", @"测试2", @"测试3", @"测试4"]];
+    [section addFormRow:row];
     
     #pragma mark - text field
     

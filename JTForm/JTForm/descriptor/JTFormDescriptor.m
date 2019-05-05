@@ -175,6 +175,16 @@
     }
 }
 
+#pragma mark - section
+
+- (JTSectionDescriptor *)formSectionAtIndex:(NSUInteger)index
+{
+    if (index < 0 || index >= self.formSections.count) {
+        return nil;
+    }
+    return self.formSections[index];
+}
+
 #pragma mark - all sections
 
 - (void)insertFormSection:(JTSectionDescriptor *)section inAllSectionsAtIndex:(NSUInteger)index

@@ -22,10 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSMutableArray *allRows;
 
 /** 这一节的头标题 */
-@property (nonatomic, copy) NSString *headerTitle;
+@property (nonatomic, copy) NSAttributedString *headerAttributedString;
 
 /** 这一节的尾标题 */
-@property (nonatomic, copy) NSString *footerTitle;
+@property (nonatomic, copy) NSAttributedString *footerAttributedString;
 
 @property (nonatomic, assign) CGFloat headerHeight;
 

@@ -39,6 +39,13 @@ NSString *const JTFormRowTypeDateInline = @"JTFormRowTypeDateInline";
 
 NSString *const JTFormRowTypeInlineDatePicker = @"JTFormRowTypeInlineDatePicker";
 
+NSString *const JTFormRowTypeSwitch = @"JTFormRowTypeSwitch";
+NSString *const JTFormRowTypeCheck = @"JTFormRowTypeCheck";
+NSString *const JTFormRowTypeStepCounter = @"JTFormRowTypeStepCounter";
+NSString *const JTFormRowTypeSegmentedControl = @"JTFormRowTypeSegmentedControl";
+NSString *const JTFormRowTypeSlider = @"JTFormRowTypeSlider";
+NSString *const JTFormRowTypeButton = @"JTFormRowTypeButton";
+
 CGFloat const JTFormRowInitialHeight = -2.0;
 CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 

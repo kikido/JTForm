@@ -21,11 +21,13 @@
 - (void)config
 {
     self.separatorInset= UIEdgeInsetsMake(0, 15., 0, 0);
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.automaticallyManagesSubnodes = YES;
     
     _titleNode = [[ASTextNode alloc] init];
     _titleNode.layerBacked = YES;
     _titleNode.style.flexShrink = 1.;
+    _titleNode.backgroundColor = [UIColor blueColor];
     
     _contentNode = [[ASTextNode alloc] init];
     _contentNode.layerBacked = YES;
@@ -37,7 +39,7 @@
 - (void)update
 {
     self.backgroundColor = [self formCellBgColor];
-    self.selectionStyle = self.rowDescriptor.disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleDefault;
+//    self.selectionStyle = self.rowDescriptor.disabled ? UITableViewCellSelectionStyleNone : UITableViewCellSelectionStyleDefault;
 
 }
 

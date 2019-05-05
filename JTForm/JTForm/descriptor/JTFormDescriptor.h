@@ -91,6 +91,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section;
 
+#pragma mark - section
+
+- (JTSectionDescriptor *)formSectionAtIndex:(NSUInteger)index;
+
 #pragma mark - row
 
 /**

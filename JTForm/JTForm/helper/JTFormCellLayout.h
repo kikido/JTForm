@@ -18,12 +18,14 @@
 /** textview类型单元行textview的最小高度 */
 #define kJTFormMinTextViewHeight 100.
 
+//|-----------------------------------------------------------------||//
 #pragma mark - select
 
 #define kJTFormSelectMaxContentHeight 50.
 
 #define kJTFormSelectMaxTitleHeight 50.
 
+//|-----------------------------------------------------------------||//
 #pragma mark - date
 
 #define kJTFormDateMaxContentHeight 50.
@@ -35,6 +37,9 @@
 
 /** 内联日期选择器的高度 */
 #define kJTFormDateInlineDateHeight 216.0
+
+//|-----------------------------------------------------------------||//
+#pragma mark - other
 
 
 

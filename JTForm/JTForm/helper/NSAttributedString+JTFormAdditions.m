@@ -11,12 +11,15 @@
 @implementation NSAttributedString (JTFormAdditions)
 
 + (NSAttributedString *)attributedStringWithString:(NSString *)string
-                                              font:(UIFont *)font
+                                              font:(nullable UIFont *)font
                                              color:(nullable UIColor *)color
                                     firstWordColor:(nullable UIColor *)firstWordColor
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     
+    if (!font) {
+        font = [UIFont systemFontOfSize:16.];
+    }
     if (string) {
         NSDictionary *attributes = @{NSForegroundColorAttributeName: color ? : [UIColor blackColor],
                                                 NSFontAttributeName: font};
@@ -33,11 +36,13 @@
 }
 
 + (NSAttributedString *)rightAttributedStringWithString:(NSString *)string
-                                                   font:(UIFont *)font
+                                                   font:(nullable UIFont *)font
                                                   color:(nullable UIColor *)color
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-    
+    if (!font) {
+        font = [UIFont systemFontOfSize:16.];
+    }
     if (string) {
         NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
         paragraph.alignment = NSTextAlignmentRight;

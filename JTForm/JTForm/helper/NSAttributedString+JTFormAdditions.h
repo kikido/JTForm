@@ -14,12 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSAttributedString (JTFormAdditions)
 
 + (NSAttributedString *)attributedStringWithString:(NSString *)string
-                                              font:(UIFont *)font
+                                              font:(nullable UIFont *)font
                                              color:(nullable UIColor *)color
                                     firstWordColor:(nullable UIColor *)firstWordColor;
 
 + (NSAttributedString *)rightAttributedStringWithString:(NSString *)string
-                                                   font:(UIFont *)font
+                                                   font:(nullable UIFont *)font
                                                   color:(nullable UIColor *)color;
 
 @end

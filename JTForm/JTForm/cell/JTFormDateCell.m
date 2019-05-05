@@ -29,9 +29,6 @@
     _tempNode.style.preferredSize = CGSizeMake(0.01, 0.01);
     
     self.titleNode.backgroundColor = [UIColor blueColor];
-    
-    
-    
 }
 
 - (void)update
@@ -66,7 +63,7 @@
 
 - (void)formCellDidSelected
 {
-//     [[[self jtForm] tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
+     [[[self jtForm] tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
 }
 
 #pragma mark - responder
