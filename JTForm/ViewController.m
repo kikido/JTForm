@@ -12,6 +12,7 @@
 #import "TextViewController.h"
 #import "SelectViewController.h"
 #import "DateViewController.h"
+#import "OtherViewController.h"
 #import "TestViewController.h"
 
 @interface ViewController ()
@@ -64,7 +65,7 @@
     
     row = [JTRowDescriptor formRowDescriptorWithTag:@"3" rowType:JTFormRowTypePushButton title:@"other"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
-        TextViewController *vc = [[TextViewController alloc] init];
+        OtherViewController *vc = [[OtherViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     };
     [section addFormRow:row];

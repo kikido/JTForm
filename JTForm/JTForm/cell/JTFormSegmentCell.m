@@ -24,34 +24,36 @@
         [segmentControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return segmentControl;
     }];
-    _segmentNode.backgroundColor = [UIColor greenColor];
 }
 
 - (void)update
 {
     [super update];
     
+    self.imageNode.image = self.rowDescriptor.image;
+    self.imageNode.URL = self.rowDescriptor.imageUrl;
+    
     UISegmentedControl *segmentControl = (UISegmentedControl *)self.segmentNode.view;
     segmentControl.enabled = !self.rowDescriptor.disabled;
-
+    [self updateSegmentedControl:segmentControl];
+    segmentControl.selectedSegmentIndex = [self selectedIndex];
+    self.segmentControl = segmentControl;
+    
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
     self.titleNode.attributedText = [NSAttributedString
                                      attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
                                      font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
                                      color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
                                      firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    
-    [self updateSegmentedControl:segmentControl];
-    segmentControl.selectedSegmentIndex = [self selectedIndex];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
     ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
-                                                                           spacing:10.
+                                                                           spacing:kJTFormCellImageSpace
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsStart
-                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
+                                                                          children:self.imageNode.hasContent ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     
     self.titleNode.style.flexGrow = 1.;
     self.titleNode.style.flexShrink = 1.;

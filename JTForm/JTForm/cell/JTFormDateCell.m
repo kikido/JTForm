@@ -13,7 +13,6 @@
 /** 因为实在不知道怎么替换当前view的‘inputView’属性，所以当类型为‘JTFormRowTypePickerSelect’时，只能让这个属性成为第一响应者，然后用‘pickerView’属性替换掉它的‘textview.inputView’ */
 @property (nonatomic, strong) ASEditableTextNode *tempNode;
 @property (nonatomic, strong) UIDatePicker *datePicker;
-//@property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @end
 
 @implementation JTFormDateCell

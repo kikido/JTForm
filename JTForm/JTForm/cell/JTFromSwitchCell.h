@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFromSwitchCell : JTBaseCell
-
+@property (nonatomic, strong) UISwitch *switchControl;
 @end
 
 NS_ASSUME_NONNULL_END

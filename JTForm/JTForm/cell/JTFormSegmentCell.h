@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormSegmentCell : JTBaseCell
-
+@property (nonatomic, strong) UISegmentedControl *segmentControl;
 @end
 
 NS_ASSUME_NONNULL_END

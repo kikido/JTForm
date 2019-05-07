@@ -1,5 +1,5 @@
 //
-//  DateViewController.h
+//  OtherViewController.h
 //  JTForm
 //
 //  Created by dqh on 2019/5/7.
@@ -10,7 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DateViewController : RootViewController
+@interface OtherViewController : RootViewController
+
 @end
 
 NS_ASSUME_NONNULL_END

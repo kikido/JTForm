@@ -24,19 +24,29 @@
         [slider addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return slider;
     }];
-    _sliderNode.backgroundColor = [UIColor yellowColor];
     _steps = 0;
+    _maximumValue = 0.;
+    _minimumValue = 0.;
 }
 
 - (void)update
 {
     [super update];
     
+    self.imageNode.image = self.rowDescriptor.image;
+    self.imageNode.URL = self.rowDescriptor.imageUrl;
+    
     UISlider *slider = (UISlider *)self.sliderNode.view;
     slider.enabled = !self.rowDescriptor.disabled;
+    if (self.maximumValue != 0) {
+        slider.maximumValue = self.maximumValue;
+    }
+    if (self.minimumValue != 0) {
+        slider.minimumValue = self.minimumValue;
+    }
     slider.value = [self.rowDescriptor.value floatValue];
     [self valueChanged:slider];
-    _sliderControl = slider;
+    _slider = slider;
 
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
     self.titleNode.attributedText = [NSAttributedString
@@ -57,7 +67,7 @@
                                                                            spacing:10.
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsCenter
-                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
+                                                                          children:self.imageNode.hasContent ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     
     self.titleNode.style.flexGrow = 1.;
     self.titleNode.style.flexShrink = 1.;

@@ -15,6 +15,7 @@
 		1D39F27C228162440038A831 /* SelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27B228162440038A831 /* SelectViewController.m */; };
 		1D39F27F2281740D0038A831 /* JTTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27E2281740D0038A831 /* JTTransform.m */; };
 		1D39F28222817AD20038A831 /* DateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28122817AD20038A831 /* DateViewController.m */; };
+		1D39F28522819E160038A831 /* OtherViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28422819E160038A831 /* OtherViewController.m */; };
 		1D55FA5D227F024400943F01 /* JTFormCheckCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5C227F024400943F01 /* JTFormCheckCell.m */; };
 		1D55FA60227F083100943F01 /* JTFormStepCounterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5F227F083100943F01 /* JTFormStepCounterCell.m */; };
 		1D55FA63227F14A000943F01 /* JTFormSegmentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA62227F14A000943F01 /* JTFormSegmentCell.m */; };
@@ -71,6 +72,8 @@
 		1D39F27E2281740D0038A831 /* JTTransform.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTTransform.m; sourceTree = "<group>"; };
 		1D39F28022817AD20038A831 /* DateViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateViewController.h; sourceTree = "<group>"; };
 		1D39F28122817AD20038A831 /* DateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DateViewController.m; sourceTree = "<group>"; };
+		1D39F28322819E160038A831 /* OtherViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OtherViewController.h; sourceTree = "<group>"; };
+		1D39F28422819E160038A831 /* OtherViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OtherViewController.m; sourceTree = "<group>"; };
 		1D55FA5B227F024400943F01 /* JTFormCheckCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCheckCell.h; sourceTree = "<group>"; };
 		1D55FA5C227F024400943F01 /* JTFormCheckCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCheckCell.m; sourceTree = "<group>"; };
 		1D55FA5E227F083100943F01 /* JTFormStepCounterCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormStepCounterCell.h; sourceTree = "<group>"; };
@@ -234,6 +237,8 @@
 				1D39F28122817AD20038A831 /* DateViewController.m */,
 				1D55FA7322801AFB00943F01 /* TestViewController.h */,
 				1D55FA7422801AFB00943F01 /* TestViewController.m */,
+				1D39F28322819E160038A831 /* OtherViewController.h */,
+				1D39F28422819E160038A831 /* OtherViewController.m */,
 				1D39F27622812BF40038A831 /* formatter */,
 				1DDADA30225B6DA100652FE6 /* Assets.xcassets */,
 				1DDADA35225B6DA100652FE6 /* Info.plist */,
@@ -497,6 +502,7 @@
 				1DF4C2E52271D90A00FAEC41 /* YYFPSLabel.m in Sources */,
 				1D837DF1226EA36000AEF748 /* JTFormSelectCell.m in Sources */,
 				1D39F27F2281740D0038A831 /* JTTransform.m in Sources */,
+				1D39F28522819E160038A831 /* OtherViewController.m in Sources */,
 				1D39F27522811F830038A831 /* JTFormFloatTextCell.m in Sources */,
 				1D55FA6A227FD20500943F01 /* JTFormSliderCell.m in Sources */,
 				1DDADA52225B784700652FE6 /* JTForm.m in Sources */,

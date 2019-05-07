@@ -15,8 +15,10 @@
                                              color:(nullable UIColor *)color
                                     firstWordColor:(nullable UIColor *)firstWordColor
 {
+    if (!string) {
+        return nil;
+    }
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-    
     if (!font) {
         font = [UIFont systemFontOfSize:16.];
     }
@@ -39,6 +41,9 @@
                                                    font:(nullable UIFont *)font
                                                   color:(nullable UIColor *)color
 {
+    if (!string) {
+        return nil;
+    }
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
     if (!font) {
         font = [UIFont systemFontOfSize:16.];

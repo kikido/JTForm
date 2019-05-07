@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormSliderCell : JTBaseCell
 @property (nonatomic, assign) NSUInteger steps;
-@property (nonatomic, strong) UISlider *sliderControl;
+@property (nonatomic, assign) CGFloat maximumValue;
+@property (nonatomic, assign) CGFloat minimumValue;
+@property (nonatomic, strong) UISlider *slider;
 @end
 
 NS_ASSUME_NONNULL_END
