@@ -16,17 +16,10 @@
 
 @implementation JTFormTextFieldCell
 
-- (BOOL)textNode:(ASTextNode *)textNode shouldHighlightLinkAttribute:(NSString *)attribute value:(id)value atPoint:(CGPoint)point
-{
-    return YES;
-}
-
 - (void)config
 {
     [super config];
-    
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+        
     _textFieldNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UITextField *textField = [[UITextField alloc] init];
         textField.delegate = self;
@@ -39,9 +32,14 @@
 {
     [super update];
 
+    self.imageNode.image = self.rowDescriptor.image;
+    self.imageNode.URL = self.rowDescriptor.imageUrl;
+    
     UITextField *textField = (UITextField *)self.textFieldNode.view;
     textField.backgroundColor = [UIColor yellowColor];
     textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    textField.enabled = !self.rowDescriptor.disabled;
+    _textField = textField;
     
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeText]) {
         textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
@@ -82,27 +80,26 @@
     textField.textAlignment = NSTextAlignmentRight;
     textField.text = [self.rowDescriptor displayContentValue];
     textField.attributedPlaceholder = [NSAttributedString attributedStringWithString:self.rowDescriptor.placeHolder
-                                                                                font:[self formCellDisabledContentFont]
-                                                                               color:[self formCellDisabledContentColor]
+                                                                                font:[self formCellPlaceHlderFont]
+                                                                               color:[self formCellPlaceHolderColor]
                                                                       firstWordColor:nil];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
-                                                                           spacing:10.
-                                                                    justifyContent:ASStackLayoutJustifyContentStart
-                                                                        alignItems:ASStackLayoutAlignItemsStart
-                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
-    
-    _textFieldNode.style.minWidth = ASDimensionMakeWithFraction(.6);
-    _textFieldNode.style.height = ASDimensionMake(30.);
-    _textFieldNode.style.flexGrow = 1.;
-    
     self.titleNode.style.maxHeight = ASDimensionMake(kJTFormTextFieldCellMaxTitlteHeight);
     self.titleNode.style.flexShrink = 2.;
     
+    ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                           spacing:kJTFormCellImageSpace
+                                                                    justifyContent:ASStackLayoutJustifyContentStart
+                                                                        alignItems:ASStackLayoutAlignItemsCenter
+                                                                          children:self.imageNode.hasContent ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     leftStack.style.flexShrink = 2.;
+
+    _textFieldNode.style.minWidth = ASDimensionMakeWithFraction(.6);
+    _textFieldNode.style.height = ASDimensionMake(30.);
+    _textFieldNode.style.flexGrow = 1.;
     
     ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                               spacing:15.
@@ -131,7 +128,6 @@
 
 - (void)formCellHighlight
 {
-    // fixme
     [super formCellHighlight];
 }
 

@@ -16,20 +16,26 @@
 
 @implementation JTNetworkImageNode
 
+#pragma mark - set
+
+- (void)setImage:(UIImage *)image
+{
+    _imageNode.image = image;
+}
+
 - (void)setPlaceholderColor:(UIColor *)placeholderColor
 {
     _networkImageNode.placeholderColor = placeholderColor;
 }
 
-
-- (void)setImage:(UIImage *)image
+- (void)setJtPlaceholderFadeDuration:(NSTimeInterval)jtPlaceholderFadeDuration
 {
-    _networkImageNode.image = image;
+    _networkImageNode.placeholderFadeDuration = jtPlaceholderFadeDuration;
 }
 
-- (void)setPlaceholderFadeDuration:(NSTimeInterval)placeholderFadeDuration
+- (void)setDefaultImage:(UIImage *)defaultImage
 {
-    _networkImageNode.placeholderFadeDuration = placeholderFadeDuration;
+    _networkImageNode.defaultImage = defaultImage;
 }
 
 - (void)setURL:(NSURL *)URL
@@ -55,6 +61,7 @@
     }
     return self;
 }
+
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsZero child:_networkImageNode.URL ? _networkImageNode : _imageNode];
@@ -73,6 +80,17 @@
 {
     SDImageCache *imageCache = [SDImageCache sharedImageCache];
     [imageCache storeImage:image forKey:imageNode.URL.absoluteString toDisk:YES];
+}
+
+- (BOOL)hasContent
+{
+    if (_networkImageNode.URL) {
+        return YES;
+    }
+    if (_imageNode.image) {
+        return YES;
+    }
+    return NO;
 }
 
 

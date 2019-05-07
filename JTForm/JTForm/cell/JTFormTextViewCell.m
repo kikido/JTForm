@@ -9,7 +9,6 @@
 #import "JTFormTextViewCell.h"
 
 @interface JTFormTextViewCell () <ASEditableTextNodeDelegate, ASTextNodeDelegate>
-
 @property (nonatomic, strong) ASEditableTextNode *textViewNode;
 /** 需要给textview设定一个最小值，但是因为‘ASDisplayNode.style.minHeight’属性会覆盖‘maxHeight’和‘height’属性，所以使用一个空的node来撑起最小值 */
 @property (nonatomic, strong) ASDisplayNode *tempNode;
@@ -38,6 +37,9 @@
 {
     [super update];
     
+    self.imageNode.image = self.rowDescriptor.image;
+    self.imageNode.URL = self.rowDescriptor.imageUrl;
+    
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
     self.titleNode.attributedText = [NSAttributedString
                                      attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
@@ -49,7 +51,9 @@
         self.contentNode.attributedText = [NSAttributedString rightAttributedStringWithString:[self.rowDescriptor displayContentValue]
                                                                                      font:[self formCellDisabledContentFont]
                                                                                     color:[self formCellDisabledContentColor]];
+        self.contentNode.backgroundColor = [UIColor yellowColor];
     } else {
+        _textViewNode.textView.editable = !self.rowDescriptor.disabled;
         NSMutableParagraphStyle *paragraphStyle = NSMutableParagraphStyle.new;
         paragraphStyle.alignment                = NSTextAlignmentRight;
         _textViewNode.typingAttributes = @{
@@ -62,16 +66,17 @@
                                                                                             font:[self formCellDisabledContentFont]
                                                                                            color:[self formCellDisabledContentColor]
                                                                                   firstWordColor:nil];
+        _textView = _textViewNode.textView;
     }
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
     ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
-                                                                           spacing:10.
+                                                                           spacing:kJTFormCellImageSpace
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsStart
-                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
+                                                                          children:self.imageNode.hasContent ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     
     ASStackLayoutSpec *rightStack = nil;
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {

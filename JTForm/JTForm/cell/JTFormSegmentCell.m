@@ -7,9 +7,9 @@
 //
 
 #import "JTFormSegmentCell.h"
+#import "JTOptionObject.h"
 
 @interface JTFormSegmentCell ()
-@property (nonatomic, strong) UISegmentedControl *segmentControl;
 @property (nonatomic, strong) ASDisplayNode *segmentNode;
 @end
 
@@ -20,9 +20,9 @@
     [super config];
     
     _segmentNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
-        self.segmentControl = [[UISegmentedControl alloc] init];
-        [self.segmentControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
-        return self.segmentControl;
+        UISegmentedControl *segmentControl = [[UISegmentedControl alloc] init];
+        [segmentControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
+        return segmentControl;
     }];
     _segmentNode.backgroundColor = [UIColor greenColor];
 }
@@ -31,120 +31,70 @@
 {
     [super update];
     
-    self.textLabel.text = [NSString stringWithFormat:@"%@%@",self.rowDescriptor.title, self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle ? @"*" : @""];
-    [self updateSegmentedControl];
-    self.segmentedControl.selectedSegmentIndex = [self selectedIndex];
-    self.segmentedControl.enabled = !self.rowDescriptor.disabled;
+    UISegmentedControl *segmentControl = (UISegmentedControl *)self.segmentNode.view;
+    segmentControl.enabled = !self.rowDescriptor.disabled;
+
+    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
+    self.titleNode.attributedText = [NSAttributedString
+                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
+                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
+                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
+                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
+    
+    [self updateSegmentedControl:segmentControl];
+    segmentControl.selectedSegmentIndex = [self selectedIndex];
 }
 
-#pragma mark - KVO
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+- (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    if ([keyPath isEqualToString:@"text"] && object == self.textLabel) {
-        if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeSetting)]) {
-            [self.contentView setNeedsUpdateConstraints];
-        }
-    }
-}
-
-#pragma mark - Properties
-
-- (UISegmentedControl *)segmentedControl
-{
-    if (_segmentedControl == nil) {
-        _segmentedControl = [UISegmentedControl autolayoutView];
-        [_segmentedControl setContentHuggingPriority:500 forAxis:UILayoutConstraintAxisHorizontal];
-    }
-    return _segmentedControl;
-}
-
-- (UILabel *)textLabel
-{
-    if (_textLabel == nil) {
-        _textLabel = [UILabel autolayoutView];
-        _textLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-        [_textLabel setContentCompressionResistancePriority:500 forAxis:UILayoutConstraintAxisHorizontal];
-    }
-    return _textLabel;
+    ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                           spacing:10.
+                                                                    justifyContent:ASStackLayoutJustifyContentStart
+                                                                        alignItems:ASStackLayoutAlignItemsStart
+                                                                          children:self.imageNode.image ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
+    
+    self.titleNode.style.flexGrow = 1.;
+    self.titleNode.style.flexShrink = 1.;
+    leftStack.style.flexGrow = 1.;
+    leftStack.style.flexShrink = 1.;
+    
+    ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                              spacing:15.
+                                                                       justifyContent:ASStackLayoutJustifyContentSpaceBetween
+                                                                           alignItems:ASStackLayoutAlignItemsCenter
+                                                                             children:@[leftStack, self.segmentNode]];
+    self.segmentNode.style.preferredSize = CGSizeMake(kJTFormSegmentedControlItemWidth*self.rowDescriptor.selectorOptions.count, 30);
+    
+    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }
 
 #pragma mark - Target Event
 
 - (void)valueChanged:(UISegmentedControl *)sender
 {
-    self.rowDescriptor.value = [self.rowDescriptor.selectorOptions objectAtIndex:self.segmentedControl.selectedSegmentIndex];
+    self.rowDescriptor.value = [self.rowDescriptor.selectorOptions objectAtIndex:sender.selectedSegmentIndex];
 }
 
 #pragma mark - Helper
 
-- (NSArray *)getItems
+- (void)updateSegmentedControl:(UISegmentedControl *)segmentControl
 {
-    NSMutableArray *results = @[].mutableCopy;
-    for (JYFormOptionsObject *optionObject in self.rowDescriptor.selectorOptions) {
-        [results addObject:[optionObject displayText]];
-    }
-    return results.copy;
-}
-
-- (void)updateSegmentedControl
-{
-    [self.segmentedControl removeAllSegments];
-    
-    [[self getItems] enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self.segmentedControl insertSegmentWithTitle:[obj displayText] atIndex:idx animated:NO];
+    [segmentControl removeAllSegments];
+    [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(JTOptionObject *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [segmentControl insertSegmentWithTitle:[obj cellText] atIndex:idx animated:NO];
     }];
 }
 
 - (NSInteger)selectedIndex
 {
     if (self.rowDescriptor.value) {
-        for (JYFormOptionsObject *optionObject in self.rowDescriptor.selectorOptions) {
-            if ([[optionObject valueData] isEqual:[self.rowDescriptor.value valueData]]) {
+        for (JTOptionObject *optionObject in self.rowDescriptor.selectorOptions) {
+            if ([self.rowDescriptor.value jt_isEqual:optionObject]) {
                 return [self.rowDescriptor.selectorOptions indexOfObject:optionObject];
             }
         }
     }
     return UISegmentedControlNoSegment;
 }
-
-#pragma mark - Layout Constraints
-
-- (void)updateConstraints
-{
-    if (self.dynamicCustomConstraints) {
-        [self.contentView removeConstraints:self.dynamicCustomConstraints];
-    }
-    self.dynamicCustomConstraints = @[].mutableCopy;
-    NSDictionary *views = @{@"segmentedControl" : self.segmentedControl, @"textLabel" : self.textLabel};
-    
-    if (self.textLabel.text.length > 0) {
-        [self.dynamicCustomConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[textLabel]-16-[segmentedControl]-|"
-                                                                                                   options:NSLayoutFormatAlignAllCenterY
-                                                                                                   metrics:nil
-                                                                                                     views:views]];
-        [self.dynamicCustomConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-12-[textLabel]-12-|"
-                                                                                                   options:0
-                                                                                                   metrics:nil
-                                                                                                     views:views]];
-    } else {
-        [self.dynamicCustomConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[segmentedControl]-|"
-                                                                                                   options:NSLayoutFormatAlignAllCenterY
-                                                                                                   metrics:nil
-                                                                                                     views:views]];
-        [self.dynamicCustomConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-12-[segmentedControl]-12-|"
-                                                                                                   options:0
-                                                                                                   metrics:nil
-                                                                                                     views:views]];
-    }
-    [self.contentView addConstraints:self.dynamicCustomConstraints];
-    [super updateConstraints];
-}
-
-- (void)dealloc
-{
-    [self.textLabel removeObserver:self forKeyPath:@"text"];
-}
-
 
 @end

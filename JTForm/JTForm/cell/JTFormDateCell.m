@@ -13,7 +13,7 @@
 /** 因为实在不知道怎么替换当前view的‘inputView’属性，所以当类型为‘JTFormRowTypePickerSelect’时，只能让这个属性成为第一响应者，然后用‘pickerView’属性替换掉它的‘textview.inputView’ */
 @property (nonatomic, strong) ASEditableTextNode *tempNode;
 @property (nonatomic, strong) UIDatePicker *datePicker;
-@property (nonatomic, strong) NSDateFormatter *dateFormatter;
+//@property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @end
 
 @implementation JTFormDateCell
@@ -35,6 +35,9 @@
 {
     [super update];
     
+    self.imageNode.image = self.rowDescriptor.image;
+    self.imageNode.URL = self.rowDescriptor.imageUrl;
+    
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
     self.titleNode.attributedText = [NSAttributedString
                                      attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
@@ -43,20 +46,20 @@
                                      firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
     
     if (!self.rowDescriptor.valueFormatter) {
-        self.rowDescriptor.valueFormatter = [[NSDateFormatter alloc] init];
-    }
-    _dateFormatter = (NSDateFormatter *)self.rowDescriptor.valueFormatter;
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate]) {
-        _dateFormatter.dateStyle = NSDateFormatterMediumStyle;
-        _dateFormatter.timeStyle = NSDateFormatterNoStyle;
-    }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime]) {
-        _dateFormatter.dateStyle = NSDateFormatterNoStyle;
-        _dateFormatter.timeStyle = NSDateFormatterShortStyle;
-    }
-    else {
-        _dateFormatter.dateStyle = NSDateFormatterShortStyle;
-        _dateFormatter.timeStyle = NSDateFormatterShortStyle;
+        NSDateFormatter *dateFormatter = (NSDateFormatter *)self.rowDescriptor.valueFormatter;
+        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate]) {
+            dateFormatter.dateStyle = NSDateFormatterMediumStyle;
+            dateFormatter.timeStyle = NSDateFormatterNoStyle;
+        }
+        else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime]) {
+            dateFormatter.dateStyle = NSDateFormatterNoStyle;
+            dateFormatter.timeStyle = NSDateFormatterShortStyle;
+        }
+        else {
+            dateFormatter.dateStyle = NSDateFormatterShortStyle;
+            dateFormatter.timeStyle = NSDateFormatterShortStyle;
+        }
+        self.rowDescriptor.valueFormatter = dateFormatter;
     }
     self.contentNode.attributedText = [self cellDisplayContent];
 }
@@ -142,12 +145,6 @@
 - (void)formCellHighlight
 {
     [super formCellHighlight];
-//    ASDisplayNode *node = [[[self jtForm] tableNode] findFirstResponder];
-//    NSLog(@"node = %@", node);
-//    
-//    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-//    UIView   *firstResponder = [keyWindow performSelector:@selector(firstResponder)];
-//    NSLog(@"view = %@", firstResponder);
 }
 
 - (void)formCellUnhighlight
@@ -159,24 +156,21 @@
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    NSArray *leftChildren = self.imageNode.image ? (_tempNode ? @[self.imageNode, self.titleNode, _tempNode] : @[self.imageNode, self.titleNode]) : (_tempNode ? @[self.titleNode, _tempNode] : @[self.titleNode]);
+    NSArray *leftChildren = self.imageNode.hasContent ? (_tempNode ? @[self.imageNode, self.titleNode, _tempNode] : @[self.imageNode, self.titleNode]) : (_tempNode ? @[self.titleNode, _tempNode] : @[self.titleNode]);
     ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
-                                                                           spacing:10.
+                                                                           spacing:kJTFormCellImageSpace
                                                                     justifyContent:ASStackLayoutJustifyContentStart
-                                                                        alignItems:ASStackLayoutAlignItemsStart
+                                                                        alignItems:ASStackLayoutAlignItemsCenter
                                                                           children:leftChildren];
     
     self.titleNode.style.maxHeight = ASDimensionMake(kJTFormDateMaxTitleHeight);
     self.titleNode.style.flexShrink = 2.;
     
-    
     leftStack.style.flexShrink = 2.;
-    
-    
     
     self.contentNode.style.minWidth = ASDimensionMakeWithFraction(kJTFormDateMaxContentWidthFraction);
     self.contentNode.style.maxHeight = ASDimensionMake(kJTFormDateMaxContentHeight);
-    self.contentNode.style.flexGrow = 2.;
+    self.contentNode.style.flexGrow = 1.;
     
     ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                               spacing:15.
@@ -195,11 +189,17 @@
     NSString *displayContent = nil;
     
     if (self.rowDescriptor.value) {
-        if (_dateFormatter) {
-            NSAssert([_dateFormatter isKindOfClass:[NSDateFormatter class]], @"valueTransformer is not subclass of NSDateFormatter");
-            displayContent = [_dateFormatter stringFromDate:self.rowDescriptor.value];
+        if (self.rowDescriptor.valueFormatter) {
+            NSAssert([self.rowDescriptor.valueFormatter isKindOfClass:[NSDateFormatter class]], @"valueFormatter is not subclass of NSDateFormatter");
+            displayContent = [(NSDateFormatter *)self.rowDescriptor.valueFormatter stringFromDate:self.rowDescriptor.value];
         } else {
-            displayContent = [self.rowDescriptor.value description];
+            if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimer]) {
+                NSCalendar *calendar = [NSCalendar currentCalendar];
+                NSDateComponents *time = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute fromDate:self.rowDescriptor.value];
+                displayContent = [NSString stringWithFormat:@"%ld%@ %ldmin", (long)[time hour], (long)[time hour] == 1 ? @"hour" : @"hours", (long)[time minute]];
+            } else {
+                displayContent = [self.rowDescriptor.value description];
+            }
         }
     } else {
         noValue = YES;

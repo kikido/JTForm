@@ -12,11 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSObject (JTFormHelper)
 
-- (id)valueData;
+- (id)cellValue;
 
 - (BOOL)jt_isEqual:(id)object;
 
-- (NSString *)displayText;
+- (NSString *)cellText;
 
 - (BOOL)jt_isNotEmpty;
 @end

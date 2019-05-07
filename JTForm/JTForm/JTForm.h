@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) ASTableNode *tableNode;
 
+@property (nonatomic, strong) JTFormDescriptor *formDescriptor;
+
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
 + (NSMutableDictionary *)cellClassesForRowTypes;
@@ -36,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor;
 
 - (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor;
+
+- (void)reloadForm;
 
 
 

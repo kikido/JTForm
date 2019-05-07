@@ -37,6 +37,7 @@ extern NSString *const JTFormRowTypeMultipleSelect;
 extern NSString *const JTFormRowTypeSheetSelect;
 extern NSString *const JTFormRowTypeAlertSelect;
 extern NSString *const JTFormRowTypePickerSelect;
+extern NSString *const JTFormRowTypePushButton;
 
 //|------ date ------------------------------
 extern NSString *const JTFormRowTypeDate;
@@ -56,12 +57,20 @@ extern NSString *const JTFormRowTypeSegmentedControl;
 extern NSString *const JTFormRowTypeSlider;
 extern NSString *const JTFormRowTypeButton;
 
+//|------ custom ------------------------------
+extern NSString *const JTFormRowTypeFloatText;
+
+
 extern CGFloat const JTFormUnspecifiedCellHeight;
 
 @interface JTRowDescriptor : JTBaseDescriptor
 
 /** 单元行的标题 */
 @property (nonatomic, copy  ) NSString *title;
+
+@property (nonatomic, strong) UIImage *image;
+
+@property (nonatomic, strong) NSURL *imageUrl;
 
 /** 单元行的tag，不可重复 */
 @property (nonatomic, copy  ) NSString *tag;
@@ -85,13 +94,13 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 @property (nonatomic, strong) JTRowAction *action;
 
 
-///|< 配置cell，当JTForm调用update方法后使用
+/** 配置cell，在‘update’方法后使用 */
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigAfterUpdate;
-///|< 配置cell，当JTForm调用update方法后，且disable属性为Yes时被使用
+/** 配置cell，当'update'方法后，且disabled属性为Yes时被使用 */
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigWhenDisabled;
-///|< 配置cell，当cell调用config之后，update方法之前调用
+/** 配置cell，当cell调用config之后，update方法之前调用 */
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigAtConfigure;
-///|< 预留
+/** 预留 */
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellDataDictionary;
 /** 数据模型，可为nil */
 @property (nonatomic, assign) id mode;

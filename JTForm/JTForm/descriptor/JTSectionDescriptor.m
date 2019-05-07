@@ -10,6 +10,9 @@
 #import "JTFormDescriptor.h"
 #import "JTBaseCell.h"
 
+CGFloat const JTFormDefaultSectionHeaderHeight = 25.;
+CGFloat const JTFormDefaultSectionFooterHeight = 25.;
+
 @interface JTSectionDescriptor ()
 @property (nonatomic, strong, readwrite) NSMutableArray *formRows;
 @property (nonatomic, strong, readwrite) NSMutableArray *allRows;
@@ -24,9 +27,9 @@
     if (self = [super init]) {
         _formRows = @[].mutableCopy;
         _allRows = @[].mutableCopy;
-        
-        _footerHeight = 30.;
-        _headerHeight = 30.;
+
+        _headerHeight = JTFormDefaultSectionHeaderHeight;
+        _footerHeight = JTFormDefaultSectionFooterHeight;
         
         [self addObserver:self forKeyPath:@"formRows" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     }
@@ -252,5 +255,16 @@
     _hidden = hidden;
     [self.formDescriptor evaluateFormSectionIsHidden:self];
 }
+
+#pragma mark - disabled
+
+//- (BOOL)disabled
+//{
+//    if (self.formDescriptor.disabled) {
+//        return YES;
+//    }
+//    return self.disabled;
+//}
+#pragma mark - set
 
 @end

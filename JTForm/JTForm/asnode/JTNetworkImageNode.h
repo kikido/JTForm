@@ -15,30 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface JTNetworkImageNode : ASDisplayNode
 
-/**
- 图片的网络地址
- */
-@property (nonatomic, copy) NSURL *URL;
+@property (nonatomic, copy  ) NSURL          *URL;
 
-/**
- 转场color
- */
-@property (nonatomic, strong)UIColor *placeholderColor;
+@property (nonatomic, strong) UIColor        *placeholderColor;
 
-/**
- 静态image
- */
-@property (nonatomic, strong)UIImage *image;
+@property (nonatomic, strong) UIImage        *image;
 
-/**
- 转场时间
- */
-@property (nonatomic, assign)NSTimeInterval jt_placeholderFadeDuration;
+@property (nonatomic, assign) NSTimeInterval jtPlaceholderFadeDuration;
 
-/**
- 空置图片
- */
-@property (nonatomic, strong)UIImage *defaultImage;
+@property (nonatomic, strong) UIImage        *defaultImage;
+
+- (BOOL)hasContent;
 
 @end
 

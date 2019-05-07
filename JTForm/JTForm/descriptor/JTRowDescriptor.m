@@ -15,6 +15,7 @@ NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
 NSString *const JTFormRowTypeText = @"JTFormRowTypeText";
 NSString *const JTFormRowTypeName = @"JTFormRowTypeName";
 NSString *const JTFormRowTypeEmail = @"JTFormRowTypeEmail";
+/** 数字以及符号 */
 NSString *const JTFormRowTypeNumber = @"JTFormRowTypeNumber";
 NSString *const JTFormRowTypeInteger = @"JTFormRowTypeInteger";
 NSString *const JTFormRowTypeDecimal = @"JTFormRowTypeDecimal";
@@ -30,6 +31,7 @@ NSString *const JTFormRowTypeMultipleSelect = @"JTFormRowTypeMultipleSelect";
 NSString *const JTFormRowTypeSheetSelect = @"JTFormRowTypeSheetSelect";
 NSString *const JTFormRowTypeAlertSelect = @"JTFormRowTypeAlertSelect";
 NSString *const JTFormRowTypePickerSelect = @"JTFormRowTypePickerSelect";
+NSString *const JTFormRowTypePushButton = @"JTFormRowTypePushButton";
 
 NSString *const JTFormRowTypeDate = @"JTFormRowTypeDate";
 NSString *const JTFormRowTypeTime = @"JTFormRowTypeTime";
@@ -46,6 +48,8 @@ NSString *const JTFormRowTypeSegmentedControl = @"JTFormRowTypeSegmentedControl"
 NSString *const JTFormRowTypeSlider = @"JTFormRowTypeSlider";
 NSString *const JTFormRowTypeButton = @"JTFormRowTypeButton";
 
+NSString *const JTFormRowTypeFloatText = @"JTFormRowTypeFloatText";
+
 CGFloat const JTFormRowInitialHeight = -2.0;
 CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
@@ -57,6 +61,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 @implementation JTRowDescriptor
 
 @synthesize hidden = _hidden;
+@synthesize disabled = _disabled;
 
 + (instancetype)formRowDescriptorWithTag:(NSString *)tag rowType:(NSString *)rowType title:(NSString *)title
 {
@@ -69,8 +74,14 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         _title = title;
         _rowType = rowType;
         _tag = tag;
+        
         _height = JTFormRowInitialHeight;
         _action = [[JTRowAction alloc] init];
+        
+        _cellConfigAfterUpdate = @{}.mutableCopy;
+        _cellConfigWhenDisabled = @{}.mutableCopy;
+        _cellConfigAtConfigure = @{}.mutableCopy;
+        _cellDataDictionary = @{}.mutableCopy;
     }
     return self;
 }
@@ -122,6 +133,19 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     }
     return _height;
 }
+#pragma mark - disable
+
+- (BOOL)disabled
+{
+    if (self.sectionDescriptor.formDescriptor.disabled) {
+        return YES;
+    }
+    if (self.sectionDescriptor.disabled) {
+        return YES;
+    }
+    return _disabled;
+}
+
 #pragma mark - hidden
 
 - (void)setHidden:(BOOL)hidden
@@ -139,7 +163,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         if (self.valueFormatter) {
             return [self.valueFormatter stringForObjectValue:self.value];
         } else {
-            return [self.value displayText];
+            return [self.value cellText];
         }
     } else {
         return nil;
@@ -149,7 +173,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 - (nullable NSString *)editTextValue
 {
     if (self.value) {
-        return [self.value displayText];
+        return [self.value cellText];
     } else {
         return nil;
     }

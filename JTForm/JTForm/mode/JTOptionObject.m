@@ -27,9 +27,7 @@
 
 + (NSArray<JTOptionObject *> *)formOptionsObjectsWithValues:(nonnull NSArray *)values displayTexts:(nonnull NSArray *)displayTexts
 {
-    if (!values || values.count != displayTexts.count) {
-        return nil;
-    }
+    NSAssert((values && values.count == displayTexts.count), @"values's count must equal to displayTexts's count");
     NSMutableArray *temp = @[].mutableCopy;
     for (NSInteger i = 0; i < values.count; i++) {
         JTOptionObject *object = [[[self class] alloc] initWithValue:values[i] displayText:displayTexts[i]];
@@ -49,10 +47,15 @@
     if (self == optionObject) {
         return YES;
     }
-    if ([[self valueData] jt_isEqual:[optionObject valueData]]) {
+    if ([[self cellValue] jt_isEqual:[optionObject cellValue]]) {
         return YES;
     }
     return NO;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@ %p>: text:%@ value:%@", NSStringFromClass([self class]), &self, self.formDisplayText, self.formValue];
 }
 
 @end

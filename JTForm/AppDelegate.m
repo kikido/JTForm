@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 #import <UIKit/UIKit.h>
+#import "YYFPSLabel.h"
 
 @interface AppDelegate ()
 
@@ -27,6 +28,9 @@
     ViewController *vc = [[ViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];    
     self.window.rootViewController = nav;
+    
+    YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(15, 400., 100, 40.)];
+    [nav.view addSubview:fps];
     
     [self.window makeKeyAndVisible];
     

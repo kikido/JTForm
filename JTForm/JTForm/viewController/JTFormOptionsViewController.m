@@ -93,9 +93,9 @@
 {
     JTOptionObject *option = self.rowDescriptor.selectorOptions[indexPath.row];
     ASTextCellNode *cellNode = [[ASTextCellNode alloc] init];
-    cellNode.accessoryType = [self selectedItemsContainOption:option] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    cellNode.accessoryType = [self selectedItemsContainOption:option index:nil] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     cellNode.separatorInset = UIEdgeInsetsMake(0, 15, 0, 0);
-    cellNode.textNode.attributedText = [NSAttributedString attributedStringWithString:[option displayText]
+    cellNode.textNode.attributedText = [NSAttributedString attributedStringWithString:[option cellText]
                                                                                  font:[UIFont systemFontOfSize:16.]
                                                                                 color:UIColorHex(333333)
                                                                        firstWordColor:nil];
@@ -112,8 +112,9 @@
     
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeMultipleSelect]) {
         // 多选
-        if ([self selectedItemsContainOption:optionObject]) {
-            [_selectedItems removeObject:optionObject];
+        NSUInteger index;
+        if ([self selectedItemsContainOption:optionObject index:&index]) {
+            [_selectedItems removeObjectAtIndex:index];
             cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
             [_selectedItems addObject:optionObject];
@@ -122,7 +123,7 @@
     }
     else {
         // 单选
-        if ([[self.rowDescriptor.value valueData] jt_isEqual:[optionObject valueData]]) {
+        if ([[self.rowDescriptor.value cellValue] jt_isEqual:[optionObject cellValue]]) {
             self.rowDescriptor.value = nil;
             cell.accessoryType = UITableViewCellAccessoryNone;
         } else {
@@ -161,7 +162,7 @@
 
 #pragma mark - helper
 
-- (BOOL)selectedItemsContainOption:(JTOptionObject *)optionObject
+- (BOOL)selectedItemsContainOption:(JTOptionObject *)optionObject index:(NSUInteger *)index
 {
     if (!optionObject) {
         return NO;
@@ -171,6 +172,9 @@
     }
     for (NSInteger i = 0; i < _selectedItems.count; i++) {
         JTOptionObject *selectObject = _selectedItems[i];
+        if (index) {
+            *index = i;
+        }
         if ([optionObject jt_isEqual:selectObject]) {
             return YES;
         }

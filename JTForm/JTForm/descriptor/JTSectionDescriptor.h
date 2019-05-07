@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class JTFormDescriptor;
 
+extern CGFloat const JTFormDefaultSectionHeaderHeight;
+extern CGFloat const JTFormDefaultSectionFooterHeight;
+
 @interface JTSectionDescriptor : JTBaseDescriptor
 
 /** 在表单中，这一节所有显示出来的单元行集合(不包括隐藏的单元行) */
@@ -21,6 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 /** 这一节所包含的所有单元行(包括隐藏的单元行) */
 @property (nonatomic, strong, readonly) NSMutableArray *allRows;
 
+#pragma mark -
+
+@property (nullable, nonatomic, strong) UIView *headerView;
+
+@property (nullable, nonatomic, strong) UIView *footerView;
 /** 这一节的头标题 */
 @property (nonatomic, copy) NSAttributedString *headerAttributedString;
 

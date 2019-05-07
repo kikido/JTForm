@@ -35,6 +35,9 @@
 {
     [super update];
     
+    self.imageNode.image = self.rowDescriptor.image;
+    self.imageNode.URL = self.rowDescriptor.imageUrl;
+    
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
         _tempNode = [[ASEditableTextNode alloc] init];
         _tempNode.delegate = self;
@@ -54,7 +57,6 @@
     
     self.contentNode.attributedText = [self cellDisplayContent];
     self.contentNode.backgroundColor = [UIColor yellowColor];
-    
 }
 
 - (void)formCellDidSelected
@@ -115,30 +117,32 @@
             }]];
         }];
         [self.closestViewController presentViewController:alertController animated:YES completion:nil];
+    } else {
+        if (self.rowDescriptor.action.rowBlock) {
+            self.rowDescriptor.action.rowBlock(self.rowDescriptor);
+        }
     }
     [[[self jtForm] tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    NSArray *leftChildren = self.imageNode.image ? (_tempNode ? @[self.imageNode, self.titleNode, _tempNode] : @[self.imageNode, self.titleNode]) : (_tempNode ? @[self.titleNode, _tempNode] : @[self.titleNode]);
-    ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
-                                                                           spacing:10.
-                                                                    justifyContent:ASStackLayoutJustifyContentStart
-                                                                        alignItems:ASStackLayoutAlignItemsStart
-                                                                          children:leftChildren];
-    
     self.titleNode.style.maxHeight = ASDimensionMake(kJTFormSelectMaxTitleHeight);
     self.titleNode.style.flexShrink = 2.;
+    
+    NSArray *leftChildren = self.imageNode.hasContent ? (_tempNode ? @[self.imageNode, self.titleNode, _tempNode] : @[self.imageNode, self.titleNode]) : (_tempNode ? @[self.titleNode, _tempNode] : @[self.titleNode]);
+    ASStackLayoutSpec *leftStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                           spacing:kJTFormCellImageSpace
+                                                                    justifyContent:ASStackLayoutJustifyContentStart
+                                                                        alignItems:ASStackLayoutAlignItemsCenter
+                                                                          children:leftChildren];
 
     
-    leftStack.style.flexShrink = 2.;
+    leftStack.style.flexShrink = 1.;
     
-    
-    
-    self.contentNode.style.minWidth = ASDimensionMakeWithFraction(.6);
+    self.contentNode.style.width = ASDimensionMakeWithFraction(.6);
     self.contentNode.style.maxHeight = ASDimensionMake(kJTFormSelectMaxContentHeight);
-    self.contentNode.style.flexGrow = 2.;
+    self.contentNode.style.flexGrow = 1.;
 
     ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                               spacing:15.
@@ -177,7 +181,6 @@
 
 - (void)formCellHighlight
 {
-    // fixme
     [super formCellHighlight];
 }
 
@@ -194,7 +197,14 @@
         _pickerView = [UIPickerView new];
         _pickerView.delegate = self;
         _pickerView.dataSource = self;
-//        [_pickerView selectRow:[self selectedIndex] inComponent:0 animated:NO];
+        if (self.rowDescriptor.value) {
+            [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([self.rowDescriptor.value jt_isEqual:obj]) {
+                    [self.pickerView selectRow:idx inComponent:0 animated:NO];
+                    *stop = YES;
+                }
+            }];
+        }
     }
     return _pickerView;
 }
@@ -203,7 +213,7 @@
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    return [self.rowDescriptor.selectorOptions[row] displayText];
+    return [self.rowDescriptor.selectorOptions[row] cellText];
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
@@ -243,13 +253,13 @@
                 // 有值，有‘valueTransformer’
                 NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]], @"valueTransformer is not a subclass of NSValueTransformer");
                 NSValueTransformer *valueTransformer = [[self.rowDescriptor.valueTransformer alloc] init];
-                displayContent = [valueTransformer transformedValue:[self.rowDescriptor.value valueData]];
+                displayContent = [valueTransformer transformedValue:[self.rowDescriptor.value cellValue]];
             } else {
                 // 有值，没有‘valueTransformer’
                 NSMutableArray *descriptionArray = @[].mutableCopy;
                 for (NSInteger i = 0; i < [self.rowDescriptor.value count]; i++) {
                     JTOptionObject *selectObject = self.rowDescriptor.value[i];
-                    [descriptionArray addObject:[selectObject displayText]];
+                    [descriptionArray addObject:[selectObject cellText]];
                 }
                 displayContent = [descriptionArray componentsJoinedByString:@", "];
             }
@@ -262,9 +272,9 @@
             if (self.rowDescriptor.valueTransformer) {
                 NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]], @"valueTransformer is not a subclass of NSValueTransformer");
                 NSValueTransformer *valueTransformer = [self.rowDescriptor.valueTransformer new];
-                displayContent = [valueTransformer transformedValue:[self.rowDescriptor.value valueData]];
+                displayContent = [valueTransformer transformedValue:[self.rowDescriptor.value cellText]];
             } else {
-                displayContent = [self.rowDescriptor.value displayText];
+                displayContent = [self.rowDescriptor.value cellText];
             }
         }
     }
@@ -294,7 +304,7 @@
 
 - (NSString *)cellSelectorDisplayTitle:(JTOptionObject *)optionObject
 {
-    NSString *optionTitle = [optionObject displayText];
+    NSString *optionTitle = [optionObject cellText];
     if (self.rowDescriptor.valueTransformer) {
         NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]], @"valueTransformer is not a subclass of NSValueTransformer");
         NSValueTransformer * valueTransformer = [self.rowDescriptor.valueTransformer new];

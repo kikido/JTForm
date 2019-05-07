@@ -8,9 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		1D2163C8227E8A0800ED48B4 /* JTFromSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2163C7227E8A0800ED48B4 /* JTFromSwitchCell.m */; };
+		1D39F27022811F550038A831 /* JVFloatLabeledTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F26A22811F550038A831 /* JVFloatLabeledTextField.m */; };
+		1D39F27122811F550038A831 /* JVFloatLabeledTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F26C22811F550038A831 /* JVFloatLabeledTextView.m */; };
+		1D39F27222811F550038A831 /* NSString+TextDirectionality.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F26E22811F550038A831 /* NSString+TextDirectionality.m */; };
+		1D39F27522811F830038A831 /* JTFormFloatTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27422811F830038A831 /* JTFormFloatTextCell.m */; };
+		1D39F27C228162440038A831 /* SelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27B228162440038A831 /* SelectViewController.m */; };
+		1D39F27F2281740D0038A831 /* JTTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27E2281740D0038A831 /* JTTransform.m */; };
+		1D39F28222817AD20038A831 /* DateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28122817AD20038A831 /* DateViewController.m */; };
 		1D55FA5D227F024400943F01 /* JTFormCheckCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5C227F024400943F01 /* JTFormCheckCell.m */; };
 		1D55FA60227F083100943F01 /* JTFormStepCounterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5F227F083100943F01 /* JTFormStepCounterCell.m */; };
 		1D55FA63227F14A000943F01 /* JTFormSegmentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA62227F14A000943F01 /* JTFormSegmentCell.m */; };
+		1D55FA6A227FD20500943F01 /* JTFormSliderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA69227FD20500943F01 /* JTFormSliderCell.m */; };
+		1D55FA6F22800BCE00943F01 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA6E22800BCE00943F01 /* RootViewController.m */; };
+		1D55FA7222800BFE00943F01 /* TextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA7122800BFE00943F01 /* TextViewController.m */; };
+		1D55FA7522801AFB00943F01 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA7422801AFB00943F01 /* TestViewController.m */; };
 		1D837DEA226AF61F00AEF748 /* JTFormTextViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DE9226AF61F00AEF748 /* JTFormTextViewCell.m */; };
 		1D837DEE226D948F00AEF748 /* JTOptionObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DED226D948F00AEF748 /* JTOptionObject.m */; };
 		1D837DF1226EA36000AEF748 /* JTFormSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D837DF0226EA36000AEF748 /* JTFormSelectCell.m */; };
@@ -46,12 +57,34 @@
 		1D2163C6227E8A0800ED48B4 /* JTFromSwitchCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFromSwitchCell.h; sourceTree = "<group>"; };
 		1D2163C7227E8A0800ED48B4 /* JTFromSwitchCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFromSwitchCell.m; sourceTree = "<group>"; };
 		1D339BF52269A445002AFEF2 /* JTFormCellLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCellLayout.h; sourceTree = "<group>"; };
+		1D39F26A22811F550038A831 /* JVFloatLabeledTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JVFloatLabeledTextField.m; sourceTree = "<group>"; };
+		1D39F26B22811F550038A831 /* JVFloatLabeledTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JVFloatLabeledTextField.h; sourceTree = "<group>"; };
+		1D39F26C22811F550038A831 /* JVFloatLabeledTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JVFloatLabeledTextView.m; sourceTree = "<group>"; };
+		1D39F26D22811F550038A831 /* NSString+TextDirectionality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+TextDirectionality.h"; sourceTree = "<group>"; };
+		1D39F26E22811F550038A831 /* NSString+TextDirectionality.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+TextDirectionality.m"; sourceTree = "<group>"; };
+		1D39F26F22811F550038A831 /* JVFloatLabeledTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JVFloatLabeledTextView.h; sourceTree = "<group>"; };
+		1D39F27322811F830038A831 /* JTFormFloatTextCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormFloatTextCell.h; sourceTree = "<group>"; };
+		1D39F27422811F830038A831 /* JTFormFloatTextCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormFloatTextCell.m; sourceTree = "<group>"; };
+		1D39F27A228162440038A831 /* SelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectViewController.h; sourceTree = "<group>"; };
+		1D39F27B228162440038A831 /* SelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectViewController.m; sourceTree = "<group>"; };
+		1D39F27D2281740D0038A831 /* JTTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTTransform.h; sourceTree = "<group>"; };
+		1D39F27E2281740D0038A831 /* JTTransform.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTTransform.m; sourceTree = "<group>"; };
+		1D39F28022817AD20038A831 /* DateViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DateViewController.h; sourceTree = "<group>"; };
+		1D39F28122817AD20038A831 /* DateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DateViewController.m; sourceTree = "<group>"; };
 		1D55FA5B227F024400943F01 /* JTFormCheckCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCheckCell.h; sourceTree = "<group>"; };
 		1D55FA5C227F024400943F01 /* JTFormCheckCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCheckCell.m; sourceTree = "<group>"; };
 		1D55FA5E227F083100943F01 /* JTFormStepCounterCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormStepCounterCell.h; sourceTree = "<group>"; };
 		1D55FA5F227F083100943F01 /* JTFormStepCounterCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormStepCounterCell.m; sourceTree = "<group>"; };
 		1D55FA61227F14A000943F01 /* JTFormSegmentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormSegmentCell.h; sourceTree = "<group>"; };
 		1D55FA62227F14A000943F01 /* JTFormSegmentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormSegmentCell.m; sourceTree = "<group>"; };
+		1D55FA68227FD20500943F01 /* JTFormSliderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormSliderCell.h; sourceTree = "<group>"; };
+		1D55FA69227FD20500943F01 /* JTFormSliderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormSliderCell.m; sourceTree = "<group>"; };
+		1D55FA6D22800BCE00943F01 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		1D55FA6E22800BCE00943F01 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		1D55FA7022800BFE00943F01 /* TextViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextViewController.h; sourceTree = "<group>"; };
+		1D55FA7122800BFE00943F01 /* TextViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextViewController.m; sourceTree = "<group>"; };
+		1D55FA7322801AFB00943F01 /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		1D55FA7422801AFB00943F01 /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		1D837DE8226AF61F00AEF748 /* JTFormTextViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormTextViewCell.h; sourceTree = "<group>"; };
 		1D837DE9226AF61F00AEF748 /* JTFormTextViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormTextViewCell.m; sourceTree = "<group>"; };
 		1D837DEC226D948F00AEF748 /* JTOptionObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTOptionObject.h; sourceTree = "<group>"; };
@@ -125,6 +158,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D39F26922811F3F0038A831 /* floatlabel */ = {
+			isa = PBXGroup;
+			children = (
+				1D39F26B22811F550038A831 /* JVFloatLabeledTextField.h */,
+				1D39F26A22811F550038A831 /* JVFloatLabeledTextField.m */,
+				1D39F26F22811F550038A831 /* JVFloatLabeledTextView.h */,
+				1D39F26C22811F550038A831 /* JVFloatLabeledTextView.m */,
+				1D39F26D22811F550038A831 /* NSString+TextDirectionality.h */,
+				1D39F26E22811F550038A831 /* NSString+TextDirectionality.m */,
+			);
+			path = floatlabel;
+			sourceTree = "<group>";
+		};
+		1D39F27622812BF40038A831 /* formatter */ = {
+			isa = PBXGroup;
+			children = (
+				1D39F27D2281740D0038A831 /* JTTransform.h */,
+				1D39F27E2281740D0038A831 /* JTTransform.m */,
+			);
+			path = formatter;
+			sourceTree = "<group>";
+		};
 		1D837DEB226D946C00AEF748 /* mode */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,8 +222,19 @@
 				1DDADA3D225B6FF800652FE6 /* JTForm */,
 				1DDADA27225B6DA000652FE6 /* AppDelegate.h */,
 				1DDADA28225B6DA000652FE6 /* AppDelegate.m */,
+				1D55FA6D22800BCE00943F01 /* RootViewController.h */,
+				1D55FA6E22800BCE00943F01 /* RootViewController.m */,
 				1DDADA2A225B6DA000652FE6 /* ViewController.h */,
 				1DDADA2B225B6DA000652FE6 /* ViewController.m */,
+				1D55FA7022800BFE00943F01 /* TextViewController.h */,
+				1D55FA7122800BFE00943F01 /* TextViewController.m */,
+				1D39F27A228162440038A831 /* SelectViewController.h */,
+				1D39F27B228162440038A831 /* SelectViewController.m */,
+				1D39F28022817AD20038A831 /* DateViewController.h */,
+				1D39F28122817AD20038A831 /* DateViewController.m */,
+				1D55FA7322801AFB00943F01 /* TestViewController.h */,
+				1D55FA7422801AFB00943F01 /* TestViewController.m */,
+				1D39F27622812BF40038A831 /* formatter */,
 				1DDADA30225B6DA100652FE6 /* Assets.xcassets */,
 				1DDADA35225B6DA100652FE6 /* Info.plist */,
 				1DDADA36225B6DA100652FE6 /* main.m */,
@@ -235,6 +301,10 @@
 				1D55FA5F227F083100943F01 /* JTFormStepCounterCell.m */,
 				1D55FA61227F14A000943F01 /* JTFormSegmentCell.h */,
 				1D55FA62227F14A000943F01 /* JTFormSegmentCell.m */,
+				1D55FA68227FD20500943F01 /* JTFormSliderCell.h */,
+				1D55FA69227FD20500943F01 /* JTFormSliderCell.m */,
+				1D39F27322811F830038A831 /* JTFormFloatTextCell.h */,
+				1D39F27422811F830038A831 /* JTFormFloatTextCell.m */,
 			);
 			path = cell;
 			sourceTree = "<group>";
@@ -281,6 +351,7 @@
 			children = (
 				1DDADA922268756600652FE6 /* JTFormNavigationAccessoryView.h */,
 				1DDADA932268756600652FE6 /* JTFormNavigationAccessoryView.m */,
+				1D39F26922811F3F0038A831 /* floatlabel */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -395,12 +466,17 @@
 			files = (
 				1DDADA7922646A1A00652FE6 /* JTDefaultCell.m in Sources */,
 				1DDADA4A225B771800652FE6 /* JTSectionDescriptor.m in Sources */,
+				1D39F27022811F550038A831 /* JVFloatLabeledTextField.m in Sources */,
 				1DDADA8022646E7700652FE6 /* JTNetworkImageNode.m in Sources */,
 				1DDADA892264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m in Sources */,
 				1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */,
 				1D837DF9226FF58E00AEF748 /* NSString+JTAdd.m in Sources */,
 				1DDADA6F225E246200652FE6 /* JTBaseCell.m in Sources */,
 				1DDADA55225B897D00652FE6 /* NSObject+JTFormHelper.m in Sources */,
+				1D39F27C228162440038A831 /* SelectViewController.m in Sources */,
+				1D39F27122811F550038A831 /* JVFloatLabeledTextView.m in Sources */,
+				1D55FA6F22800BCE00943F01 /* RootViewController.m in Sources */,
+				1D39F28222817AD20038A831 /* DateViewController.m in Sources */,
 				1DDADA47225B770000652FE6 /* JTRowDescriptor.m in Sources */,
 				1D2163C8227E8A0800ED48B4 /* JTFromSwitchCell.m in Sources */,
 				1D55FA63227F14A000943F01 /* JTFormSegmentCell.m in Sources */,
@@ -410,13 +486,19 @@
 				1DDADA8622647CDA00652FE6 /* UIColor+JTFormAdditions.m in Sources */,
 				1D837DEA226AF61F00AEF748 /* JTFormTextViewCell.m in Sources */,
 				1DDADA902266FD2600652FE6 /* JTFormTextFieldCell.m in Sources */,
+				1D39F27222811F550038A831 /* NSString+TextDirectionality.m in Sources */,
+				1D55FA7522801AFB00943F01 /* TestViewController.m in Sources */,
 				1DF4C2E22271A02500FAEC41 /* JTFormDateCell.m in Sources */,
+				1D55FA7222800BFE00943F01 /* TextViewController.m in Sources */,
 				1D837DEE226D948F00AEF748 /* JTOptionObject.m in Sources */,
 				1DDADA8322647ABA00652FE6 /* NSAttributedString+JTFormAdditions.m in Sources */,
 				1D55FA5D227F024400943F01 /* JTFormCheckCell.m in Sources */,
 				1D55FA60227F083100943F01 /* JTFormStepCounterCell.m in Sources */,
 				1DF4C2E52271D90A00FAEC41 /* YYFPSLabel.m in Sources */,
 				1D837DF1226EA36000AEF748 /* JTFormSelectCell.m in Sources */,
+				1D39F27F2281740D0038A831 /* JTTransform.m in Sources */,
+				1D39F27522811F830038A831 /* JTFormFloatTextCell.m in Sources */,
+				1D55FA6A227FD20500943F01 /* JTFormSliderCell.m in Sources */,
 				1DDADA52225B784700652FE6 /* JTForm.m in Sources */,
 				1DDADA942268756600652FE6 /* JTFormNavigationAccessoryView.m in Sources */,
 				1DDADA4D225B772D00652FE6 /* JTFormDescriptor.m in Sources */,

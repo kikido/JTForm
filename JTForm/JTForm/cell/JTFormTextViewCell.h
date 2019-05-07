@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormTextViewCell : JTBaseCell
-
+@property (nonatomic, strong) UITextView *textView;
 @end
 
 NS_ASSUME_NONNULL_END

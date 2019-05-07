@@ -15,6 +15,9 @@
 #import "JTFormDateCell.h"
 #import "JTFormDateInlineCell.h"
 #import "JTFromSwitchCell.h"
+#import "JTFormSegmentCell.h"
+#import "JTFormSliderCell.h"
+#import "JTFormFloatTextCell.h"
 
 #import "JTFormNavigationAccessoryView.h"
 #import "JTFormCheckCell.h"
@@ -26,7 +29,6 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 };
 
 @interface JTForm () <ASTableDelegate, ASTableDataSource, JTFormDescriptorDelegate>
-@property (nonatomic, strong) JTFormDescriptor *formDescriptor;
 @property (nonatomic, strong) JTFormNavigationAccessoryView *navigationAccessoryView;
 
 @property (nonatomic, strong) NSNumber *oldBottomTableMargin;
@@ -80,37 +82,55 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 - (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    if (sectionDescriptor.headerView) {
+        return sectionDescriptor.headerView;
+    }
     if (!sectionDescriptor.headerAttributedString) {
         return nil;
     }
-    
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 40)];
-    view.backgroundColor = [UIColor greenColor];
-    view.opaque = YES;
+    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, sectionDescriptor.headerHeight)];
+    header.opaque = YES;
     
     ASTextNode *textNode = [[ASTextNode alloc] init];
     textNode.attributedText = sectionDescriptor.headerAttributedString;
-//    textNode.layerBacked = YES;
-//    [textNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
-//        node.style.flexGrow = 1.;
-//        node.style.flexShrink = 1.;
-//        return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(5, 15, 5, 15) child:node];
-//    }];
-
-    [view addSubnode:textNode];
+    textNode.frame = CGRectMake(15., 5., self.bounds.size.width - 30., sectionDescriptor.headerHeight - 10.);
+    [header addSubnode:textNode];
     
-    return nil;
+    return header;
+}
+
+- (nullable UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    if (sectionDescriptor.footerView) {
+        return sectionDescriptor.footerView;
+    }
+    if (!sectionDescriptor.footerAttributedString) {
+        return nil;
+    }
+    UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, sectionDescriptor.footerHeight)];
+    footer.backgroundColor = [UIColor greenColor];
+    footer.opaque = YES;
+    
+    ASTextNode *textNode = [[ASTextNode alloc] init];
+    textNode.attributedText = sectionDescriptor.headerAttributedString;
+    textNode.frame = CGRectMake(15., 5., self.bounds.size.width - 30., sectionDescriptor.footerHeight - 10.);
+    [footer addSubnode:textNode];
+    
+    return footer;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 15.;
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    return sectionDescriptor.headerHeight;
 }
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-//{
-//    return 0.;
-//}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    return sectionDescriptor.footerHeight;
+}
 
 #pragma mark - notification
 
@@ -381,6 +401,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
                                     JTFormRowTypeSheetSelect : [JTFormSelectCell class],
                                     JTFormRowTypeAlertSelect : [JTFormSelectCell class],
                                     JTFormRowTypePickerSelect : [JTFormSelectCell class],
+                                    JTFormRowTypePushButton : [JTFormSelectCell class],
                                       
                                     JTFormRowTypeDate : [JTFormDateCell class],
                                     JTFormRowTypeTime : [JTFormDateCell class],
@@ -391,7 +412,11 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
                                     
                                     JTFormRowTypeSwitch : [JTFromSwitchCell class],
                                     JTFormRowTypeCheck : [JTFormCheckCell class],
-                                    JTFormRowTypeStepCounter : [JTFormStepCounterCell class]
+                                    JTFormRowTypeStepCounter : [JTFormStepCounterCell class],
+                                    JTFormRowTypeSegmentedControl : [JTFormSegmentCell class],
+                                    JTFormRowTypeSlider : [JTFormSliderCell class],
+                                    
+                                    JTFormRowTypeFloatText : [JTFormFloatTextCell class]
                                     }.mutableCopy;
     });
     return _cellClassesForRowTypes;
@@ -575,6 +600,10 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         // fixme 可能有问题
         [self.tableNode reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }
+}
+
+- (void)reloadForm
+{
 }
 
 @end
