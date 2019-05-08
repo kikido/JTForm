@@ -16,6 +16,8 @@
 		1D39F27F2281740D0038A831 /* JTTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27E2281740D0038A831 /* JTTransform.m */; };
 		1D39F28222817AD20038A831 /* DateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28122817AD20038A831 /* DateViewController.m */; };
 		1D39F28522819E160038A831 /* OtherViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28422819E160038A831 /* OtherViewController.m */; };
+		1D39F28E2282F9FF0038A831 /* JTFormValidateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28D2282F9FF0038A831 /* JTFormValidateObject.m */; };
+		1D39F292228308010038A831 /* JTFormRegexValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F291228308010038A831 /* JTFormRegexValidator.m */; };
 		1D55FA5D227F024400943F01 /* JTFormCheckCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5C227F024400943F01 /* JTFormCheckCell.m */; };
 		1D55FA60227F083100943F01 /* JTFormStepCounterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5F227F083100943F01 /* JTFormStepCounterCell.m */; };
 		1D55FA63227F14A000943F01 /* JTFormSegmentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA62227F14A000943F01 /* JTFormSegmentCell.m */; };
@@ -74,6 +76,11 @@
 		1D39F28122817AD20038A831 /* DateViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DateViewController.m; sourceTree = "<group>"; };
 		1D39F28322819E160038A831 /* OtherViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OtherViewController.h; sourceTree = "<group>"; };
 		1D39F28422819E160038A831 /* OtherViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OtherViewController.m; sourceTree = "<group>"; };
+		1D39F28C2282F9FF0038A831 /* JTFormValidateObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormValidateObject.h; sourceTree = "<group>"; };
+		1D39F28D2282F9FF0038A831 /* JTFormValidateObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormValidateObject.m; sourceTree = "<group>"; };
+		1D39F28F2282FBF10038A831 /* JTFormValidateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormValidateProtocol.h; sourceTree = "<group>"; };
+		1D39F290228308010038A831 /* JTFormRegexValidator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormRegexValidator.h; sourceTree = "<group>"; };
+		1D39F291228308010038A831 /* JTFormRegexValidator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormRegexValidator.m; sourceTree = "<group>"; };
 		1D55FA5B227F024400943F01 /* JTFormCheckCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCheckCell.h; sourceTree = "<group>"; };
 		1D55FA5C227F024400943F01 /* JTFormCheckCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCheckCell.m; sourceTree = "<group>"; };
 		1D55FA5E227F083100943F01 /* JTFormStepCounterCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormStepCounterCell.h; sourceTree = "<group>"; };
@@ -183,6 +190,17 @@
 			path = formatter;
 			sourceTree = "<group>";
 		};
+		1D39F28B2282F95F0038A831 /* validation */ = {
+			isa = PBXGroup;
+			children = (
+				1D39F28C2282F9FF0038A831 /* JTFormValidateObject.h */,
+				1D39F28D2282F9FF0038A831 /* JTFormValidateObject.m */,
+				1D39F290228308010038A831 /* JTFormRegexValidator.h */,
+				1D39F291228308010038A831 /* JTFormRegexValidator.m */,
+			);
+			path = validation;
+			sourceTree = "<group>";
+		};
 		1D837DEB226D946C00AEF748 /* mode */ = {
 			isa = PBXGroup;
 			children = (
@@ -252,6 +270,7 @@
 		1DDADA3D225B6FF800652FE6 /* JTForm */ = {
 			isa = PBXGroup;
 			children = (
+				1D39F28B2282F95F0038A831 /* validation */,
 				1D837DF3226F413200AEF748 /* viewController */,
 				1D837DEB226D946C00AEF748 /* mode */,
 				1DDADA912268753F00652FE6 /* view */,
@@ -338,6 +357,7 @@
 			children = (
 				1D837DF2226F3F3A00AEF748 /* JTFormSelectViewControllerDelegate.h */,
 				1DF4C2E92271EE3E00FAEC41 /* JTFormInlineCellDelegate.h */,
+				1D39F28F2282FBF10038A831 /* JTFormValidateProtocol.h */,
 			);
 			path = delegate;
 			sourceTree = "<group>";
@@ -491,6 +511,7 @@
 				1DDADA8622647CDA00652FE6 /* UIColor+JTFormAdditions.m in Sources */,
 				1D837DEA226AF61F00AEF748 /* JTFormTextViewCell.m in Sources */,
 				1DDADA902266FD2600652FE6 /* JTFormTextFieldCell.m in Sources */,
+				1D39F28E2282F9FF0038A831 /* JTFormValidateObject.m in Sources */,
 				1D39F27222811F550038A831 /* NSString+TextDirectionality.m in Sources */,
 				1D55FA7522801AFB00943F01 /* TestViewController.m in Sources */,
 				1DF4C2E22271A02500FAEC41 /* JTFormDateCell.m in Sources */,
@@ -503,6 +524,7 @@
 				1D837DF1226EA36000AEF748 /* JTFormSelectCell.m in Sources */,
 				1D39F27F2281740D0038A831 /* JTTransform.m in Sources */,
 				1D39F28522819E160038A831 /* OtherViewController.m in Sources */,
+				1D39F292228308010038A831 /* JTFormRegexValidator.m in Sources */,
 				1D39F27522811F830038A831 /* JTFormFloatTextCell.m in Sources */,
 				1D55FA6A227FD20500943F01 /* JTFormSliderCell.m in Sources */,
 				1DDADA52225B784700652FE6 /* JTForm.m in Sources */,

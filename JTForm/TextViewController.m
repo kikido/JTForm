@@ -121,7 +121,7 @@
     
     
     JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
-    form.frame = self.view.bounds;
+    form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;
 }

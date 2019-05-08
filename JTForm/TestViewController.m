@@ -20,16 +20,56 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor yellowColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     
-    ASTextNode *textNode = [[ASTextNode alloc] init];
-    textNode.attributedText = [NSAttributedString rightAttributedStringWithString:@"测试一席好" font:nil color:nil];
-    textNode.frame = CGRectMake(15, 100, 300, 50);
-    textNode.backgroundColor = [UIColor blueColor];
     
-    [self.view addSubnode:textNode];
+    
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(30, 100, 300, 40.)];
+    textField.backgroundColor = [UIColor yellowColor];
+    [self.view addSubview:textField];
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(contentSizeCategoryChanged)
+                                                 name:UIContentSizeCategoryDidChangeNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    //    [[NSNotificationCenter defaultCenter] addObserver:self
+    //                                             selector:@selector(keyboardDidShow:)
+    //                                                 name:UIKeyboardDidShowNotification
+    //                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidHide)
+                                                 name:UIKeyboardDidHideNotification
+                                               object:nil];
     // Do any additional setup after loading the view.
 }
+
+- (void)keyboardWillShow:(NSNotification *)NSNotification
+{
+    NSLog(@"[%@] %s", [self class], __func__);
+    CGRect keybordEndFrame = [NSNotification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    self.view.transform = CGAffineTransformMakeTranslation(0, -200);
+}
+
+- (void)keyboardWillHide
+{
+    NSLog(@"[%@] %s", [self class], __func__);
+}
+
+- (void)keyboardDidHide
+{
+    NSLog(@"[%@] %s", [self class], __func__);
+}
+
+
 
 /*
 #pragma mark - Navigation

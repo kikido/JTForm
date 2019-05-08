@@ -7,6 +7,7 @@
 //
 
 #import "JTBaseDescriptor.h"
+#import "JTFormValidateProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -59,7 +60,6 @@ extern NSString *const JTFormRowTypeButton;
 
 //|------ custom ------------------------------
 extern NSString *const JTFormRowTypeFloatText;
-
 
 extern CGFloat const JTFormUnspecifiedCellHeight;
 
@@ -135,11 +135,31 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 
 #pragma mark - select
 
-// fixme
-/** 对于选择行来说，我们需要提前知道可以选择的数据。 */
+/** 可以选择的数据 */
 @property (nullable, nonatomic, copy) NSArray *selectorOptions;
-
+/** 选择时的标题 */
 @property (nullable, nonatomic, copy) NSString *selectorTitle;
+
+#pragma mark - validate
+/** 当‘require’为YES，且value为空时，返回该消息 */
+@property (nullable, nonatomic, copy) NSString *requireMsg;
+
+/**
+添加验证器
+ */
+- (void)addValidator:(nonnull id<JTFormValidateProtocol>)validator;
+
+
+/**
+ 移除验证器
+ */
+- (void)removeValidator:(nonnull id<JTFormValidateProtocol>)validator;
+
+
+/**
+ 对单元行的值进行验证
+ */
+- (nullable JTFormValidateObject *)doValidate;
 
 @end
 

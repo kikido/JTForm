@@ -84,90 +84,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "JTForm/JTForm/JTForm.m"
-            timestampString = "578988500.851499"
+            timestampString = "578991942.084005"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "503"
-            endingLineNumber = "503"
-            landmarkName = "-navigateToDirection:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JTForm/JTForm/JTForm.m"
-            timestampString = "578988500.851959"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "221"
-            endingLineNumber = "221"
-            landmarkName = "-keyboardWillShow:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[JTForm keyboardWillShow:]"
-                  moduleName = "JTForm"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTForm/JTForm/JTForm.m"
-                  timestampString = "578978153.340281"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "218"
-                  endingLineNumber = "218"
-                  offsetFromSymbolStart = "1068">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__27-[JTForm keyboardWillShow:]_block_invoke"
-                  moduleName = "JTForm"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTForm/JTForm/JTForm.m"
-                  timestampString = "578978153.3438261"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "219"
-                  endingLineNumber = "219"
-                  offsetFromSymbolStart = "24">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__destroy_helper_block_"
-                  moduleName = "JTForm"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTForm/JTForm/JTForm.m"
-                  timestampString = "578978153.346958"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "218"
-                  endingLineNumber = "218"
-                  offsetFromSymbolStart = "20">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "JTForm/JTForm/JTForm.m"
-            timestampString = "578988500.852273"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
             landmarkName = "-keyboardWillHide:"
             landmarkType = "7">
          </BreakpointContent>

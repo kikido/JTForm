@@ -28,16 +28,19 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     JTFormRowNavigationDirectionNext
 };
 
+typedef NS_ENUM(NSUInteger, JTFormErrorCode) {
+    JTFormErrorCodeInvalid = -999,
+    JTFormErrorCodeRequired = -1000
+};
+
+NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
+
 @interface JTForm () <ASTableDelegate, ASTableDataSource, JTFormDescriptorDelegate>
 @property (nonatomic, strong) JTFormNavigationAccessoryView *navigationAccessoryView;
 
-@property (nonatomic, strong) NSNumber *oldBottomTableMargin;
-@property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
-@property (nonatomic, assign) CGRect orginTableFrame;
 @property (nonatomic, assign) BOOL notFirstShowKeyBoard;
-@property (nonatomic, strong) NSNumber *oldTopTableInset;
-@property (nonatomic, assign) CGFloat temp;
-@property (nonatomic, assign) CGRect orginFrame;
+@property (nonatomic, assign) CGRect orginViewControllerFrame;
+@property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
 /** 代表第一响应者的那一行 */
 @property (nonatomic, strong) JTBaseCell *firstResponderCell;
 @end
@@ -76,7 +79,14 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 {
     self.tableNode.delegate = nil;
     self.tableNode.dataSource = nil;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
 }
+
+#pragma mark - ASCommonTableViewDelegate
 
 - (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
@@ -143,13 +153,13 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(keyboardDidShow:)
-//                                                 name:UIKeyboardDidShowNotification
-//                                               object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDidHide:)
+                                                 name:UIKeyboardDidHideNotification
                                                object:nil];
 }
 
@@ -160,70 +170,34 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-//    if (_firstResponderCell) {
-//        NSDictionary *keyboardInfo = notification.userInfo;
-//        CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-//        CGRect convertTableFrame = [self convertRect:self.tableNode.view.frame toView:self.window];
-//        // 如果该值小于0，就不需要去设置inset和transform
-//        CGFloat bottomMargin = CGRectGetMaxY(!_notFirstShowKeyBoard ? convertTableFrame : _orginTableFrame) - CGRectGetMinY(keybordFrame);
-//        NSLog(@"form %@",NSStringFromCGRect(convertTableFrame));
-//        NSLog(@"keyboard %@",NSStringFromCGRect(keybordFrame));
-//        NSLog(@"bottomMargin = %.1f",bottomMargin);
-//        if (bottomMargin <= 0 && !_notFirstShowKeyBoard) {
-//            return;
-//        }
-//        UIEdgeInsets tableContentInset = self.tableNode.contentInset;
-//        if (!_notFirstShowKeyBoard) {
-//            _notFirstShowKeyBoard = YES;
-//            _orginTableContentInset = self.tableNode.contentInset;
-//            _orginTableFrame = convertTableFrame;
-//        }
-//        // 当tb.min - transform.y小于0时，需要设置一下inset，不然tb顶部的内容会被遮掉
-//        tableContentInset.top = bottomMargin - CGRectGetMinY(_orginTableFrame);
-//
-////        if (_oldBottomTableMargin) {
-////            bottomMargin += [_oldBottomTableMargin doubleValue];
-////        }
-////
-////        _oldBottomTableMargin = @(bottomMargin);
-//
-//        [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
-//
-//            self.tableNode.contentInset = tableContentInset;
-//            self.transform = CGAffineTransformIdentity;
-//            self.transform = CGAffineTransformMakeTranslation(0, -bottomMargin);
-//
-//
-//        } completion:^(BOOL finished) {
-//            [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
-//        }];
-//    }
+    NSLog(@"[%@] %s", [self class], __func__);
     
-    NSDictionary *keyboardInfo = notification.userInfo;
-    NSLog(@"userInfo %@",keyboardInfo);
-    
-    if (_firstResponderCell) {
-        CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-        UIEdgeInsets tableContentInset = self.tableNode.contentInset;
+    if (_firstResponderCell && self.tableNode.closestViewController) {
+        NSDictionary *keyboardInfo = notification.userInfo;
+        CGRect keybordBeginFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+        CGRect keybordEndFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         if (!_notFirstShowKeyBoard) {
             // 第一次弹出键盘
             _notFirstShowKeyBoard = YES;
-            _orginTableContentInset = tableContentInset;
-            _orginFrame =  self.tableNode.closestViewController.view.frame;
+            _orginTableContentInset = self.tableNode.contentInset;
+            _orginViewControllerFrame =  self.tableNode.closestViewController.view.frame;
         }
-//        CGRect superFrame = [self.tableNode.closestViewController.view convertRect:self.tableNode.closestViewController.view.frame toView:self.window];
         self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
-        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginFrame));
-        CGFloat ty = _orginFrame.size.height + _orginFrame.origin.y - keybordFrame.origin.y;
-        
+        CGFloat ty = _orginViewControllerFrame.size.height + _orginViewControllerFrame.origin.y - keybordEndFrame.origin.y;
+
+        NSLog(@"[JTForm] keybordBeginFrame:%@",NSStringFromCGRect(keybordBeginFrame));
+        NSLog(@"[JTForm] keybordEndFrame:%@",NSStringFromCGRect(keybordEndFrame));
+        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginViewControllerFrame));
+        NSLog(@"[JTForm] ty:%f", ty);
+
         if (ty > 0) {
-            tableContentInset.top = ty;
-            
+            UIEdgeInsets newTableInset = UIEdgeInsetsMake(_orginTableContentInset.top + ty, _orginTableContentInset.left, _orginTableContentInset.bottom, _orginTableContentInset.right);
+
             [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
-                self.tableNode.contentInset = tableContentInset;
+                self.tableNode.contentInset = newTableInset;
                 self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
                 self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - ty);
-                [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
+                [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
             } completion:nil];
         }
     }
@@ -243,24 +217,30 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
+    
+    self.tableNode.contentInset = _orginTableContentInset;
+    self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
+
+    NSLog(@"[JTForm] %s", __func__);
+
 //    self.tableNode.contentInset = _orginTableContentInset;
-//    self.transform = CGAffineTransformIdentity;
+//    self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
 //
 //    _orginTableContentInset = UIEdgeInsetsZero;
 //    _oldBottomTableMargin = nil;
 //    _notFirstShowKeyBoard = false;
-    
+//    _firstResponderCell = nil;
+//    _orginFrame = CGRectZero;
+}
+
+- (void)keyboardDidHide:(NSNotification *)notification
+{
+    _orginTableContentInset = UIEdgeInsetsZero;
+    _notFirstShowKeyBoard = false;
+    _orginViewControllerFrame = CGRectZero;
+    _firstResponderCell = nil;
     
     NSLog(@"[JTForm] %s", __func__);
-
-    self.tableNode.contentInset = _orginTableContentInset;
-    self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
-    
-    _orginTableContentInset = UIEdgeInsetsZero;
-    _oldBottomTableMargin = nil;
-    _notFirstShowKeyBoard = false;
-    _firstResponderCell = nil;
-    _orginFrame = CGRectZero;
 }
 
 #pragma mark - JTFormDescriptorDelegate
@@ -496,6 +476,8 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 
 - (void)navigateToDirection:(JTFormRowNavigationDirection)direction
 {
+    NSLog(@"[JTForm] %s", __func__);
+
     JTBaseCell *currentCell = _firstResponderCell;
     JTRowDescriptor *currentRow = currentCell.rowDescriptor;
     JTRowDescriptor *nextRow = [self nextRowDescriptorForRow:currentRow direction:direction];
@@ -504,7 +486,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         JTBaseCell *nextCell = [nextRow cellInForm];
         if ([nextCell formCellCanBecomeFirstResponder]){
             NSIndexPath *indexPath = [self.tableNode indexPathForNode:nextCell];
-            [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
+            [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
             [nextCell formCellBecomeFirstResponder];
         }
     }
@@ -543,6 +525,64 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         return nextRow;
     }
     return [self nextRowDescriptorForRow:nextRow direction:direction];
+}
+
+#pragma mark - get data
+
+- (NSDictionary *)formValues
+{
+    NSMutableDictionary *result = @{}.mutableCopy;
+    for (JTSectionDescriptor *section in self.formDescriptor.allSections) {
+        for (JTRowDescriptor *row in section.allRows) {
+            if (row.tag.length > 0) {
+                [result setObject:row.value ? row.value : [NSNull null] forKey:row.tag];
+            }
+        }
+    }
+    return result.copy;
+}
+
+- (NSArray<NSError *> *)formValidationErrors
+{
+    NSMutableArray *result = @[].mutableCopy;
+    
+    for (JTSectionDescriptor *section in self.formDescriptor.formSections) {
+        for (JTRowDescriptor *row in section.formRows) {
+            JTFormValidateObject *vObject = [row doValidate];
+            if (vObject && !vObject.valid) {
+                NSDictionary *userInfo = @{
+                                           NSLocalizedDescriptionKey : vObject.errorMsg
+                                           };
+                NSError *error = [[NSError alloc] initWithDomain:JTFormErrorDomain code:JTFormErrorCodeInvalid userInfo:userInfo];
+                [result addObject:error];
+            }
+        }
+    }
+    return [result copy];
+}
+
+- (void)showFormValidationError:(NSError *)error
+{
+    if (!error || !self.tableNode.closestViewController) {
+        return;
+    }
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[NSString jt_localizedStringForKey:@"error"]
+                                                                             message:error.localizedDescription
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:[NSString jt_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:nil]];
+    [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)showFormValidationError:(NSError *)error withTitle:(NSString*)title
+{
+    if (!error || !self.tableNode.closestViewController) {
+        return;
+    }
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
+                                                                             message:error.localizedDescription
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:[NSString jt_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:nil]];
+    [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - 001

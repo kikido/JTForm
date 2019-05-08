@@ -21,6 +21,44 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
+#pragma mark - get data
+
+/**
+ 表单值的集合，即每一个单元行的值的集合。key为‘tag’，value为‘value’。如果有一些单元行的‘tag’重复，则仅仅保存其中的一条。如果‘value’为nil，则返回'[nsnull null]'
+ */
+- (NSDictionary *)formValues;
+
+/**
+ 获得表单的验证错误信息。你可以对单元行设置验证器（id<JTFormValidateProtocol>），如果单元行的值没有通过验证，则会通过该方法返回错误信息。
+
+ @return 未通过验证器验证的错误集合
+ */
+- (NSArray<NSError *> *)formValidationErrors;
+
+/**
+ 显示错误信息。当‘form’不在视图层级中时不可使用。
+
+ @param error 错误信息
+ */
+- (void)showFormValidationError:(NSError *)error;
+
+
+/**
+ 显示错误信息。当‘form’不在视图层级中时不可使用。
+
+
+ @param error 错误信息
+ @param title 错误标题
+ */
+- (void)showFormValidationError:(NSError *)error withTitle:(NSString*)title;
+
+
+#pragma mark - row
+
+/**
+ 一个字典。包含了行描述跟单元行相对应的信息，‘key’为行描述类型，value为单元行类型。
+ 当你自定义一个单元行时，你需要在‘+load’方法中为该字典添加新的信息
+ */
 + (NSMutableDictionary *)cellClassesForRowTypes;
 
 #pragma mark - inline row
@@ -30,18 +68,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)ensureRowIsVisible:(JTRowDescriptor *)rowDescriptor;
 
 #pragma mark - 001
-
-- (void)didSelectFormRow:(JTRowDescriptor *)rowDescriptor;
-
-- (void)deSelectFormRow:(JTRowDescriptor *)rowDescriptor;
+//- (void)didSelectFormRow:(JTRowDescriptor *)rowDescriptor;
+//
+//- (void)deSelectFormRow:(JTRowDescriptor *)rowDescriptor;
 
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor;
 
 - (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor;
 
 - (void)reloadForm;
-
-
 
 #pragma mark - edit text delegate
 

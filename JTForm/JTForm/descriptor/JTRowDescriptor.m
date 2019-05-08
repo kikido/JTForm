@@ -56,6 +56,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 @interface JTRowDescriptor ()
 @property (nonatomic, strong) JTBaseCell *cell;
+@property (nonatomic, strong) NSMutableArray<id<JTFormValidateProtocol>> *validators;
 @end
 
 @implementation JTRowDescriptor
@@ -182,6 +183,75 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@ , tag:%@, value:%@",[self class], &self,self.rowType, self.tag, self.value];
+}
+
+#pragma mark - Validation
+
+- (void)addValidator:(nonnull id<JTFormValidateProtocol>)validator
+{
+    if (validator == nil || ![validator conformsToProtocol:@protocol(JTFormValidateProtocol)]) {
+        return;
+    }
+    if (!_validators) {
+        _validators = @[].mutableCopy;
+    }
+    if(![self.validators containsObject:validator]) {
+        [self.validators addObject:validator];
+    }
+}
+
+- (void)removeValidator:(nonnull id<JTFormValidateProtocol>)validator;
+{
+    if (validator == nil|| ![validator conformsToProtocol:@protocol(JTFormValidateProtocol)]) {
+        return;
+    }
+    if ([self.validators containsObject:validator]) {
+        [self.validators removeObject:validator];
+    }
+}
+
+- (nullable JTFormValidateObject *)doValidate
+{
+    __block JTFormValidateObject *validateObject = nil;
+    
+    if (self.required) {
+        if ([self valueIsEmpty]) {
+            NSString *errorMsg = nil;
+            if (self.requireMsg != nil) {
+                errorMsg = self.requireMsg;
+            } else {
+                if (self.title != nil) {
+                    errorMsg = [NSString stringWithFormat:@"%@ %@", self.title, [NSString jt_localizedStringForKey:@"can't empty"]];
+                } else {
+                    errorMsg = [NSString stringWithFormat:@"%@ %@", self.tag, [NSString jt_localizedStringForKey:@"can't empty"]];
+                }
+            }
+            validateObject = [JTFormValidateObject formValidateObjectWithErrorMsg:errorMsg valid:NO];
+            return validateObject;
+        }
+    }
+    [self.validators enumerateObjectsUsingBlock:^(id<JTFormValidateProtocol>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JTFormValidateObject *vObject = [obj isValid:self];
+        if (vObject && !vObject.valid) {
+            validateObject = vObject;
+            *stop = YES;
+        }
+    }];
+    return validateObject;
+}
+
+- (BOOL)valueIsEmpty
+{
+    if (!self.value || [self.value isKindOfClass:[NSNull class]]) {
+        return NO;
+    }
+    if ([self.value isKindOfClass:[NSString class]] && [self.value length] == 0) {
+        return NO;
+    }
+    if ([self.value isKindOfClass:[NSArray class]] && [self.value count] == 0) {
+        return NO;
+    }
+    return YES;
 }
 
 @end
