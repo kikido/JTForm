@@ -26,7 +26,8 @@
     self.window.backgroundColor = [UIColor whiteColor];
     
     ViewController *vc = [[ViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.navigationBar.translucent = false;
     self.window.rootViewController = nav;
     
     YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(15, 400., 100, 40.)];

@@ -179,6 +179,11 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     }
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@ , tag:%@, value:%@",[self class], &self,self.rowType, self.tag, self.value];
+}
+
 @end
 
 

@@ -118,12 +118,12 @@
 
 - (BOOL)formCellBecomeFirstResponder
 {
-    return [_textFieldNode.view becomeFirstResponder];
+    return [_textField becomeFirstResponder];
 }
 
 - (BOOL)formCellResignFirstResponder
 {
-    return [_textFieldNode.view resignFirstResponder];
+    return [_textField resignFirstResponder];
 }
 
 - (void)formCellHighlight

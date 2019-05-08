@@ -35,12 +35,11 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 @property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
 @property (nonatomic, assign) CGRect orginTableFrame;
 @property (nonatomic, assign) BOOL notFirstShowKeyBoard;
-/** 代表第一响应者的那一行 */
-@property (nonatomic, strong) JTBaseCell *firstResponderCell;
-
-//@property (nonatomic, strong) NSNumber *oldBottomTableMargin;
 @property (nonatomic, strong) NSNumber *oldTopTableInset;
 @property (nonatomic, assign) CGFloat temp;
+@property (nonatomic, assign) CGRect orginFrame;
+/** 代表第一响应者的那一行 */
+@property (nonatomic, strong) JTBaseCell *firstResponderCell;
 @end
 
 @implementation JTForm
@@ -200,38 +199,33 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 //        }];
 //    }
     
+    NSDictionary *keyboardInfo = notification.userInfo;
+    NSLog(@"userInfo %@",keyboardInfo);
     
     if (_firstResponderCell) {
-        NSDictionary *keyboardInfo = notification.userInfo;
         CGRect keybordFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         UIEdgeInsets tableContentInset = self.tableNode.contentInset;
-        
         if (!_notFirstShowKeyBoard) {
+            // 第一次弹出键盘
             _notFirstShowKeyBoard = YES;
-            _orginTableContentInset = self.tableNode.contentInset;
+            _orginTableContentInset = tableContentInset;
+            _orginFrame =  self.tableNode.closestViewController.view.frame;
         }
-        // 当tb.min - transform.y小于0时，需要设置一下inset，不然tb顶部的内容会被遮掉
+//        CGRect superFrame = [self.tableNode.closestViewController.view convertRect:self.tableNode.closestViewController.view.frame toView:self.window];
+        self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
+        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginFrame));
+        CGFloat ty = _orginFrame.size.height + _orginFrame.origin.y - keybordFrame.origin.y;
         
-        CGFloat ty = self.tableNode.closestViewController.view.bounds.size.height - keybordFrame.origin.y;
-        tableContentInset.top = ty;
-        
-
-        //        if (_oldBottomTableMargin) {
-        //            bottomMargin += [_oldBottomTableMargin doubleValue];
-        //        }
-        //
-        //        _oldBottomTableMargin = @(bottomMargin);
-
-        self.tableNode.contentInset = tableContentInset;
-        NSLog(@"fffff");
-        
-        _temp = ty;
-        
-        [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
-
-            self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - ty);
-            [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
-        } completion:nil];
+        if (ty > 0) {
+            tableContentInset.top = ty;
+            
+            [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
+                self.tableNode.contentInset = tableContentInset;
+                self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
+                self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - ty);
+                [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionNone animated:NO];
+            } completion:nil];
+        }
     }
 }
 
@@ -257,12 +251,16 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 //    _notFirstShowKeyBoard = false;
     
     
+    NSLog(@"[JTForm] %s", __func__);
+
     self.tableNode.contentInset = _orginTableContentInset;
-        self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
+    self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
     
-        _orginTableContentInset = UIEdgeInsetsZero;
-        _oldBottomTableMargin = nil;
-        _notFirstShowKeyBoard = false;
+    _orginTableContentInset = UIEdgeInsetsZero;
+    _oldBottomTableMargin = nil;
+    _notFirstShowKeyBoard = false;
+    _firstResponderCell = nil;
+    _orginFrame = CGRectZero;
 }
 
 #pragma mark - JTFormDescriptorDelegate
@@ -326,27 +324,9 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         return;
     }
     JTBaseCell *cellNode = [rowDescriptor cellInForm];
-    if (!([cellNode formCellCanBecomeFirstResponder] && [cellNode formCellBecomeFirstResponder])) {
-        // fixme
-//        [self.tableNode.view endEditing:YES];
-    } else {
-//        if ([cellNode respondsToSelector:@selector(jtFormCellInputView)]) {
-//            UITableViewCell *cell = [tableNode cellForRowAtIndexPath:indexPath];
-//            UIView *inputView = [cellNode jtFormCellInputView];
-//            if (inputView) {
-//                cell.inputView
-//                cell.inputView = inputView;
-//            }
-//        }
-    }
     if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
         [cellNode formCellDidSelected];
     }
-}
-
-- (BOOL)tableNode:(ASTableNode *)tableNode shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
 }
 
 - (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -451,6 +431,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
 {
     JTBaseCell *cell = [row cellInForm];
     _firstResponderCell = cell;
+    NSLog(@"[JTForm] %s", __func__);
 
     if (editableTextNode) {
         editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
@@ -523,7 +504,7 @@ typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
         JTBaseCell *nextCell = [nextRow cellInForm];
         if ([nextCell formCellCanBecomeFirstResponder]){
             NSIndexPath *indexPath = [self.tableNode indexPathForNode:nextCell];
-            [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:NO];
+            [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
             [nextCell formCellBecomeFirstResponder];
         }
     }
