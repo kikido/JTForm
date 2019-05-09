@@ -11,10 +11,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTOptionObject : NSObject
-
-@property (nonatomic, copy) NSString *formDisplayText;
-
-@property (nonatomic, assign) id formValue;
+/** 选择项的展示文本 */
+@property (nonatomic, copy  ) NSString *formDisplayText;
+/** 选择项的值 */
+@property (nonatomic, assign) id       formValue;
 
 +(JTOptionObject *)formOptionsObjectWithValue:(nonnull id)value displayText:(nonnull NSString *)displayText;
 

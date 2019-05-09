@@ -13,7 +13,6 @@
 NSString *const JTFormRowTypeText = @"JTFormRowTypeText";
 NSString *const JTFormRowTypeName = @"JTFormRowTypeName";
 NSString *const JTFormRowTypeEmail = @"JTFormRowTypeEmail";
-/** 数字以及符号 */
 NSString *const JTFormRowTypeNumber = @"JTFormRowTypeNumber";
 NSString *const JTFormRowTypeInteger = @"JTFormRowTypeInteger";
 NSString *const JTFormRowTypeDecimal = @"JTFormRowTypeDecimal";
@@ -73,9 +72,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         _title = title;
         _rowType = rowType;
         _tag = tag;
-        
         _height = JTFormRowInitialHeight;
-        _action = [[JTRowAction alloc] init];
         
         _cellConfigAfterUpdate = @{}.mutableCopy;
         _cellConfigWhenDisabled = @{}.mutableCopy;
@@ -126,7 +123,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         if ([[self.cell class] respondsToSelector:@selector(formCellHeightForRowDescriptor:)]) {
             return [[self.cell class] formCellHeightForRowDescriptor:self];
         } else {
-            //没有指定高度
+            // 没有指定高度
             return JTFormUnspecifiedCellHeight;
         }
     }
@@ -150,11 +147,10 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 - (void)setHidden:(BOOL)hidden
 {
     _hidden = hidden;
-    
     [self.sectionDescriptor evaluateFormRowIsHidden:self];
 }
 
-#pragma mark - 文本
+#pragma mark - text
 
 - (nullable NSString *)displayContentValue
 {
@@ -180,7 +176,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@ , tag:%@, value:%@",[self class], &self, self.rowType, self.tag, self.value];
+    return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@ , tag:%@, value:%@",[self class], self, _rowType, _tag, _value];
 }
 
 #pragma mark - Validation
@@ -250,6 +246,16 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         return YES;
     }
     return NO;
+}
+
+#pragma mark - property
+
+- (JTRowAction *)action
+{
+    if (!_action) {
+        _action = [[JTRowAction alloc] init];
+    }
+    return _action;
 }
 
 @end

@@ -96,11 +96,9 @@
         return (NSString *)self;
     } else if ([self isKindOfClass:[NSNumber class]]) {
         return [(NSNumber *)self stringValue];
-    }
-    else if ([self isKindOfClass:[JTOptionObject class]]) {
+    } else if ([self isKindOfClass:[JTOptionObject class]]) {
         return [(JTOptionObject *)self formDisplayText];
     } else {
-        // fixme
         return self.description;
     }
 }

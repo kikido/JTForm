@@ -14,16 +14,20 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTSectionDescriptor;
 @class JTForm;
 
+
+/**
+ 表描述，即表单的数据源。
+ */
 @interface JTFormDescriptor : JTBaseDescriptor
 
-
-/** 是否在表单里为必录项前面添加‘*’符号 */
+/** 是否在表单里为必录项前面添加‘*’符号。默认值为‘NO’ */
 @property (nonatomic, assign) BOOL addAsteriskToRequiredRowsTitle;
 
-/** 一个集合，key为单元行的tag值，value为单元行。该属性用来判断哪些必录项还没有值以及获取整个表单的数据 */
+/** 一个集合：key为单元行的tag值，value为单元行。 */
 @property (nonatomic, strong) NSMutableDictionary *allRowsByTag;
 
-@property (nonatomic, assign) id<JTFormDescriptorDelegate> delegate;
+/** 代理，执行一些行、节的增减操作 */
+@property (nonatomic, weak) id<JTFormDescriptorDelegate> delegate;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -32,63 +36,33 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - section
 
 /** 当前表单所有能看到section的集合(不包括隐藏掉的section) */
-@property (nonatomic, strong, readonly) NSMutableArray *formSections;
+@property (nonatomic, strong, readonly) NSMutableArray<JTSectionDescriptor *> *formSections;
 
 /** 当前表单所有包含着的section集合(包括隐藏掉的，但不包括移除掉的) */
-@property (nonatomic, strong, readonly) NSMutableArray *allSections;
+@property (nonatomic, strong, readonly) NSMutableArray<JTSectionDescriptor *> *allSections;
 
-/**
- 添加段描述
- 
- */
+/** 添加节 */
 - (void)addFormSection:(JTSectionDescriptor *)section;
 
-/**
- 添加段描述到指定位置
- 
- */
+/** 在指定位置添加节 */
 - (void)addFormSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index;
 
-
-/**
- 添加段描述在某个段描述之后
-
- */
+/** 在指定节后面添加节 */
 - (void)addFormSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection;
 
-
-/**
- 添加段描述在某个段描述之前
-
- */
+/** 在指定节前面添加节 */
 - (void)addFormSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
 
-
-/**
- 移除某个段描述
-
- */
+/** 移除节 */
 - (void)removeFormSection:(JTSectionDescriptor *)section;
 
-
-/**
- 移除某个位置的段描述
-
- */
+/** 移除某个位置的节 */
 - (void)removeFormSectionAtIndex:(NSUInteger)index;
 
-
-/**
- 移除某些位置的段描述
-
- */
+/**  移除某些位置的节 */
 - (void)removeFormSectionsAtIndexes:(NSIndexSet *)indexes;
 
-
-/**
- 根据段描述，判断是该隐藏还是显示单元段
-
- */
+/** 根据节描述的‘hidden’，来进行相应的隐藏、显示操作 */
 - (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section;
 
 #pragma mark - section
@@ -104,7 +78,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (JTRowDescriptor *)nextRowDescriptorForRow:(JTRowDescriptor *)currentRow;
 
-
 /**
  找出在当前行描述前面的行描述
  
@@ -112,11 +85,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (JTRowDescriptor *)previousRowDescriptorForRow:(JTRowDescriptor *)currentRow;
 
-/** 返回一个‘NSIndexPath’对象，表示行描述代表的单元行在表单中位置 */
+/** 返回一个‘NSIndexPath’对象，表示单元行在表单中位置 */
 - (NSIndexPath *)indexPathForRowDescriptor:(JTRowDescriptor *)rowDescriptor;
 
+/** 根据tag值找到对应的行描述 */
+- (JTRowDescriptor *)formRowWithTag:(NSString *)tag;
 
-#pragma mark - cell
+/** 根据‘NSIndexPath’值找到对应的行描述 */
+- (JTRowDescriptor *)formRowAtIndex:(NSIndexPath *)indexPath;
+
+
+#pragma mark - tag collection
 
 /**
  将单元行添加到属性`allRowsByTag`中
@@ -131,20 +110,6 @@ NS_ASSUME_NONNULL_BEGIN
  @param row 单元行tag值不能为空
  */
 - (void)removeRowFromTagCollection:(JTRowDescriptor *)row;
-
-- (JTRowDescriptor *)formRowWithTag:(NSString *)tag;
-
-- (JTRowDescriptor *)formRowAtIndex:(NSIndexPath *)indexPath;
-
-@end
-
-
-/**
- 上啦刷新需要实现的方法
- */
-// fixme
-@protocol JTFormRefreshDelegate <NSObject>
-
 
 @end
 

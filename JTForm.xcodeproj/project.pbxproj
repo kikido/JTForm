@@ -94,6 +94,7 @@
 		1D39F2AB2283F9600038A831 /* UIView+JTAdd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+JTAdd.m"; sourceTree = "<group>"; };
 		1D39F2AD228407950038A831 /* JTFormProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormProtocol.h; sourceTree = "<group>"; };
 		1D39F2AE228409E70038A831 /* JTFormDescriptorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDescriptorDelegate.h; sourceTree = "<group>"; };
+		1D39F2B32284229B0038A831 /* JTFormRefreshDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormRefreshDelegate.h; sourceTree = "<group>"; };
 		1D55FA5B227F024400943F01 /* JTFormCheckCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCheckCell.h; sourceTree = "<group>"; };
 		1D55FA5C227F024400943F01 /* JTFormCheckCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCheckCell.m; sourceTree = "<group>"; };
 		1D55FA5E227F083100943F01 /* JTFormStepCounterCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormStepCounterCell.h; sourceTree = "<group>"; };
@@ -376,6 +377,7 @@
 				1DF4C2E92271EE3E00FAEC41 /* JTFormInlineCellDelegate.h */,
 				1D39F28F2282FBF10038A831 /* JTFormValidateProtocol.h */,
 				1D39F2AE228409E70038A831 /* JTFormDescriptorDelegate.h */,
+				1D39F2B32284229B0038A831 /* JTFormRefreshDelegate.h */,
 				1D39F2AD228407950038A831 /* JTFormProtocol.h */,
 			);
 			path = delegate;

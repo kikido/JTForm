@@ -335,6 +335,9 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
         return;
     }
     JTBaseCell *cellNode = [rowDescriptor cellInForm];
+    if (!([cellNode formCellCanBecomeFirstResponder] && [cellNode formCellBecomeFirstResponder])) {
+        [self.tableNode.view endEditing:YES];
+    }
     if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
         [cellNode formCellDidSelected];
     }
@@ -615,27 +618,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
 }
 
-#pragma mark - 001
-
-- (void)didSelectFormRow:(JTRowDescriptor *)rowDescriptor
-{
-    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
-    if (indexPath) {
-        [self.tableNode selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-        JTBaseCell *cellNode = [rowDescriptor cellInForm];
-        if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
-            [cellNode formCellDidSelected];
-        }
-    }
-}
-
-- (void)deSelectFormRow:(JTRowDescriptor *)rowDescriptor
-{
-    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
-    if (indexPath) {
-        [self.tableNode deselectRowAtIndexPath:indexPath animated:YES];
-    }
-}
+#pragma mark - update and reload
 
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor
 {

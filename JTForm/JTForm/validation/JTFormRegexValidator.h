@@ -12,7 +12,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormRegexValidator : NSObject <JTFormValidateProtocol>
+/** 错误提示 */
 @property (nonatomic, copy) NSString *errorMsg;
+/** 正则表达式 */
 @property (nonatomic, copy) NSString *regex;
 
 - (instancetype)initWithErrorMsg:(NSString *)errorMsg regex:(NSString *)regex;

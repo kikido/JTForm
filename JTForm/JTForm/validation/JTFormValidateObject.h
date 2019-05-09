@@ -10,12 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class JTRowDescriptor;
-
 @interface JTFormValidateObject : NSObject
+/** 错误提示 */
 @property (nonatomic, copy) NSString *errorMsg;
+/** 是否通过验证 */
 @property (nonatomic, assign) BOOL valid;
-@property (nonatomic, strong) JTRowDescriptor *rowDescriptor;
 
 - (instancetype)initWithErrorMsg:(NSString *)errorMsg valid:(BOOL)valid;
 

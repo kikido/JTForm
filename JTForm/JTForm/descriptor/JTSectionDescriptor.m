@@ -153,7 +153,6 @@ CGFloat const JTFormDefaultSectionFooterHeight = 25.;
     }
 }
 
-
 - (void)moveRowAtIndexPath:(NSIndexPath *)sourceIndex toIndexPath:(NSIndexPath *)destinationIndex
 {
     // fixme

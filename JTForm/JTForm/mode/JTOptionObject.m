@@ -55,7 +55,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p>: text:%@ value:%@", NSStringFromClass([self class]), &self, self.formDisplayText, self.formValue];
+    return [NSString stringWithFormat:@"<%@ %p>: text:%@ value:%@", NSStringFromClass([self class]), self, self.formDisplayText, self.formValue];
 }
 
 @end

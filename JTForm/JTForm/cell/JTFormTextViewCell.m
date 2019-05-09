@@ -131,7 +131,6 @@
 
 - (void)formCellHighlight
 {
-    // fixme
     [super formCellHighlight];
     _textViewNode.scrollEnabled = YES;
 }

@@ -46,7 +46,6 @@
     if (!self.delegate) {
         return;
     }
-    NSLog(@"dddddddd-dddddddd-dddddddd");
     if ([keyPath isEqualToString:@"formSections"]) {
         if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeInsertion)])
         {

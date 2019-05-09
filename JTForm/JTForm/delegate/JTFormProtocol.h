@@ -17,5 +17,7 @@
 #import "JTFormInlineCellDelegate.h"
 /** 验证器协议 */
 #import "JTFormValidateProtocol.h"
+/** fixme。代写 */
+#import "JTFormRefreshDelegate.h"
 
 #endif /* JTFormProtocol_h */
