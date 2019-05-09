@@ -182,7 +182,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@ , tag:%@, value:%@",[self class], &self,self.rowType, self.tag, self.value];
+    return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@ , tag:%@, value:%@",[self class], &self, self.rowType, self.tag, self.value];
 }
 
 #pragma mark - Validation
@@ -215,7 +215,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     __block JTFormValidateObject *validateObject = nil;
     
     if (self.required) {
-        if ([self valueIsEmpty]) {
+        if ([self rowValueIsEmpty]) {
             NSString *errorMsg = nil;
             if (self.requireMsg != nil) {
                 errorMsg = self.requireMsg;
@@ -240,18 +240,18 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     return validateObject;
 }
 
-- (BOOL)valueIsEmpty
+- (BOOL)rowValueIsEmpty
 {
     if (!self.value || [self.value isKindOfClass:[NSNull class]]) {
-        return NO;
+        return YES;
     }
-    if ([self.value isKindOfClass:[NSString class]] && [self.value length] == 0) {
-        return NO;
+    if ([self.value isKindOfClass:[NSString class]] && [[self.value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+        return YES;
     }
     if ([self.value isKindOfClass:[NSArray class]] && [self.value count] == 0) {
-        return NO;
+        return YES;
     }
-    return YES;
+    return NO;
 }
 
 @end

@@ -95,7 +95,7 @@
     if ([self isKindOfClass:[NSString class]]) {
         return (NSString *)self;
     } else if ([self isKindOfClass:[NSNumber class]]) {
-        return [self description];
+        return [(NSNumber *)self stringValue];
     }
     else if ([self isKindOfClass:[JTOptionObject class]]) {
         return [(JTOptionObject *)self formDisplayText];

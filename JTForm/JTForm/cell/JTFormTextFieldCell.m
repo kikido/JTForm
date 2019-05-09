@@ -140,11 +140,10 @@
 
 - (void)textFieldDidChange:(UITextField *)textField
 {
+    // fixme 大数问题
     if (textField.text.length > 0) {
         if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
             self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:textField.text locale:NSLocale.currentLocale];
-        } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInteger]) {
-            self.rowDescriptor.value = @([textField.text integerValue]);
         } else {
             self.rowDescriptor.value = textField.text;
         }

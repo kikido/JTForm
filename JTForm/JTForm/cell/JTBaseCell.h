@@ -7,8 +7,12 @@
 //
 
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
-#import "JTFormDescriptor.h"
+//#import "JTFormDescriptor.h"
 #import "JTNetworkImageNode.h"
+
+@class JTRowDescriptor;
+@class JTSectionDescriptor;
+@class <#name#>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -81,7 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  当单元行退出第一响应者时被调用
- 
  */
 - (void)formCellUnhighlight;
 
@@ -89,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @interface JTBaseCell : ASCellNode <JTBaseCellDelegate>
-
+/** 行描述。数据源 */
 @property (nonatomic, weak) JTRowDescriptor *rowDescriptor;
 
 @property (nonatomic, strong) ASTextNode *titleNode;

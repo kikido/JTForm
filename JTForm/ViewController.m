@@ -13,6 +13,8 @@
 #import "SelectViewController.h"
 #import "DateViewController.h"
 #import "OtherViewController.h"
+#import "ValidatorViewController.h"
+#import "DeleteViewController.h"
 #import "TestViewController.h"
 
 @interface ViewController ()
@@ -70,9 +72,16 @@
     };
     [section addFormRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"4" rowType:JTFormRowTypePushButton title:@"formater"];
+    row = [JTRowDescriptor formRowDescriptorWithTag:@"4" rowType:JTFormRowTypePushButton title:@"validator"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
-        TextViewController *vc = [[TextViewController alloc] init];
+        ValidatorViewController *vc = [[ValidatorViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    };
+    [section addFormRow:row];
+    
+    row = [JTRowDescriptor formRowDescriptorWithTag:@"5" rowType:JTFormRowTypePushButton title:@"delete"];
+    row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
+        DeleteViewController *vc = [[DeleteViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     };
     [section addFormRow:row];

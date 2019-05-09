@@ -141,6 +141,38 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     return sectionDescriptor.footerHeight;
 }
 
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    JTSectionDescriptor *section = [self.formDescriptor formSectionAtIndex:indexPath.section];
+    if (section.sectionOptions & JTFormSectionOptionCanDelete) {
+        return UITableViewCellEditingStyleDelete;
+    }
+    return UITableViewCellEditingStyleNone;
+}
+
+- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCellEditingStyle editStyle = [self tableView:tableView editingStyleForRowAtIndexPath:indexPath];
+    if (editStyle == UITableViewCellEditingStyleNone) {
+        return NO;
+    }
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        JTRowDescriptor *row = [self.formDescriptor formRowAtIndex:indexPath];
+        UITableViewCell *cell = [self.tableNode cellForRowAtIndexPath:indexPath];
+        UIView *firstResponder = [cell findFirstResponder];
+
+        if (firstResponder) {
+            [self.tableNode.view endEditing:YES];
+        }
+        [row.sectionDescriptor removeFormRowAtIndex:indexPath.row];
+    }
+}
+
 #pragma mark - notification
 
 - (void)addNotifications

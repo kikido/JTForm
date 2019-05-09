@@ -7,13 +7,30 @@
 //
 
 #import "JTFormRegexValidator.h"
-#import "JYFormValidatorProtocol.h"
+#import "JTRowDescriptor.h"
 
 @implementation JTFormRegexValidator
-@property (nonatomic, copy) NSString *msg;
-@property (nonatomic, copy) NSString *regex;
 
-- (instancetype)initWithErrorMsg:(NSString *)errorMsg regex:(NSString *)regex;
+- (instancetype)initWithErrorMsg:(NSString *)errorMsg regex:(NSString *)regex
+{
+    if (self = [super init]) {
+        _errorMsg = errorMsg;
+        _regex = regex;
+    }
+    return self;
+}
 
-+ (JTFormRegexValidator *)formRegexValidatorWithMsg:(NSString *)msg regexString:(NSString *)regex;
++ (JTFormRegexValidator *)formRegexValidatorWithMsg:(NSString *)errorMsg regex:(NSString *)regex
+{
+    return [[[self class] alloc] initWithErrorMsg:errorMsg regex:regex];
+}
+
+- (JTFormValidateObject *)isValid:(JTRowDescriptor *)rowDescriptor
+{
+    BOOL isValid = [[NSPredicate predicateWithFormat:@"SELF MATCHES %@", self.regex] evaluateWithObject:[rowDescriptor.value cellText]];
+    if (isValid) {
+        return nil;
+    }
+    return [JTFormValidateObject formValidateObjectWithErrorMsg:self.errorMsg valid:isValid];;
+}
 @end

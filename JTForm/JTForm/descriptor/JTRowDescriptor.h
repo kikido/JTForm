@@ -161,6 +161,16 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
  */
 - (nullable JTFormValidateObject *)doValidate;
 
+
+/**
+ 判断value是否为空，以下情况均判断为空
+ 1. nil
+ 2. NSNull的实例
+ 3. 字符串如果字符数为0
+ 4. 数组如果为0
+ */
+- (BOOL)rowValueIsEmpty;
+
 @end
 
 

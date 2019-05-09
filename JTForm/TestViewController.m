@@ -22,33 +22,9 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
-    
-    
-    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(30, 100, 300, 40.)];
-    textField.backgroundColor = [UIColor yellowColor];
-    [self.view addSubview:textField];
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(contentSizeCategoryChanged)
-                                                 name:UIContentSizeCategoryDidChangeNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    //    [[NSNotificationCenter defaultCenter] addObserver:self
-    //                                             selector:@selector(keyboardDidShow:)
-    //                                                 name:UIKeyboardDidShowNotification
-    //                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidHide)
-                                                 name:UIKeyboardDidHideNotification
-                                               object:nil];
+//    BOOL isValid = [[NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^([5-9][0-9]|100)$"] evaluateWithObject:@60];
+//    NSLog(@"result:%d", isValid);
+
     // Do any additional setup after loading the view.
 }
 

@@ -18,6 +18,10 @@
 		1D39F28522819E160038A831 /* OtherViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28422819E160038A831 /* OtherViewController.m */; };
 		1D39F28E2282F9FF0038A831 /* JTFormValidateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28D2282F9FF0038A831 /* JTFormValidateObject.m */; };
 		1D39F292228308010038A831 /* JTFormRegexValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F291228308010038A831 /* JTFormRegexValidator.m */; };
+		1D39F2952283B5B30038A831 /* ValidatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F2942283B5B30038A831 /* ValidatorViewController.m */; };
+		1D39F2982283B6660038A831 /* JTIdCardValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F2972283B6660038A831 /* JTIdCardValidator.m */; };
+		1D39F29B2283C4BF0038A831 /* DeleteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F29A2283C4BF0038A831 /* DeleteViewController.m */; };
+		1D39F2AC2283F9600038A831 /* UIView+JTAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F2AB2283F9600038A831 /* UIView+JTAdd.m */; };
 		1D55FA5D227F024400943F01 /* JTFormCheckCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5C227F024400943F01 /* JTFormCheckCell.m */; };
 		1D55FA60227F083100943F01 /* JTFormStepCounterCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA5F227F083100943F01 /* JTFormStepCounterCell.m */; };
 		1D55FA63227F14A000943F01 /* JTFormSegmentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D55FA62227F14A000943F01 /* JTFormSegmentCell.m */; };
@@ -81,6 +85,14 @@
 		1D39F28F2282FBF10038A831 /* JTFormValidateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormValidateProtocol.h; sourceTree = "<group>"; };
 		1D39F290228308010038A831 /* JTFormRegexValidator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormRegexValidator.h; sourceTree = "<group>"; };
 		1D39F291228308010038A831 /* JTFormRegexValidator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormRegexValidator.m; sourceTree = "<group>"; };
+		1D39F2932283B5B30038A831 /* ValidatorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValidatorViewController.h; sourceTree = "<group>"; };
+		1D39F2942283B5B30038A831 /* ValidatorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ValidatorViewController.m; sourceTree = "<group>"; };
+		1D39F2962283B6660038A831 /* JTIdCardValidator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTIdCardValidator.h; sourceTree = "<group>"; };
+		1D39F2972283B6660038A831 /* JTIdCardValidator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTIdCardValidator.m; sourceTree = "<group>"; };
+		1D39F2992283C4BF0038A831 /* DeleteViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeleteViewController.h; sourceTree = "<group>"; };
+		1D39F29A2283C4BF0038A831 /* DeleteViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeleteViewController.m; sourceTree = "<group>"; };
+		1D39F2AA2283F9600038A831 /* UIView+JTAdd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+JTAdd.h"; sourceTree = "<group>"; };
+		1D39F2AB2283F9600038A831 /* UIView+JTAdd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+JTAdd.m"; sourceTree = "<group>"; };
 		1D55FA5B227F024400943F01 /* JTFormCheckCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCheckCell.h; sourceTree = "<group>"; };
 		1D55FA5C227F024400943F01 /* JTFormCheckCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCheckCell.m; sourceTree = "<group>"; };
 		1D55FA5E227F083100943F01 /* JTFormStepCounterCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormStepCounterCell.h; sourceTree = "<group>"; };
@@ -257,6 +269,12 @@
 				1D55FA7422801AFB00943F01 /* TestViewController.m */,
 				1D39F28322819E160038A831 /* OtherViewController.h */,
 				1D39F28422819E160038A831 /* OtherViewController.m */,
+				1D39F2932283B5B30038A831 /* ValidatorViewController.h */,
+				1D39F2942283B5B30038A831 /* ValidatorViewController.m */,
+				1D39F2992283C4BF0038A831 /* DeleteViewController.h */,
+				1D39F29A2283C4BF0038A831 /* DeleteViewController.m */,
+				1D39F2962283B6660038A831 /* JTIdCardValidator.h */,
+				1D39F2972283B6660038A831 /* JTIdCardValidator.m */,
 				1D39F27622812BF40038A831 /* formatter */,
 				1DDADA30225B6DA100652FE6 /* Assets.xcassets */,
 				1DDADA35225B6DA100652FE6 /* Info.plist */,
@@ -348,6 +366,8 @@
 				1DDADA56225B89F900652FE6 /* JTHelper.h */,
 				1D837DF7226FF58E00AEF748 /* NSString+JTAdd.h */,
 				1D837DF8226FF58E00AEF748 /* NSString+JTAdd.m */,
+				1D39F2AA2283F9600038A831 /* UIView+JTAdd.h */,
+				1D39F2AB2283F9600038A831 /* UIView+JTAdd.m */,
 			);
 			path = helper;
 			sourceTree = "<group>";
@@ -492,8 +512,10 @@
 				1DDADA7922646A1A00652FE6 /* JTDefaultCell.m in Sources */,
 				1DDADA4A225B771800652FE6 /* JTSectionDescriptor.m in Sources */,
 				1D39F27022811F550038A831 /* JVFloatLabeledTextField.m in Sources */,
+				1D39F29B2283C4BF0038A831 /* DeleteViewController.m in Sources */,
 				1DDADA8022646E7700652FE6 /* JTNetworkImageNode.m in Sources */,
 				1DDADA892264BC9900652FE6 /* ASDisplayNode+JTFormAdditions.m in Sources */,
+				1D39F2952283B5B30038A831 /* ValidatorViewController.m in Sources */,
 				1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */,
 				1D837DF9226FF58E00AEF748 /* NSString+JTAdd.m in Sources */,
 				1DDADA6F225E246200652FE6 /* JTBaseCell.m in Sources */,
@@ -518,6 +540,7 @@
 				1D55FA7222800BFE00943F01 /* TextViewController.m in Sources */,
 				1D837DEE226D948F00AEF748 /* JTOptionObject.m in Sources */,
 				1DDADA8322647ABA00652FE6 /* NSAttributedString+JTFormAdditions.m in Sources */,
+				1D39F2982283B6660038A831 /* JTIdCardValidator.m in Sources */,
 				1D55FA5D227F024400943F01 /* JTFormCheckCell.m in Sources */,
 				1D55FA60227F083100943F01 /* JTFormStepCounterCell.m in Sources */,
 				1DF4C2E52271D90A00FAEC41 /* YYFPSLabel.m in Sources */,
@@ -532,6 +555,7 @@
 				1DDADA4D225B772D00652FE6 /* JTFormDescriptor.m in Sources */,
 				1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */,
 				1DF4C2E82271E50500FAEC41 /* JTFormDateInlineCell.m in Sources */,
+				1D39F2AC2283F9600038A831 /* UIView+JTAdd.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

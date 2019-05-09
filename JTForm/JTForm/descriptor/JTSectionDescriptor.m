@@ -27,7 +27,7 @@ CGFloat const JTFormDefaultSectionFooterHeight = 25.;
     if (self = [super init]) {
         _formRows = @[].mutableCopy;
         _allRows = @[].mutableCopy;
-
+        _sectionOptions = JTFormSectionOptionNone;
         _headerHeight = JTFormDefaultSectionHeaderHeight;
         _footerHeight = JTFormDefaultSectionFooterHeight;
         
