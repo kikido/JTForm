@@ -7,12 +7,12 @@
 //
 
 #import "JTBaseDescriptor.h"
-#import "JTSectionDescriptor.h"
-#import "JTForm.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol JTFormDescriptorDelegate;
+@class JTRowDescriptor;
+@class JTSectionDescriptor;
+@class JTForm;
 
 @interface JTFormDescriptor : JTBaseDescriptor
 
@@ -136,28 +136,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (JTRowDescriptor *)formRowAtIndex:(NSIndexPath *)indexPath;
 
-
 @end
 
 
 /**
  上啦刷新需要实现的方法
  */
+// fixme
 @protocol JTFormRefreshDelegate <NSObject>
 
-
-@end
-
-
-@protocol JTFormDescriptorDelegate <NSObject>
-
-- (void)formSectionsHaveBeenRemovedAtIndexes:(NSIndexSet *)indexSet;
-
-- (void)formSectionsHaveBeenAddedAtIndexes:(NSIndexSet *)indexSet;
-
-- (void)formRowsHaveBeenAddedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
-
-- (void)formRowsHaveBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 
 @end
 

@@ -146,12 +146,12 @@
 
 - (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    return [self.jtForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    return [self.findForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.jtForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
     if (self.rowDescriptor.valueFormatter) {
         editableTextNode.textView.text = [self.rowDescriptor editTextValue];
     }
@@ -188,7 +188,7 @@
     if (self.rowDescriptor.valueFormatter) {
         _textViewNode.textView.text = [self.rowDescriptor displayContentValue];
     }
-    [self.jtForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 @end

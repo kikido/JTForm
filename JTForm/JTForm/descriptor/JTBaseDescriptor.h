@@ -10,6 +10,8 @@
 #import <UIKit/UIKit.h>
 #import "JTHelper.h"
 
+#import "JTOptionObject.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class JTFormConfigMode;

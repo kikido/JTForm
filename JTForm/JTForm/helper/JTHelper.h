@@ -16,6 +16,9 @@
 #import "ASDisplayNode+JTFormAdditions.h"
 #import "NSString+JTAdd.h"
 #import "UIView+JTAdd.h"
+/** 布局 */
 #import "JTFormCellLayout.h"
+/** 协议 */
+#import "JTFormProtocol.h"
 
 #endif /* JTHelper_h */

@@ -7,7 +7,7 @@
 //
 
 #import "JTFormOptionsViewController.h"
-#import "JTOptionObject.h"
+#import "JTForm.h"
 
 @interface JTFormOptionsViewController () <ASTableDelegate, ASTableDataSource>
 

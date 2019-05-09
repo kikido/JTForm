@@ -7,7 +7,6 @@
 //
 
 #import "SelectViewController.h"
-#import "JTOptionObject.h"
 #import "JTTransform.h"
 
 @interface SelectViewController ()

@@ -54,7 +54,7 @@
 {
     if (self.connectedRowDescriptor) {
         self.connectedRowDescriptor.value = sender.date;
-        [self.jtForm updateFormRow:self.connectedRowDescriptor];
+        [self.findForm updateFormRow:self.connectedRowDescriptor];
     }
 }
 

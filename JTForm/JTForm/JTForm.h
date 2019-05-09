@@ -7,11 +7,10 @@
 //
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
 #import "JTFormDescriptor.h"
+#import "JTSectionDescriptor.h"
+#import "JTRowDescriptor.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class JTFormDescriptor;
-@class JTRowDescriptor;
 
 @interface JTForm : UIView 
 

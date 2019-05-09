@@ -7,7 +7,6 @@
 //
 
 #import "JTFormSegmentCell.h"
-#import "JTOptionObject.h"
 
 @interface JTFormSegmentCell ()
 @property (nonatomic, strong) ASDisplayNode *segmentNode;

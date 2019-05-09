@@ -7,9 +7,10 @@
 //
 
 #import "JTFormDescriptor.h"
+#import "JTSectionDescriptor.h"
+#import "JTRowDescriptor.h"
 #import "JTBaseCell.h"
-#import "JTDefaultCell.h"
-#import "JTFormTextFieldCell.h"
+#import "JTForm.h"
 
 @interface JTFormDescriptor ()
 @property (nonatomic, strong, readwrite) NSMutableArray *formSections;

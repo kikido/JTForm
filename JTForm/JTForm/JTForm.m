@@ -8,7 +8,6 @@
 
 #import "JTForm.h"
 #import "JTBaseCell.h"
-#import "JTDefaultCell.h"
 #import "JTFormTextFieldCell.h"
 #import "JTFormTextViewCell.h"
 #import "JTFormSelectCell.h"
@@ -18,10 +17,10 @@
 #import "JTFormSegmentCell.h"
 #import "JTFormSliderCell.h"
 #import "JTFormFloatTextCell.h"
-
-#import "JTFormNavigationAccessoryView.h"
 #import "JTFormCheckCell.h"
 #import "JTFormStepCounterCell.h"
+
+#import "JTFormNavigationAccessoryView.h"
 
 typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     JTFormRowNavigationDirectionPrevious = 0,
@@ -374,7 +373,6 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _cellClassesForRowTypes = @{
-                                    JTFormRowTypeDefault : [JTDefaultCell class],
                                     JTFormRowTypeText : [JTFormTextFieldCell class],
                                     JTFormRowTypeName : [JTFormTextFieldCell class],
                                     JTFormRowTypeEmail : [JTFormTextFieldCell class],

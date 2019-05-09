@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JTFormValidateObject.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class JTFormValidateObject;
+@class JTRowDescriptor;
 
 @protocol JTFormValidateProtocol <NSObject>
 - (JTFormValidateObject *)isValid:(JTRowDescriptor *)rowDescriptor;

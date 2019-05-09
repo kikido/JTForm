@@ -7,11 +7,11 @@
 //
 
 #import "JTBaseDescriptor.h"
-#import "JTRowDescriptor.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class JTFormDescriptor;
+@class JTRowDescriptor;
 
 extern CGFloat const JTFormDefaultSectionHeaderHeight;
 extern CGFloat const JTFormDefaultSectionFooterHeight;

@@ -7,15 +7,13 @@
 //
 
 #import "JTBaseDescriptor.h"
-#import "JTFormValidateProtocol.h"
+#import "JTFormValidateObject.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class JTRowAction;
 @class JTSectionDescriptor;
 @class JTBaseCell;
-
-extern NSString *const JTFormRowTypeDefault;
 
 //|------ textfield ------------------------------
 extern NSString *const JTFormRowTypeText;

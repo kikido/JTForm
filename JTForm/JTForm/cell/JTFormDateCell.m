@@ -65,7 +65,7 @@
 
 - (void)formCellDidSelected
 {
-     [[[self jtForm] tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
+     [[self.findForm tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
 }
 
 #pragma mark - responder
@@ -106,11 +106,11 @@
         inlineCell.connectedRowDescriptor = self.rowDescriptor;
 
         [section addFormRow:inlineRow afterRow:self.rowDescriptor];
-        [[self jtForm] ensureRowIsVisible:inlineRow];
+        [self.findForm ensureRowIsVisible:inlineRow];
 
         BOOL result = [super becomeFirstResponder];
         if (result) {
-            [[self jtForm] beginEditing:self.rowDescriptor];
+            [self.findForm beginEditing:self.rowDescriptor];
         }
         return result;
     }
@@ -136,7 +136,7 @@
     }
     BOOL result = [super resignFirstResponder];
     if (result) {
-        [[self jtForm] endEditing:self.rowDescriptor];
+        [self.findForm endEditing:self.rowDescriptor];
     }
     return result;
 }
@@ -283,16 +283,16 @@
 - (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
 {
     editableTextNode.textView.inputView = [self jtFormCellInputView];
-    return [self.jtForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    return [self.findForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.jtForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.jtForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 @end

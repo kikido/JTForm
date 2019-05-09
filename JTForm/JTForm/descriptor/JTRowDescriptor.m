@@ -10,8 +10,6 @@
 #import "JTBaseCell.h"
 #import "JTForm.h"
 
-NSString *const JTFormRowTypeDefault = @"JTFormRowTypeDefault";
-
 NSString *const JTFormRowTypeText = @"JTFormRowTypeText";
 NSString *const JTFormRowTypeName = @"JTFormRowTypeName";
 NSString *const JTFormRowTypeEmail = @"JTFormRowTypeEmail";

@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JTForm.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class JTRowDescriptor;
+@class JTForm;
 
 @protocol JTFormSelectViewControllerDelegate <NSObject>
 @required

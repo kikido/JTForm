@@ -7,7 +7,6 @@
 //
 
 #import "JTFormSelectCell.h"
-#import "JTOptionObject.h"
 #import "JTFormSelectViewControllerDelegate.h"
 #import "JTFormOptionsViewController.h"
 
@@ -74,7 +73,7 @@
         else if (self.rowDescriptor.selectorOptions) {
             JTFormOptionsViewController *optionViewController = [[JTFormOptionsViewController alloc] init];
             optionViewController.rowDescriptor = self.rowDescriptor;
-            optionViewController.form = [self jtForm];
+            optionViewController.form = [self findForm];
             optionViewController.title = self.rowDescriptor.selectorTitle;
         
             [self.closestViewController.navigationController pushViewController:optionViewController animated:YES];
@@ -122,7 +121,7 @@
             self.rowDescriptor.action.rowBlock(self.rowDescriptor);
         }
     }
-    [[[self jtForm] tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
+    [[self.findForm tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
@@ -330,16 +329,16 @@
 - (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
 {
     editableTextNode.textView.inputView = [self jtFormCellInputView];
-    return [self.jtForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    return [self.findForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.jtForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.jtForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 @end

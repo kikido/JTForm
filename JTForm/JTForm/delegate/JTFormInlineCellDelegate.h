@@ -13,10 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTRowDescriptor;
 
 @protocol JTFormInlineCellDelegate <NSObject>
-
 @required
 @property (nonatomic, weak) JTRowDescriptor *connectedRowDescriptor;
-
 @end
 
 NS_ASSUME_NONNULL_END

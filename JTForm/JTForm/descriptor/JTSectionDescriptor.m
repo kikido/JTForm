@@ -7,7 +7,7 @@
 //
 
 #import "JTSectionDescriptor.h"
-#import "JTFormDescriptor.h"
+#import "JTRowDescriptor.h"
 #import "JTBaseCell.h"
 
 CGFloat const JTFormDefaultSectionHeaderHeight = 25.;

@@ -107,6 +107,20 @@
     return nil;
 }
 
+- (JTForm *)findForm
+{
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.delegate) {
+        return (JTForm *)self.rowDescriptor.sectionDescriptor.formDescriptor.delegate;
+    } else {
+        return nil;
+    }
+}
+
+- (JTFormDescriptor *)findFormDescriptor
+{
+    return self.rowDescriptor.sectionDescriptor.formDescriptor;
+}
+
 - (JTForm *)jtForm
 {
     if (self.rowDescriptor.sectionDescriptor.formDescriptor.delegate) {

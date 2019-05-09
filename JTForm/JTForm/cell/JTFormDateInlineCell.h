@@ -7,7 +7,6 @@
 //
 
 #import "JTBaseCell.h"
-#import "JTFormInlineCellDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

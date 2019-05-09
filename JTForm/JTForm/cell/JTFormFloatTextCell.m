@@ -103,7 +103,7 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return [self.jtForm editableTextShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    return [self.findForm editableTextShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
@@ -119,7 +119,7 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    [self.jtForm editableTextDidBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
     if (self.rowDescriptor.valueFormatter) {
         textField.text = [self.rowDescriptor editTextValue];
     }
@@ -130,7 +130,7 @@
     if (self.rowDescriptor.valueFormatter) {
         textField.text = [self.rowDescriptor displayContentValue];
     }
-    [self.jtForm editableTextDidEndEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 @end

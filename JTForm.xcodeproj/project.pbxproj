@@ -46,7 +46,6 @@
 		1DDADA52225B784700652FE6 /* JTForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA51225B784700652FE6 /* JTForm.m */; };
 		1DDADA55225B897D00652FE6 /* NSObject+JTFormHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA54225B897D00652FE6 /* NSObject+JTFormHelper.m */; };
 		1DDADA6F225E246200652FE6 /* JTBaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA6E225E246200652FE6 /* JTBaseCell.m */; };
-		1DDADA7922646A1A00652FE6 /* JTDefaultCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA7822646A1A00652FE6 /* JTDefaultCell.m */; };
 		1DDADA8022646E7700652FE6 /* JTNetworkImageNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA7F22646E7700652FE6 /* JTNetworkImageNode.m */; };
 		1DDADA8322647ABA00652FE6 /* NSAttributedString+JTFormAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA8222647ABA00652FE6 /* NSAttributedString+JTFormAdditions.m */; };
 		1DDADA8622647CDA00652FE6 /* UIColor+JTFormAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA8522647CDA00652FE6 /* UIColor+JTFormAdditions.m */; };
@@ -93,6 +92,8 @@
 		1D39F29A2283C4BF0038A831 /* DeleteViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeleteViewController.m; sourceTree = "<group>"; };
 		1D39F2AA2283F9600038A831 /* UIView+JTAdd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+JTAdd.h"; sourceTree = "<group>"; };
 		1D39F2AB2283F9600038A831 /* UIView+JTAdd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+JTAdd.m"; sourceTree = "<group>"; };
+		1D39F2AD228407950038A831 /* JTFormProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormProtocol.h; sourceTree = "<group>"; };
+		1D39F2AE228409E70038A831 /* JTFormDescriptorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDescriptorDelegate.h; sourceTree = "<group>"; };
 		1D55FA5B227F024400943F01 /* JTFormCheckCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCheckCell.h; sourceTree = "<group>"; };
 		1D55FA5C227F024400943F01 /* JTFormCheckCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCheckCell.m; sourceTree = "<group>"; };
 		1D55FA5E227F083100943F01 /* JTFormStepCounterCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormStepCounterCell.h; sourceTree = "<group>"; };
@@ -142,8 +143,6 @@
 		1DDADA56225B89F900652FE6 /* JTHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTHelper.h; sourceTree = "<group>"; };
 		1DDADA6D225E246200652FE6 /* JTBaseCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTBaseCell.h; sourceTree = "<group>"; };
 		1DDADA6E225E246200652FE6 /* JTBaseCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTBaseCell.m; sourceTree = "<group>"; };
-		1DDADA7722646A1A00652FE6 /* JTDefaultCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTDefaultCell.h; sourceTree = "<group>"; };
-		1DDADA7822646A1A00652FE6 /* JTDefaultCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTDefaultCell.m; sourceTree = "<group>"; };
 		1DDADA7E22646E7700652FE6 /* JTNetworkImageNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTNetworkImageNode.h; sourceTree = "<group>"; };
 		1DDADA7F22646E7700652FE6 /* JTNetworkImageNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTNetworkImageNode.m; sourceTree = "<group>"; };
 		1DDADA8122647ABA00652FE6 /* NSAttributedString+JTFormAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+JTFormAdditions.h"; sourceTree = "<group>"; };
@@ -323,8 +322,6 @@
 			children = (
 				1DDADA6D225E246200652FE6 /* JTBaseCell.h */,
 				1DDADA6E225E246200652FE6 /* JTBaseCell.m */,
-				1DDADA7722646A1A00652FE6 /* JTDefaultCell.h */,
-				1DDADA7822646A1A00652FE6 /* JTDefaultCell.m */,
 				1DDADA8E2266FD2600652FE6 /* JTFormTextFieldCell.h */,
 				1DDADA8F2266FD2600652FE6 /* JTFormTextFieldCell.m */,
 				1D837DE8226AF61F00AEF748 /* JTFormTextViewCell.h */,
@@ -378,6 +375,8 @@
 				1D837DF2226F3F3A00AEF748 /* JTFormSelectViewControllerDelegate.h */,
 				1DF4C2E92271EE3E00FAEC41 /* JTFormInlineCellDelegate.h */,
 				1D39F28F2282FBF10038A831 /* JTFormValidateProtocol.h */,
+				1D39F2AE228409E70038A831 /* JTFormDescriptorDelegate.h */,
+				1D39F2AD228407950038A831 /* JTFormProtocol.h */,
 			);
 			path = delegate;
 			sourceTree = "<group>";
@@ -509,7 +508,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DDADA7922646A1A00652FE6 /* JTDefaultCell.m in Sources */,
 				1DDADA4A225B771800652FE6 /* JTSectionDescriptor.m in Sources */,
 				1D39F27022811F550038A831 /* JVFloatLabeledTextField.m in Sources */,
 				1D39F29B2283C4BF0038A831 /* DeleteViewController.m in Sources */,

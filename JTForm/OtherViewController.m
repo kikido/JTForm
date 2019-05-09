@@ -7,7 +7,6 @@
 //
 
 #import "OtherViewController.h"
-#import "JTOptionObject.h"
 
 @interface OtherViewController ()
 

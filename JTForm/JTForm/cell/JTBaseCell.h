@@ -7,12 +7,11 @@
 //
 
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
-//#import "JTFormDescriptor.h"
 #import "JTNetworkImageNode.h"
+#import "JTForm.h"
 
 @class JTRowDescriptor;
 @class JTSectionDescriptor;
-@class <#name#>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -99,7 +98,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) ASTextNode *contentNode;
 @property (nonatomic, strong) JTNetworkImageNode *imageNode;
 
-- (JTForm *)jtForm;
+- (JTForm *)findForm;
+
+- (JTFormDescriptor *)findFormDescriptor;
 
 - (UIView *)jtFormCellInputView;
 
