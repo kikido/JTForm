@@ -7,7 +7,6 @@
 //
 
 #import "JTBaseDescriptor.h"
-#import <AsyncDisplayKit/AsyncDisplayKit.h>
 
 @implementation JTBaseDescriptor
 

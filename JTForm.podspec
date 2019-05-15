@@ -16,10 +16,10 @@ Pod::Spec.new do |s|
   s.license       = { :type => "MIT",  }
   s.author             = { "kikido" => "kikido1992@gmail.com" }
   s.source        = { :git => "https://github.com/kikido/JTForm.git", :tag => s.version }
-  s.source_files  = "Classes", "Classes/**/*.{h,m}"
+  s.source_files  = "JTForm", "JTForm/**/*.{h,m}"
   s.resource      = 'JTForm/JTForm.bundle'
-  s.dependency      "Texture", "2.8"
-  s.dependency      "SDWebImage", "4.4.6"
+  s.dependency "Texture", '~> 2.8'
+  s.dependency "SDWebImage", "~> 4.4.6"
   s.requires_arc = true
   s.ios.deployment_target = '8.0'
 

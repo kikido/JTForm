@@ -39,8 +39,8 @@ PODS:
     - Texture/Core
 
 DEPENDENCIES:
-  - SDWebImage
-  - Texture
+  - SDWebImage (~> 4.4.6)
+  - Texture (~> 2.8)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -57,6 +57,6 @@ SPEC CHECKSUMS:
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   Texture: fc6e0157201f3a6e503d364c147b1872e365cef4
 
-PODFILE CHECKSUM: 3fa5186f89718f4942cb10fcfaad3ffb3090bd0c
+PODFILE CHECKSUM: 159809558d1adef6bbabc235e470243abe8fc6d3
 
 COCOAPODS: 1.5.3
