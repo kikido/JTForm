@@ -7,7 +7,7 @@
 //
 
 #import "JTNetworkImageNode.h"
-#import <SDImageCache.h>
+#import <SDWebImage/SDImageCache.h>
 
 @interface JTNetworkImageNode () <ASNetworkImageNodeDelegate>
 @property (nonatomic, strong) ASNetworkImageNode *networkImageNode;

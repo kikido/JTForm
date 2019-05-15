@@ -22,7 +22,6 @@
 
 #import "JTFormNavigationAccessoryView.h"
 
-#import <AsyncDisplayKit/AsyncDisplayKit.h>
 
 typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     JTFormRowNavigationDirectionPrevious = 0,

@@ -6,10 +6,13 @@
 //  Copyright © 2019 dqh. All rights reserved.
 //
 
+#if __has_include (<AsyncDisplayKit/AsyncDisplayKit.h>)
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class ASDisplayNode;
 /**
  为了避免reload时'ASNetworkImageNode'闪烁的问题，所自定义的替代类
  */

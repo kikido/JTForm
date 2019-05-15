@@ -6,9 +6,13 @@
 //  Copyright © 2019 dqh. All rights reserved.
 //
 
+#if __has_include (<AsyncDisplayKit/AsyncDisplayKit.h>)
 #import <AsyncDisplayKit/AsyncDisplayKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class ASDisplayNode;
 
 @class JTBaseCell;
 

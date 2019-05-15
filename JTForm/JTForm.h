@@ -8,7 +8,6 @@
 #import "JTFormDescriptor.h"
 #import "JTSectionDescriptor.h"
 #import "JTRowDescriptor.h"
-#import <SDWebImage/SDImageCache.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

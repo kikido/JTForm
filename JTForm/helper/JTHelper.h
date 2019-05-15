@@ -9,6 +9,10 @@
 #ifndef JTHelper_h
 #define JTHelper_h
 
+#if __has_include (<AsyncDisplayKit/AsyncDisplayKit.h>)
+#import <AsyncDisplayKit/AsyncDisplayKit.h>
+#endif
+
 #import <UIKit/UIKit.h>
 #import "NSObject+JTAdd.h"
 #import "UIColor+JTAdd.h"
