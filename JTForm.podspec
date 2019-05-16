@@ -22,6 +22,7 @@ Pod::Spec.new do |s|
   s.dependency "Texture", '~> 2.8'
   s.requires_arc = true
   s.ios.deployment_target = '9.0'
+  s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SRCROOT)/SDWebImage" }
 
   # s.public_header_files = "Classes/**/*.h"
 

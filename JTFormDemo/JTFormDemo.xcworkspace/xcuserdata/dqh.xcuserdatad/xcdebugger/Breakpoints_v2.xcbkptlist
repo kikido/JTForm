@@ -42,7 +42,7 @@
                   moduleName = "JTFormDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTFormDemo/JTFormDemo/IGViewController.m"
-                  timestampString = "579581668.247744"
+                  timestampString = "579701465.095801"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "87"
@@ -57,7 +57,7 @@
                   moduleName = "JTFormDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTFormDemo/JTFormDemo/IGViewController.m"
-                  timestampString = "579581668.250469"
+                  timestampString = "579701465.098443"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "87"
@@ -72,7 +72,7 @@
                   moduleName = "JTFormDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTFormDemo/JTFormDemo/IGViewController.m"
-                  timestampString = "579581668.2529809"
+                  timestampString = "579701465.100988"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "87"
@@ -105,7 +105,7 @@
                   moduleName = "JTFormDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTFormDemo/JTFormDemo/IGViewController.m"
-                  timestampString = "579581668.30654"
+                  timestampString = "579701465.108881"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "71"
@@ -120,7 +120,7 @@
                   moduleName = "JTFormDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTFormDemo/JTFormDemo/IGViewController.m"
-                  timestampString = "579581668.309172"
+                  timestampString = "579701465.1113549"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "71"
@@ -135,7 +135,7 @@
                   moduleName = "JTFormDemo"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/dqh/1-%E8%87%AA%E5%B7%B1%E7%9A%84%E9%A1%B9%E7%9B%AE/JTForm/JTFormDemo/JTFormDemo/IGViewController.m"
-                  timestampString = "579581668.312129"
+                  timestampString = "579701465.11388"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "71"
@@ -143,6 +143,22 @@
                   offsetFromSymbolStart = "20">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../JTForm/JTForm.m"
+            timestampString = "579701464.97465"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "224"
+            endingLineNumber = "224"
+            landmarkName = "-keyboardWillShow:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

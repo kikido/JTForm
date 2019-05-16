@@ -16,12 +16,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setTitle:@"Values" forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(testAction:) forControlEvents:UIControlEventTouchUpInside];
-    [button sizeToFit];
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithCustomView:button];
+    
     
     UIButton *button01 = [UIButton buttonWithType:UIButtonTypeCustom];
     [button01 setTitle:@"Disable" forState:UIControlStateNormal];
@@ -30,7 +25,7 @@
     button01.tag = 99;
     [button01 sizeToFit];
     UIBarButtonItem *item01 = [[UIBarButtonItem alloc] initWithCustomView:button01];
-    self.navigationItem.rightBarButtonItems = @[item01,item];
+    self.navigationItem.rightBarButtonItems = @[item01];
     // Do any additional setup after loading the view.
 }
 

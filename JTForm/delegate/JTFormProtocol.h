@@ -11,6 +11,8 @@
 
 /** 表描述协议 */
 #import "JTFormDescriptorDelegate.h"
+/** 单元行协议 */
+#import "JTBaseCellDelegate.h"
 /** 自定义选择视图控制器协议 */
 #import "JTFormSelectViewControllerDelegate.h"
 /** 关联行协议 */

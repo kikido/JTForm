@@ -20,6 +20,7 @@
     
     _stepNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UIStepper *stepControl = [[UIStepper alloc] init];
+        stepControl.backgroundColor = [UIColor clearColor];
         [stepControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return stepControl;
     }];

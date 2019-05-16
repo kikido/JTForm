@@ -21,6 +21,7 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     _accessoryNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UISwitch *switchControl = [[UISwitch alloc] init];
+        switchControl.backgroundColor = [UIColor clearColor];
         [switchControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return switchControl;
     }];

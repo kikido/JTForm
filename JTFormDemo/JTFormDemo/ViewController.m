@@ -16,6 +16,7 @@
 #import "ValidatorViewController.h"
 #import "DeleteViewController.h"
 #import "WeiBoViewController.h"
+#import "IGViewController.h"
 
 @interface ViewController ()
 @end
@@ -75,9 +76,9 @@
     };
     [section addFormRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"6" rowType:JTFormRowTypePushButton title:@"weibo"];
+    row = [JTRowDescriptor formRowDescriptorWithTag:@"6" rowType:JTFormRowTypePushButton title:@"ig"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
-        WeiBoViewController *vc = [[WeiBoViewController alloc] init];
+        IGViewController *vc = [[IGViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     };
     [section addFormRow:row];

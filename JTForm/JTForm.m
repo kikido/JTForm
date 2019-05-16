@@ -22,7 +22,6 @@
 
 #import "JTFormNavigationAccessoryView.h"
 
-
 typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
     JTFormRowNavigationDirectionPrevious = 0,
     JTFormRowNavigationDirectionNext
@@ -82,6 +81,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)layoutSubviews{
     [super layoutSubviews];
+    self.window.backgroundColor = [UIColor whiteColor];
     self.tableNode.frame = self.frame;
 }
 
@@ -200,11 +200,10 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    NSLog(@"[%@] %s", [self class], __func__);
-    
-    if (_firstResponderCell && self.tableNode.closestViewController && self.showInputAccessoryView) {
+    if (_firstResponderCell && self.tableNode.closestViewController && self.showInputAccessoryView && self.tableNode.isVisible) {
+
         NSDictionary *keyboardInfo = notification.userInfo;
-        CGRect keybordBeginFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+//        CGRect keybordBeginFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
         CGRect keybordEndFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         if (!_notFirstShowKeyBoard) {
             // 第一次弹出键盘
@@ -215,18 +214,17 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
         self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
         CGFloat ty = _orginViewControllerFrame.size.height + _orginViewControllerFrame.origin.y - keybordEndFrame.origin.y;
 
-        NSLog(@"[JTForm] keybordBeginFrame:%@",NSStringFromCGRect(keybordBeginFrame));
-        NSLog(@"[JTForm] keybordEndFrame:%@",NSStringFromCGRect(keybordEndFrame));
-        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginViewControllerFrame));
-        NSLog(@"[JTForm] ty:%f", ty);
+//        NSLog(@"[JTForm] keybordBeginFrame:%@",NSStringFromCGRect(keybordBeginFrame));
+//        NSLog(@"[JTForm] keybordEndFrame:%@",NSStringFromCGRect(keybordEndFrame));
+//        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginViewControllerFrame));
+//        NSLog(@"[JTForm] real superFrame:%@",NSStringFromCGRect(self.tableNode.closestViewController.view.frame));
+//        NSLog(@"[JTForm] ty:%f", ty);
 
         if (ty > 0) {
             UIEdgeInsets newTableInset = UIEdgeInsetsMake(_orginTableContentInset.top + ty, _orginTableContentInset.left, _orginTableContentInset.bottom, _orginTableContentInset.right);
-
             [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
                 self.tableNode.contentInset = newTableInset;
-                self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
-                self.tableNode.closestViewController.view.transform = CGAffineTransformMakeTranslation(0, - ty);
+                self.tableNode.closestViewController.view.frame = CGRectMake(self.orginViewControllerFrame.origin.x, self.orginViewControllerFrame.origin.y-ty, self.orginViewControllerFrame.size.width, self.orginViewControllerFrame.size.height);
                 [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
             } completion:nil];
         }
@@ -237,7 +235,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 {
     if (_notFirstShowKeyBoard) {
         self.tableNode.contentInset = _orginTableContentInset;
-        self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
+        self.tableNode.closestViewController.view.frame = _orginViewControllerFrame;
     }
 }
 
@@ -609,6 +607,11 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 {
     JTBaseCell *cell = [rowDescriptor cellInForm];
     [self upadteCell:cell];
+}
+
+- (void)updateAllFormRows
+{
+    
 }
 
 - (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor

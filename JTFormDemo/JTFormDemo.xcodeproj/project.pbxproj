@@ -161,6 +161,7 @@
 		1D04D6C2228AA99C004F6E07 /* JTFormValidateObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTFormValidateObject.h; sourceTree = "<group>"; };
 		1D04D6C3228AA99C004F6E07 /* JTFormRegexValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTFormRegexValidator.m; sourceTree = "<group>"; };
 		1D04D6C4228AA99C004F6E07 /* JTForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTForm.m; sourceTree = "<group>"; };
+		1D1558ED228D349B00171CE3 /* JTBaseCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTBaseCellDelegate.h; sourceTree = "<group>"; };
 		1D39F27A228162440038A831 /* SelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectViewController.h; sourceTree = "<group>"; };
 		1D39F27B228162440038A831 /* SelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectViewController.m; sourceTree = "<group>"; };
 		1D39F27D2281740D0038A831 /* JTTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTTransform.h; sourceTree = "<group>"; };
@@ -288,8 +289,8 @@
 		1D04D672228AA99C004F6E07 /* mode */ = {
 			isa = PBXGroup;
 			children = (
-				1D04D673228AA99C004F6E07 /* JTOptionObject.m */,
 				1D04D674228AA99C004F6E07 /* JTOptionObject.h */,
+				1D04D673228AA99C004F6E07 /* JTOptionObject.m */,
 			);
 			path = mode;
 			sourceTree = "<group>";
@@ -302,6 +303,7 @@
 				1D04D67A228AA99C004F6E07 /* JTFormDescriptorDelegate.h */,
 				1D04D67B228AA99C004F6E07 /* JTFormSelectViewControllerDelegate.h */,
 				1D04D67C228AA99C004F6E07 /* JTFormValidateProtocol.h */,
+				1D1558ED228D349B00171CE3 /* JTBaseCellDelegate.h */,
 				1D04D67D228AA99C004F6E07 /* JTFormProtocol.h */,
 			);
 			path = delegate;
@@ -310,30 +312,30 @@
 		1D04D67E228AA99C004F6E07 /* cell */ = {
 			isa = PBXGroup;
 			children = (
+				1D04D692228AA99C004F6E07 /* JTBaseCell.h */,
+				1D04D686228AA99C004F6E07 /* JTBaseCell.m */,
+				1D04D68F228AA99C004F6E07 /* JTFormTextFieldCell.h */,
+				1D04D683228AA99C004F6E07 /* JTFormTextFieldCell.m */,
+				1D04D68D228AA99C004F6E07 /* JTFormTextViewCell.h */,
+				1D04D684228AA99C004F6E07 /* JTFormTextViewCell.m */,
+				1D04D690228AA99C004F6E07 /* JTFormSelectCell.h */,
+				1D04D682228AA99C004F6E07 /* JTFormSelectCell.m */,
+				1D04D693228AA99C004F6E07 /* JTFormDateCell.h */,
+				1D04D68A228AA99C004F6E07 /* JTFormDateCell.m */,
+				1D04D687228AA99C004F6E07 /* JTFormDateInlineCell.h */,
+				1D04D696228AA99C004F6E07 /* JTFormDateInlineCell.m */,
+				1D04D68C228AA99C004F6E07 /* JTFormSliderCell.h */,
 				1D04D67F228AA99C004F6E07 /* JTFormSliderCell.m */,
+				1D04D68B228AA99C004F6E07 /* JTFormSegmentCell.h */,
 				1D04D680228AA99C004F6E07 /* JTFormSegmentCell.m */,
 				1D04D681228AA99C004F6E07 /* JTFormCheckCell.h */,
-				1D04D682228AA99C004F6E07 /* JTFormSelectCell.m */,
-				1D04D683228AA99C004F6E07 /* JTFormTextFieldCell.m */,
-				1D04D684228AA99C004F6E07 /* JTFormTextViewCell.m */,
-				1D04D685228AA99C004F6E07 /* JTFormFloatTextCell.h */,
-				1D04D686228AA99C004F6E07 /* JTBaseCell.m */,
-				1D04D687228AA99C004F6E07 /* JTFormDateInlineCell.h */,
-				1D04D688228AA99C004F6E07 /* JTFromSwitchCell.m */,
-				1D04D689228AA99C004F6E07 /* JTFormStepCounterCell.m */,
-				1D04D68A228AA99C004F6E07 /* JTFormDateCell.m */,
-				1D04D68B228AA99C004F6E07 /* JTFormSegmentCell.h */,
-				1D04D68C228AA99C004F6E07 /* JTFormSliderCell.h */,
-				1D04D68D228AA99C004F6E07 /* JTFormTextViewCell.h */,
-				1D04D68E228AA99C004F6E07 /* JTFormFloatTextCell.m */,
-				1D04D68F228AA99C004F6E07 /* JTFormTextFieldCell.h */,
-				1D04D690228AA99C004F6E07 /* JTFormSelectCell.h */,
 				1D04D691228AA99C004F6E07 /* JTFormCheckCell.m */,
-				1D04D692228AA99C004F6E07 /* JTBaseCell.h */,
-				1D04D693228AA99C004F6E07 /* JTFormDateCell.h */,
+				1D04D685228AA99C004F6E07 /* JTFormFloatTextCell.h */,
+				1D04D68E228AA99C004F6E07 /* JTFormFloatTextCell.m */,
 				1D04D694228AA99C004F6E07 /* JTFromSwitchCell.h */,
+				1D04D688228AA99C004F6E07 /* JTFromSwitchCell.m */,
 				1D04D695228AA99C004F6E07 /* JTFormStepCounterCell.h */,
-				1D04D696228AA99C004F6E07 /* JTFormDateInlineCell.m */,
+				1D04D689228AA99C004F6E07 /* JTFormStepCounterCell.m */,
 			);
 			path = cell;
 			sourceTree = "<group>";
@@ -341,8 +343,8 @@
 		1D04D697228AA99C004F6E07 /* asnode */ = {
 			isa = PBXGroup;
 			children = (
-				1D04D698228AA99C004F6E07 /* JTNetworkImageNode.m */,
 				1D04D699228AA99C004F6E07 /* JTNetworkImageNode.h */,
+				1D04D698228AA99C004F6E07 /* JTNetworkImageNode.m */,
 			);
 			path = asnode;
 			sourceTree = "<group>";
@@ -373,14 +375,14 @@
 		1D04D6A4228AA99C004F6E07 /* descriptor */ = {
 			isa = PBXGroup;
 			children = (
-				1D04D6A5228AA99C004F6E07 /* JTSectionDescriptor.h */,
-				1D04D6A6228AA99C004F6E07 /* JTFormDescriptor.h */,
-				1D04D6A7228AA99C004F6E07 /* JTRowDescriptor.m */,
-				1D04D6A8228AA99C004F6E07 /* JTBaseDescriptor.m */,
-				1D04D6A9228AA99C004F6E07 /* JTSectionDescriptor.m */,
-				1D04D6AA228AA99C004F6E07 /* JTRowDescriptor.h */,
-				1D04D6AB228AA99C004F6E07 /* JTFormDescriptor.m */,
 				1D04D6AC228AA99C004F6E07 /* JTBaseDescriptor.h */,
+				1D04D6A8228AA99C004F6E07 /* JTBaseDescriptor.m */,
+				1D04D6AA228AA99C004F6E07 /* JTRowDescriptor.h */,
+				1D04D6A7228AA99C004F6E07 /* JTRowDescriptor.m */,
+				1D04D6A5228AA99C004F6E07 /* JTSectionDescriptor.h */,
+				1D04D6A9228AA99C004F6E07 /* JTSectionDescriptor.m */,
+				1D04D6A6228AA99C004F6E07 /* JTFormDescriptor.h */,
+				1D04D6AB228AA99C004F6E07 /* JTFormDescriptor.m */,
 			);
 			path = descriptor;
 			sourceTree = "<group>";
@@ -398,19 +400,19 @@
 			isa = PBXGroup;
 			children = (
 				1D04D6B1228AA99C004F6E07 /* UIView+JTAdd.h */,
-				1D04D6B2228AA99C004F6E07 /* NSObject+JTAdd.h */,
-				1D04D6B3228AA99C004F6E07 /* NSString+JTAdd.m */,
-				1D04D6B4228AA99C004F6E07 /* JTFormCellLayout.h */,
-				1D04D6B5228AA99C004F6E07 /* UIColor+JTAdd.h */,
-				1D04D6B6228AA99C004F6E07 /* NSAttributedString+JTAdd.m */,
-				1D04D6B7228AA99C004F6E07 /* ASDisplayNode+JTAdd.m */,
-				1D04D6B8228AA99C004F6E07 /* JTHelper.h */,
 				1D04D6B9228AA99C004F6E07 /* UIView+JTAdd.m */,
+				1D04D6B2228AA99C004F6E07 /* NSObject+JTAdd.h */,
 				1D04D6BA228AA99C004F6E07 /* NSObject+JTAdd.m */,
 				1D04D6BB228AA99C004F6E07 /* NSString+JTAdd.h */,
-				1D04D6BC228AA99C004F6E07 /* ASDisplayNode+JTAdd.h */,
+				1D04D6B3228AA99C004F6E07 /* NSString+JTAdd.m */,
+				1D04D6B5228AA99C004F6E07 /* UIColor+JTAdd.h */,
 				1D04D6BD228AA99C004F6E07 /* UIColor+JTAdd.m */,
+				1D04D6B6228AA99C004F6E07 /* NSAttributedString+JTAdd.m */,
 				1D04D6BE228AA99C004F6E07 /* NSAttributedString+JTAdd.h */,
+				1D04D6BC228AA99C004F6E07 /* ASDisplayNode+JTAdd.h */,
+				1D04D6B7228AA99C004F6E07 /* ASDisplayNode+JTAdd.m */,
+				1D04D6B4228AA99C004F6E07 /* JTFormCellLayout.h */,
+				1D04D6B8228AA99C004F6E07 /* JTHelper.h */,
 			);
 			path = helper;
 			sourceTree = "<group>";
@@ -418,10 +420,10 @@
 		1D04D6BF228AA99C004F6E07 /* validation */ = {
 			isa = PBXGroup;
 			children = (
-				1D04D6C0228AA99C004F6E07 /* JTFormValidateObject.m */,
 				1D04D6C1228AA99C004F6E07 /* JTFormRegexValidator.h */,
-				1D04D6C2228AA99C004F6E07 /* JTFormValidateObject.h */,
 				1D04D6C3228AA99C004F6E07 /* JTFormRegexValidator.m */,
+				1D04D6C2228AA99C004F6E07 /* JTFormValidateObject.h */,
+				1D04D6C0228AA99C004F6E07 /* JTFormValidateObject.m */,
 			);
 			path = validation;
 			sourceTree = "<group>";

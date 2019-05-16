@@ -192,7 +192,7 @@
             return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor;
         }
     } else {
-        return UIColorHex(36b1bf);
+        return UIColorHex(999999);
     }
 }
 
