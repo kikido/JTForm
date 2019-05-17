@@ -1,9 +1,10 @@
 //
 //  JTForm.h
-//  JTForm
+//  JTForm (https://github.com/kikido/JTForm)
 //
-//  Created by dqh on 2019/4/8.
+//  Created by DuQianHang (https://github.com/kikido)
 //  Copyright © 2019 dqh. All rights reserved.
+//  Licensed under MIT: https://opensource.org/licenses/MIT
 //
 #import "JTFormDescriptor.h"
 #import "JTSectionDescriptor.h"
@@ -82,6 +83,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 刷新单元行的内容 */
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor;
+
+/** 刷新所有表单上单元行的内容，可以再改变系统字体等操作时使用 */
+- (void)updateAllFormRows;
 
 /** 重新加载单元行，将重新创建视图控件 */
 - (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor;

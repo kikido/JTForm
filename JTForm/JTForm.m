@@ -1,9 +1,10 @@
 //
 //  JTForm.m
-//  JTForm
+//  JTForm (https://github.com/kikido/JTForm)
 //
-//  Created by dqh on 2019/4/8.
+//  Created by DuQianHang (https://github.com/kikido)
 //  Copyright © 2019 dqh. All rights reserved.
+//  Licensed under MIT: https://opensource.org/licenses/MIT
 //
 
 #import "JTForm.h"
@@ -195,7 +196,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)contentSizeCategoryChanged:(NSNotification *)notification
 {
-    NSLog(@"%@", notification.userInfo);
+    [self updateAllFormRows];
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification
@@ -427,7 +428,6 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 {
     JTBaseCell *cell = [row cellInForm];
     _firstResponderCell = cell;
-    NSLog(@"[JTForm] %s", __func__);
 
     if (editableTextNode && self.showInputAccessoryView) {
         editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
@@ -492,8 +492,6 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)navigateToDirection:(JTFormRowNavigationDirection)direction
 {
-    NSLog(@"[JTForm] %s", __func__);
-
     JTBaseCell *currentCell = _firstResponderCell;
     JTRowDescriptor *currentRow = currentCell.rowDescriptor;
     JTRowDescriptor *nextRow = [self nextRowDescriptorForRow:currentRow direction:direction];
@@ -611,7 +609,12 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)updateAllFormRows
 {
-    
+    for (JTSectionDescriptor *section in self.formDescriptor.formSections) {
+        for (JTRowDescriptor *row in section.formRows) {
+            JTBaseCell *cell = [row cellInForm];
+            [cell update];
+        }
+    }
 }
 
 - (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor
