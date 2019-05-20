@@ -27,6 +27,7 @@ JTForm使用`Texture`完成视图的布局与加载，所以集成了Texture的�
 
 - 如果库自带的单元行满足不了需求，需要自定义单元行的时候，需要了解[Texture](https://github.com/TextureGroup/Texture)的相关知识。
 - 如果你的项目中有类似`‎IQKeyboardManager`的第三方，请在使用JTForm的时候禁用他们，不然会跟库的键盘弹起相冲突。如果你想禁用JTForm的键盘弹起，你可以设置`JTForm`的属性`showInputAccessoryView`为NO
+- 目前该库依赖于`SDWebImage`(4.4.6), `Texture`(2.8)，使用cocoapods安装时，如果与本地的版本发生冲突，请手动添加该库，或者升级依赖库
 
 
 ### 简单使用
