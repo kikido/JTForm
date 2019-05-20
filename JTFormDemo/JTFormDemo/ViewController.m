@@ -83,6 +83,13 @@
     };
     [section addFormRow:row];
     
+    row = [JTRowDescriptor formRowDescriptorWithTag:@"7" rowType:JTFormRowTypePushButton title:@"weibo"];
+    row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
+        WeiBoViewController *vc = [[WeiBoViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    };
+    [section addFormRow:row];
+    
     
     JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
     form.frame = self.view.bounds;

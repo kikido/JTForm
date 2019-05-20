@@ -332,7 +332,9 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     if (self.tailDelegate) {
         if ([self.tailDelegate respondsToSelector:@selector(tailLoadWithContent:)]) {
             [context beginBatchFetching];
-            [self.tailDelegate tailLoadWithContent:context];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tailDelegate tailLoadWithContent:context];
+            });
         }
     }
 }

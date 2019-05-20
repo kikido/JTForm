@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JTFormTailLoadDelegate <NSObject>
 
+/** 完成数据加载之后必须使用‘[context completeBatchFetching:YES]’ */
 - (void)tailLoadWithContent:(ASBatchContext *)context;
 
 @end

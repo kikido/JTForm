@@ -10,6 +10,7 @@
 #import "ViewController.h"
 #import <UIKit/UIKit.h>
 #import "YYFPSLabel.h"
+#import <SDImageCache.h>
 
 @interface AppDelegate ()
 
@@ -33,6 +34,7 @@
     [nav.view addSubview:fps];
     
     [self.window makeKeyAndVisible];
+    [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
     
     return YES;
 }

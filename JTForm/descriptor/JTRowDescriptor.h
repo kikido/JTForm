@@ -110,7 +110,7 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 /** 预留 */
 @property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellDataDictionary;
 /** 数据模型 */
-@property (nullable, nonatomic, assign) id mode;
+@property (nullable, nonatomic, strong) id mode;
 
 - (instancetype)init NS_UNAVAILABLE;
 
