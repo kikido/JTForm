@@ -61,6 +61,11 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     return self;
 }
 
++ (instancetype)FormWithDescriptor:(JTFormDescriptor *)formDescriptor
+{
+    return [[[self class] alloc] initWithFormDescriptor:formDescriptor];
+}
+
 - (void)initializeForm
 {
     _tableNode            = [[ASTableNode alloc] initWithStyle:UITableViewStyleGrouped];

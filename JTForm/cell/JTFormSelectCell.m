@@ -115,6 +115,7 @@
     } else {
         if (self.rowDescriptor.action.rowBlock) {
             self.rowDescriptor.action.rowBlock(self.rowDescriptor);
+            [self.findForm updateFormRow:self.rowDescriptor];
         }
     }
     [[self.findForm tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];

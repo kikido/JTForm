@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
++ (instancetype)FormWithDescriptor:(JTFormDescriptor *)formDescriptor;
+
 #pragma mark - get data
 
 /**
