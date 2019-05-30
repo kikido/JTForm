@@ -132,11 +132,11 @@ CGFloat const JTFormDefaultSectionFooterHeight = 25.;
 - (void)addFormRow:(JTRowDescriptor *)row beforeRow:(JTRowDescriptor *)beforeRow
 {
     NSUInteger index = [self.allRows indexOfObject:row];
-    NSUInteger beforeIndex = [self.allRows indexOfObject:row];;
+    NSUInteger beforeIndex = [self.allRows indexOfObject:beforeRow];;
     
     if (index == NSNotFound) {
         if (beforeIndex != NSNotFound) {
-            [self addFormRow:row atIndex:beforeIndex - 1];
+            [self addFormRow:row atIndex:beforeIndex];
         } else {
             [self addFormRow:row];
         }

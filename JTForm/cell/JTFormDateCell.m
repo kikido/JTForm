@@ -43,7 +43,7 @@
                                      firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
     
     if (!self.rowDescriptor.valueFormatter) {
-        NSDateFormatter *dateFormatter = (NSDateFormatter *)self.rowDescriptor.valueFormatter;
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate]) {
             dateFormatter.dateStyle = NSDateFormatterMediumStyle;
             dateFormatter.timeStyle = NSDateFormatterNoStyle;

@@ -139,7 +139,7 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 /** 详情占位符 */
 @property (nullable, nonatomic, copy  ) NSString    *placeHolder;
 /** 能输入最大的字符数 */
-@property (nullable, nonatomic, assign) NSNumber    *maxNumberOfCharacters;
+@property (nullable, nonatomic, strong) NSNumber    *maxNumberOfCharacters;
 
 /**
  在未编辑状态时，详情的显示内容
