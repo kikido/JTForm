@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class JTRowDescriptor;
+
 @protocol JTFormDescriptorDelegate <NSObject>
 
 /** 移除了某些位置的节描述 */
@@ -24,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 移除了某些位置的行描述 */
 - (void)formRowsHaveBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
+
+- (void)formRowDescriptorValueHasChanged:(JTRowDescriptor *)formRow oldValue:(id)oldValue newValue:(id)newValue;
 
 @end
 

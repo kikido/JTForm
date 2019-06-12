@@ -22,7 +22,6 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
     _textViewNode = [[ASEditableTextNode alloc] init];
-    _textViewNode.textContainerInset = UIEdgeInsetsMake(7, 0, 0, 0);
     _textViewNode.delegate = self;
     _textViewNode.scrollEnabled = false;
     _textViewNode.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -91,6 +90,7 @@
         rightStack.style.alignSelf = ASStackLayoutAlignSelfStretch;
         rightStack.style.flexGrow = 1.;
     } else {
+        self.contentNode.style.minHeight = ASDimensionMake(30.);
         self.contentNode.style.flexGrow = 1.;
         self.contentNode.style.flexShrink = 1.;
     }
@@ -106,7 +106,7 @@
                                                                            alignItems: ASStackLayoutAlignItemsStart
                                                                              children:@[leftStack, rightStack ? rightStack : self.contentNode]];
 
-    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
+    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 15., 12., 15.) child:contentStack];
 }
 
 #pragma mark  -
@@ -164,23 +164,13 @@
     return YES;
 }
 
-- (void)editableTextNodeDidUpdateText:(ASEditableTextNode *)editableTextNode
+- (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
 {
     if (editableTextNode.textView.text.length > 0) {
-        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
-            self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:editableTextNode.textView.text locale:NSLocale.currentLocale];
-        } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInteger]) {
-            self.rowDescriptor.value = @([editableTextNode.textView.text integerValue]);
-        } else {
-            self.rowDescriptor.value = editableTextNode.textView.text;
-        }
+        self.rowDescriptor.value = editableTextNode.textView.text;
     } else {
         self.rowDescriptor.value = nil;
     }
-}
-
-- (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
-{
     if (self.rowDescriptor.valueFormatter) {
         _textViewNode.textView.text = [self.rowDescriptor displayContentValue];
     }

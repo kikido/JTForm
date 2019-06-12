@@ -44,9 +44,8 @@
     
     if (!self.rowDescriptor.valueFormatter) {
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate]) {
-            dateFormatter.dateStyle = NSDateFormatterMediumStyle;
-            dateFormatter.timeStyle = NSDateFormatterNoStyle;
+        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
+            dateFormatter.dateFormat = @"yyyy-MM-dd";
         }
         else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime]) {
             dateFormatter.dateStyle = NSDateFormatterNoStyle;
@@ -171,8 +170,8 @@
                                                                        justifyContent:ASStackLayoutJustifyContentSpaceBetween
                                                                            alignItems: ASStackLayoutAlignItemsCenter
                                                                              children:@[leftStack, self.contentNode]];
-    
-    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
+    contentStack.style.minHeight = ASDimensionMake(30.);
+    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 15., 12., 15.) child:contentStack];
 }
 
 #pragma mark - helper

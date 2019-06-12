@@ -117,6 +117,7 @@
 		1D7BF949228EB3B4009790D0 /* UIView+YYText.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D7BF92E228EB3B4009790D0 /* UIView+YYText.m */; };
 		1D7BF94A228EB3B4009790D0 /* YYTextAsyncLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D7BF931228EB3B4009790D0 /* YYTextAsyncLayer.m */; };
 		1D7BF94B228EB3B4009790D0 /* YYTextWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D7BF932228EB3B4009790D0 /* YYTextWeakProxy.m */; };
+		1DBF846D22B0D1F800CC4FBA /* FormOneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DBF846C22B0D1F800CC4FBA /* FormOneController.m */; };
 		1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA28225B6DA000652FE6 /* AppDelegate.m */; };
 		1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA2B225B6DA000652FE6 /* ViewController.m */; };
 		1DDADA31225B6DA100652FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA30225B6DA100652FE6 /* Assets.xcassets */; };
@@ -342,6 +343,10 @@
 		1D7BF931228EB3B4009790D0 /* YYTextAsyncLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTextAsyncLayer.m; sourceTree = "<group>"; };
 		1D7BF932228EB3B4009790D0 /* YYTextWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTextWeakProxy.m; sourceTree = "<group>"; };
 		1D7BF933228EB3B4009790D0 /* UIPasteboard+YYText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIPasteboard+YYText.h"; sourceTree = "<group>"; };
+		1DBF846B22B0D1F800CC4FBA /* FormOneController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormOneController.h; sourceTree = "<group>"; };
+		1DBF846C22B0D1F800CC4FBA /* FormOneController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormOneController.m; sourceTree = "<group>"; };
+		1DBF846E22B0DDD700CC4FBA /* JTFormEditDeletegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormEditDeletegate.h; sourceTree = "<group>"; };
+		1DBF846F22B0DE7200CC4FBA /* JTFormDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDelegate.h; sourceTree = "<group>"; };
 		1DDADA24225B6DA000652FE6 /* JTFormDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JTFormDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DDADA27225B6DA000652FE6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DDADA28225B6DA000652FE6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -410,6 +415,8 @@
 				1D04D67B228AA99C004F6E07 /* JTFormSelectViewControllerDelegate.h */,
 				1D04D67C228AA99C004F6E07 /* JTFormValidateProtocol.h */,
 				1D1558ED228D349B00171CE3 /* JTBaseCellDelegate.h */,
+				1DBF846E22B0DDD700CC4FBA /* JTFormEditDeletegate.h */,
+				1DBF846F22B0DE7200CC4FBA /* JTFormDelegate.h */,
 				1D04D67D228AA99C004F6E07 /* JTFormProtocol.h */,
 			);
 			path = delegate;
@@ -816,6 +823,8 @@
 				1D39F2942283B5B30038A831 /* ValidatorViewController.m */,
 				1D39F2992283C4BF0038A831 /* DeleteViewController.h */,
 				1D39F29A2283C4BF0038A831 /* DeleteViewController.m */,
+				1DBF846B22B0D1F800CC4FBA /* FormOneController.h */,
+				1DBF846C22B0D1F800CC4FBA /* FormOneController.m */,
 				1D39F2B422844E380038A831 /* WeiBoViewController.h */,
 				1D39F2B522844E380038A831 /* WeiBoViewController.m */,
 				1D39F3C2228942B80038A831 /* IGViewController.h */,
@@ -1056,6 +1065,7 @@
 				1D7BF93A228EB3B4009790D0 /* YYTextLine.m in Sources */,
 				1D04D6E3228AA99C004F6E07 /* JTFormValidateObject.m in Sources */,
 				1D7BF949228EB3B4009790D0 /* UIView+YYText.m in Sources */,
+				1DBF846D22B0D1F800CC4FBA /* FormOneController.m in Sources */,
 				1D7BF934228EB3B4009790D0 /* YYTextView.m in Sources */,
 				1D04D6DB228AA99C004F6E07 /* JTFormDescriptor.m in Sources */,
 				1D39F3C4228942B80038A831 /* IGViewController.m in Sources */,

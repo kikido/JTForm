@@ -24,7 +24,6 @@
     _textFieldNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UITextField *textField = [[UITextField alloc] init];
         textField.delegate = self;
-        [textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
         return textField;
     }];
 }
@@ -136,21 +135,6 @@
     [super formCellUnhighlight];
 }
 
-#pragma mark - Action
-
-- (void)textFieldDidChange:(UITextField *)textField
-{
-    if (textField.text.length > 0) {
-        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
-            self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:textField.text locale:NSLocale.currentLocale];
-        } else {
-            self.rowDescriptor.value = textField.text;
-        }
-    } else {
-        self.rowDescriptor.value = nil;
-    }
-}
-
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
@@ -179,6 +163,15 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
+    if (textField.text.length > 0) {
+        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
+            self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:textField.text locale:NSLocale.currentLocale];
+        } else {
+            self.rowDescriptor.value = textField.text;
+        }
+    } else {
+        self.rowDescriptor.value = nil;
+    }
     if (self.rowDescriptor.valueFormatter) {
         textField.text = [self.rowDescriptor displayContentValue];
     }

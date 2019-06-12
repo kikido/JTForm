@@ -87,6 +87,9 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 /** 单元行的值 */
 @property (nullable, nonatomic, strong) id value;
 
+/** 注意不要在block内修改该单元行的value，否则会死循环 */
+@property (nullable, nonatomic, copy) void(^valueChangeBlock)(_Nullable id oldValue, _Nonnull id newValue, JTRowDescriptor * _Nonnull sender);
+
 /** 是否为必录项。default是‘YES’ */
 @property (nonatomic, assign) BOOL required;
 
@@ -172,6 +175,8 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
  移除验证器
  */
 - (void)removeValidator:(nonnull id<JTFormValidateProtocol>)validator;
+
+- (void)removeAllValidators;
 
 /**
  对单元行的值进行验证

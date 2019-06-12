@@ -22,5 +22,9 @@
 #import "JTFormValidateProtocol.h"
 /** 上拉加载更多 */
 #import "JTFormTailLoadDelegate.h"
+/** 删减，添加单元行协议 */
+#import "JTFormEditDeletegate.h"
+
+#import "JTFormDelegate.h"
 
 #endif /* JTFormProtocol_h */

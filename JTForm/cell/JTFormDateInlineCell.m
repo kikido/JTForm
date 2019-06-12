@@ -26,6 +26,7 @@
     _datePickerNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         __strong typeof(weakSelf) strongSelf = weakSelf;
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
+        datePicker.datePickerMode = UIDatePickerModeDate;
         datePicker.backgroundColor = [UIColor whiteColor];
         [datePicker addTarget:strongSelf action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
         return datePicker;
@@ -50,6 +51,7 @@
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
+    _datePickerNode.style.alignSelf = ASStackLayoutAlignSelfStretch;
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsZero child:_datePickerNode];
 }
 

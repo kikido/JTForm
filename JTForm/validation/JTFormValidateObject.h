@@ -17,9 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否通过验证 */
 @property (nonatomic, assign) BOOL valid;
 
-- (instancetype)initWithErrorMsg:(NSString *)errorMsg valid:(BOOL)valid;
+- (instancetype)initWithErrorMsg:(nullable NSString *)errorMsg valid:(BOOL)valid;
 
-+ (instancetype)formValidateObjectWithErrorMsg:(NSString *)errorMsg valid:(BOOL)valid;
++ (instancetype)formValidateObjectWithErrorMsg:(nullable NSString *)errorMsg valid:(BOOL)valid;
 @end
 
 NS_ASSUME_NONNULL_END

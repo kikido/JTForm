@@ -11,7 +11,7 @@
 
 @implementation JTFormValidateObject
 
-- (instancetype)initWithErrorMsg:(NSString *)errorMsg valid:(BOOL)valid
+- (instancetype)initWithErrorMsg:(nullable NSString *)errorMsg valid:(BOOL)valid
 {
     if (self = [super init]) {
         _errorMsg = errorMsg;
@@ -20,7 +20,7 @@
     return self;
 }
 
-+ (instancetype)formValidateObjectWithErrorMsg:(NSString *)errorMsg valid:(BOOL)valid
++ (instancetype)formValidateObjectWithErrorMsg:(nullable NSString *)errorMsg valid:(BOOL)valid
 {
     return [[[self class] alloc] initWithErrorMsg:errorMsg valid:valid];
 }

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 选择项的值 */
 @property (nonatomic, assign) id       formValue;
 
-+(JTOptionObject *)formOptionsObjectWithValue:(nonnull id)value displayText:(nonnull NSString *)displayText;
++(JTOptionObject *)formOptionsObjectWithValue:(nullable id)value displayText:(nonnull NSString *)displayText;
 
 + (NSArray<JTOptionObject *> *)formOptionsObjectsWithValues:(nonnull NSArray *)values displayTexts:(nonnull NSArray *)displayTexts;
 

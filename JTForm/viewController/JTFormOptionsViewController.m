@@ -40,13 +40,14 @@
     if (self = [super initWithNode:_tableNode]) {
         _tableNode.delegate = self;
         _tableNode.dataSource = self;
+        _tableNode.backgroundColor = [UIColor whiteColor];
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = UIColorHex(f0f0f0);
     self.title = _rowDescriptor.selectorTitle;
     _selectedItems =
     [self.rowDescriptor.rowType isEqualToString:JTFormRowTypePushSelect]
@@ -159,6 +160,18 @@
 - (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return ASSizeRangeMake(CGSizeMake(0, 55.));
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 25.;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
+    view.backgroundColor = UIColorHex(f0f0f0);
+    return view;
 }
 
 #pragma mark - helper

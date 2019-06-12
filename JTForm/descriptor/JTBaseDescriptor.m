@@ -11,6 +11,15 @@
 
 @implementation JTBaseDescriptor
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        _configMode = [[JTFormConfigMode alloc] init];
+        _hidden = false;
+        _disabled = false;
+    }
+    return self;
+}
 @end
 
 

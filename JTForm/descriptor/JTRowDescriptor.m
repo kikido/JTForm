@@ -79,8 +79,15 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         _cellConfigWhenDisabled = @{}.mutableCopy;
         _cellConfigAtConfigure = @{}.mutableCopy;
         _cellDataDictionary = @{}.mutableCopy;
+        
+        [self addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:@"value"];
 }
 
 #pragma mark - cell
@@ -205,6 +212,11 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     }
 }
 
+- (void)removeAllValidators
+{
+    [self.validators removeAllObjects];
+}
+
 - (nullable JTFormValidateObject *)doValidate
 {
     __block JTFormValidateObject *validateObject = nil;
@@ -237,17 +249,25 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (BOOL)rowValueIsEmpty
 {
-    if (!self.value || [self.value isKindOfClass:[NSNull class]]) {
+    return [self sourceRowValueIsEmpty:self.value];
+}
+
+- (BOOL)sourceRowValueIsEmpty:(id)objectValue
+{
+    if (!objectValue || [objectValue isKindOfClass:[NSNull class]]) {
         return YES;
     }
-    if ([self.value isKindOfClass:[NSString class]] && [[self.value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
+    if ([objectValue isKindOfClass:[NSString class]] && [[objectValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] == 0) {
         return YES;
     }
-    if ([self.value isKindOfClass:[NSArray class]] && [self.value count] == 0) {
+    if ([objectValue isKindOfClass:[NSArray class]] && [objectValue count] == 0) {
         return YES;
     }
-    if ([self.value isKindOfClass:[NSDictionary class]] && [[self.value allKeys] count] == 0) {
+    if ([objectValue isKindOfClass:[NSDictionary class]] && [[objectValue allKeys] count] == 0) {
         return YES;
+    }
+    if ([objectValue isKindOfClass:[JTOptionObject class]]) {
+        return  [self sourceRowValueIsEmpty:[objectValue formValue]];
     }
     return NO;
 }
@@ -260,6 +280,29 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         _action = [[JTRowAction alloc] init];
     }
     return _action;
+}
+
+#pragma mark - kvo
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (!self.sectionDescriptor.formDescriptor.delegate) {
+        return;
+    }
+    if (object == self && [keyPath isEqualToString:@"value"]) {
+        if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeSetting)]) {
+            id newValue = [change objectForKey:NSKeyValueChangeNewKey];
+            id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
+            
+            __weak typeof(self) weakSelf = self;
+            if (self.valueChangeBlock) {
+                self.valueChangeBlock(oldValue, newValue, weakSelf);
+            }
+            if ([self.sectionDescriptor.formDescriptor.delegate respondsToSelector:@selector(formRowDescriptorValueHasChanged:oldValue:newValue:)]) {
+                [self.sectionDescriptor.formDescriptor.delegate formRowDescriptorValueHasChanged:weakSelf oldValue:oldValue newValue:newValue];
+            }
+        }
+    }
 }
 
 @end

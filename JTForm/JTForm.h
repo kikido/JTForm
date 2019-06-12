@@ -23,6 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 仅支持tail加载。想使用head加载可以自定义‘uirefreshcontrol’或者使用‘mjrefresh’之类的第三方工具 */
 @property (nonatomic, weak) id<JTFormTailLoadDelegate> tailDelegate;
+
+@property (nonatomic, weak) id<JTFormEditDeletegate> editDelegate;
+
+@property (nonatomic, weak) id<JTFormDelegate> delegate;
+
 /** 数据源：表描述 */
 @property (nonatomic, strong) JTFormDescriptor *formDescriptor;
 /** 是否显示‘InputAccessoryView’，default是YES */
@@ -30,16 +35,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor;
 
-+ (instancetype)FormWithDescriptor:(JTFormDescriptor *)formDescriptor;
++ (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor;
 
 #pragma mark - get data
 
+/** 根据tag返回单元行的value。当单元行值类型为`JTOptionObject`时，在返回集合中的值是`JTOptionObject.formValue` */
+- (nullable id)findRowValueByTag:(NSString *)tag;
+
+
 /**
- 表单值的集合。key为‘tag’，value为‘value’。如果有一些单元行的‘tag’重复，则仅仅保存其中的一条。如果‘value’为nil，则返回'[nsnull null]'
+ 表单值的集合。key为‘tag’，value为‘value’。
+ 注意：1. 当value为空时，结果集合中的值为'[nsnull null]'
+ ***  2. 如果有一些单元行的‘tag’重复，则仅仅保存其中的一条
+ ***  3. 如果是选中类型的单元行，value可能为`JTOptionObject`类型
+ ***  4. 隐藏掉的单元行的值也会出现在返回集合中
  */
 - (NSDictionary *)formValues;
 
+/**  表单值的集合。key为‘tag’，value为‘value’。与`formValues`不同的是，当单元行值类型为`JTOptionObject`时，在返回集合中的值是`JTOptionObject.formValue` */
+- (NSDictionary *)formHttpValues;
+
 #pragma mark - validate
+
+/** 验证表单中某一节的值 */
+- (NSArray<NSError *> *)sectionValidationErrors:(JTSectionDescriptor *)sectionDescriptor;
 
 /**
  获得表单的验证错误信息。你可以对单元行设置验证器（id<JTFormValidateProtocol>），如果单元行的值没有通过验证，则会通过该方法返回错误信息。
@@ -66,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)showFormValidationError:(NSError *)error withTitle:(NSString*)title;
 
 
-#pragma mark - row
+#pragma mark - row types
 
 /**
  一个字典。包含了行描述跟单元行相对应的信息，‘key’为‘rowType’，value为单元行类型。
@@ -74,14 +93,44 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSMutableDictionary *)cellClassesForRowTypes;
 
-#pragma mark - inline row
+#pragma mark - inline row types
 
 + (NSMutableDictionary *)inlineRowTypesForRowTypes;
 
 /** 确保指定行可见 */
 - (void)ensureRowIsVisible:(JTRowDescriptor *)rowDescriptor;
 
+#pragma mark - delete && add
+
+- (void)addFormRow:(JTRowDescriptor *)formRow afterRow:(JTRowDescriptor *)afterRow;
+
+-(void)addFormRow:(JTRowDescriptor *)formRow beforeRow:(JTRowDescriptor *)beforeRow;
+
+- (void)addFormRow:(JTRowDescriptor *)formRow afterRowWithTag:(NSString *)afterRowTag;
+
+- (void)addFormRow:(JTRowDescriptor *)formRow beforeRowWithTag:(NSString *)beforeRowTag;
+
+-(void)removeFormRow:(JTRowDescriptor *)row;
+
+-(void)removeFormRowByTag:(NSString *)tag;
+
+
 #pragma mark - update and reload
+
+/** 根据tag隐藏单元行。调用该方法之后无需刷新即可更新ui */
+- (void)setRowsHidden:(BOOL)hidden byTags:(NSArray<NSString *> *)tags;
+
+/** 根据tag设置单元行不可编辑状态，如果需要更新UI则需要手动调用`update`方法 */
+- (void)setRowsDisabled:(BOOL)disabled byTags:(NSArray<NSString *> *)tags;
+
+/** 根据tag设置单元行为必填项，如果需要更新UI则需要手动调用`update`方法 */
+- (void)setRowsRequired:(BOOL)required byTags:(NSArray<NSString *> *)tags;
+
+/** s根据tag设置value，如果需要更新UI则需要手动调用`update`方法 */
+- (void)setRowValue:(nullable id)value byTag:(NSString *)tag;
+
+/** 刷新一定数量的单元行 */
+- (void)updateRowByTags:(NSArray<NSString *> *)tags;
 
 /** 刷新单元行的内容 */
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor;

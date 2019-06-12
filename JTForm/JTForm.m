@@ -61,7 +61,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     return self;
 }
 
-+ (instancetype)FormWithDescriptor:(JTFormDescriptor *)formDescriptor
++ (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor
 {
     return [[[self class] alloc] initWithFormDescriptor:formDescriptor];
 }
@@ -88,7 +88,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 - (void)layoutSubviews{
     [super layoutSubviews];
     self.window.backgroundColor = [UIColor whiteColor];
-    self.tableNode.frame = self.frame;
+    self.tableNode.frame = self.bounds;
 }
 
 #pragma mark - ASCommonTableViewDelegate
@@ -174,6 +174,9 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
             [self.tableNode.view endEditing:YES];
         }
         [row.sectionDescriptor removeFormRowAtIndex:indexPath.row];
+        if ([self.editDelegate respondsToSelector:@selector(jtForm:commitEditingStyle:forRowAtIndexPath:)]) {
+            [self.editDelegate jtForm:self commitEditingStyle:JTFormCellEditingStyleDelete forRowAtIndexPath:indexPath];
+        }
     }
 }
 
@@ -209,7 +212,6 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     if (_firstResponderCell && self.tableNode.closestViewController && self.showInputAccessoryView && self.tableNode.isVisible) {
 
         NSDictionary *keyboardInfo = notification.userInfo;
-//        CGRect keybordBeginFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
         CGRect keybordEndFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         if (!_notFirstShowKeyBoard) {
             // 第一次弹出键盘
@@ -219,10 +221,12 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
         }
         self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
         CGFloat ty = _orginViewControllerFrame.size.height + _orginViewControllerFrame.origin.y - keybordEndFrame.origin.y;
-
+        
+//        CGRect keybordBeginFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
 //        NSLog(@"[JTForm] keybordBeginFrame:%@",NSStringFromCGRect(keybordBeginFrame));
 //        NSLog(@"[JTForm] keybordEndFrame:%@",NSStringFromCGRect(keybordEndFrame));
 //        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginViewControllerFrame));
+//        NSLog(@"[JTForm] superFrame:%@",NSStringFromUIEdgeInsets(_orginTableContentInset));
 //        NSLog(@"[JTForm] real superFrame:%@",NSStringFromCGRect(self.tableNode.closestViewController.view.frame));
 //        NSLog(@"[JTForm] ty:%f", ty);
 
@@ -281,6 +285,13 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self.tableNode performBatchUpdates:^{
         [self.tableNode deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     } completion:nil];
+}
+
+- (void)formRowDescriptorValueHasChanged:(JTRowDescriptor *)formRow oldValue:(id)oldValue newValue:(id)newValue
+{
+    if (self.delegate) {
+        [self.delegate formRowDescriptorValueHasChanged:self formRow:formRow oldValue:oldValue newValue:newValue];
+    }
 }
 
 #pragma mark - ASTableDataSource
@@ -550,18 +561,54 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 #pragma mark - get data
 
+- (id)findRowValueByTag:(NSString *)tag
+{
+    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
+    return [row.value cellValue];
+}
+
 - (NSDictionary *)formValues
 {
     NSMutableDictionary *result = @{}.mutableCopy;
     for (JTSectionDescriptor *section in self.formDescriptor.allSections) {
         for (JTRowDescriptor *row in section.allRows) {
-            if (row.tag.length > 0) {
+            if (row.tag) {
                 [result setObject:row.value ? row.value : [NSNull null] forKey:row.tag];
             }
         }
     }
     return result.copy;
 }
+
+- (NSDictionary *)formHttpValues
+{
+    NSMutableDictionary *result = @{}.mutableCopy;
+    for (JTSectionDescriptor *section in self.formDescriptor.allSections) {
+        for (JTRowDescriptor *row in section.allRows) {
+            if (row.tag) {
+                [result setObject:[row.value cellValue] ? [row.value cellValue] : [NSNull null] forKey:row.tag];
+            }
+        }
+    }
+    return result.copy;
+}
+
+- (NSArray<NSError *> *)sectionValidationErrors:(JTSectionDescriptor *)sectionDescriptor
+{
+    NSMutableArray *result = @[].mutableCopy;
+    for (JTRowDescriptor *row in sectionDescriptor.formRows) {
+        JTFormValidateObject *vObject = [row doValidate];
+        if (vObject && !vObject.valid) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey : vObject.errorMsg
+                                       };
+            NSError *error = [[NSError alloc] initWithDomain:JTFormErrorDomain code:JTFormErrorCodeInvalid userInfo:userInfo];
+            [result addObject:error];
+        }
+    }
+    return [result copy];
+}
+
 
 - (NSArray<NSError *> *)formValidationErrors
 {
@@ -606,7 +653,120 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
 }
 
+#pragma mark - delete && add
+
+- (void)addFormRow:(JTRowDescriptor *)formRow afterRow:(JTRowDescriptor *)afterRow
+{
+    if (afterRow.sectionDescriptor){
+        [afterRow.sectionDescriptor addFormRow:formRow afterRow:afterRow];
+    } else{
+        [[self.formDescriptor.formSections lastObject] addFormRow:formRow afterRow:afterRow];
+    }
+}
+
+-(void)addFormRow:(JTRowDescriptor *)formRow beforeRow:(JTRowDescriptor *)beforeRow
+{
+    if (beforeRow.sectionDescriptor){
+        [beforeRow.sectionDescriptor addFormRow:formRow beforeRow:beforeRow];
+    } else{
+        [[self.formDescriptor.formSections lastObject] addFormRow:formRow beforeRow:beforeRow];
+    }
+}
+
+- (void)addFormRow:(JTRowDescriptor *)formRow afterRowWithTag:(NSString *)afterRowTag
+{
+    if ([afterRowTag jt_contentIsNotEmpty]) {
+        return;
+    }
+    JTRowDescriptor *afterRow = [self.formDescriptor formRowWithTag:afterRowTag];
+    [self addFormRow:formRow afterRow:afterRow];
+}
+
+- (void)addFormRow:(JTRowDescriptor *)formRow beforeRowWithTag:(NSString *)beforeRowTag
+{
+    if ([beforeRowTag jt_contentIsNotEmpty]) {
+        return;
+    }
+    JTRowDescriptor *beforeRow = [self.formDescriptor formRowWithTag:beforeRowTag];
+    [self addFormRow:formRow beforeRow:beforeRow];
+}
+
+-(void)removeFormRow:(JTRowDescriptor *)row
+{
+    if (!row) {
+        return;
+    }
+    for (JTSectionDescriptor *section in self.formDescriptor.formSections){
+        if ([section.formRows containsObject:row]){
+            [section removeFormRow:row];
+            return;
+        }
+    }
+}
+
+-(void)removeFormRowByTag:(NSString *)tag
+{
+    if ([tag jt_contentIsNotEmpty]) {
+        return;
+    }
+    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
+    [self removeFormRow:row];
+}
+
 #pragma mark - update and reload
+
+- (void)setRowsHidden:(BOOL)hidden byTags:(NSArray<NSString *> *)tags
+{
+    if ([tags jt_contentIsNotEmpty]) {
+        return;
+    }
+    [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
+        row.hidden = hidden;
+    }];
+}
+
+- (void)setRowsDisabled:(BOOL)disabled byTags:(NSArray<NSString *> *)tags
+{
+    if ([tags jt_contentIsNotEmpty]) {
+        return;
+    }
+    [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
+        row.disabled = disabled;
+    }];
+}
+
+- (void)setRowsRequired:(BOOL)required byTags:(NSArray<NSString *> *)tags
+{
+    if ([tags jt_contentIsNotEmpty]) {
+        return;
+    }
+    [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
+        row.required = required;
+    }];
+}
+
+- (void)setRowValue:(nullable id)value byTag:(NSString *)tag
+{
+    if ([tag jt_contentIsNotEmpty]) {
+        return;
+    }
+    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
+    row.value = value;
+}
+
+- (void)updateRowByTags:(NSArray<NSString *> *)tags
+{
+    if ([tags jt_contentIsNotEmpty]) {
+        return;
+    }
+    [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
+        [self updateFormRow:row];
+    }];
+}
 
 - (void)updateFormRow:(JTRowDescriptor *)rowDescriptor
 {

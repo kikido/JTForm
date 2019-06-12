@@ -21,7 +21,7 @@
     return self;
 }
 
-+(JTOptionObject *)formOptionsObjectWithValue:(nonnull id)value displayText:(nonnull NSString *)displayText
++(JTOptionObject *)formOptionsObjectWithValue:(nullable id)value displayText:(nonnull NSString *)displayText
 {
     return [[[self class] alloc] initWithValue:value displayText:displayText];
 }

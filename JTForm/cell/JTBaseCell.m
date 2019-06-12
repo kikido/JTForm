@@ -13,7 +13,7 @@
 
 - (instancetype)init
 {
-    if (self = [super init]) {        
+    if (self = [super init]) {
         [self config];
     }
     return self;
@@ -48,7 +48,7 @@
 
 - (void)formCellUnhighlight
 {
-
+    
 }
 
 - (BOOL)formCellCanBecomeFirstResponder
@@ -131,189 +131,156 @@
 
 - (UIColor *)formCellBgColor
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.bgColor) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.bgColor) {
-            if (self.rowDescriptor.configMode.bgColor) {
-                return self.rowDescriptor.configMode.bgColor;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.bgColor;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.bgColor;
-        }
-    } else {
-        return [UIColor whiteColor];
+    if (self.rowDescriptor.configMode.bgColor) {
+        return self.rowDescriptor.configMode.bgColor;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.bgColor) {
+        return self.rowDescriptor.sectionDescriptor.configMode.bgColor;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.bgColor) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.bgColor;
+    }
+    return [UIColor whiteColor];
 }
 
 - (UIColor *)formCellTitleColor
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleColor) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.titleColor) {
-            if (self.rowDescriptor.configMode.titleColor) {
-                return self.rowDescriptor.configMode.titleColor;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.titleColor;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleColor;
-        }
-    } else {
-        return UIColorHex(333333);
+    if (self.rowDescriptor.configMode.titleColor) {
+        return self.rowDescriptor.configMode.titleColor;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.titleColor) {
+        return self.rowDescriptor.sectionDescriptor.configMode.titleColor;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleColor) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleColor;
+    }
+    return UIColorHex(333333);
 }
 
 - (UIColor *)formCellContentColor
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentColor) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.contentColor) {
-            if (self.rowDescriptor.configMode.contentColor) {
-                return self.rowDescriptor.configMode.contentColor;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.contentColor;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentColor;
-        }
-    } else {
-        return UIColorHex(333333);
+    if (self.rowDescriptor.configMode.contentColor) {
+        return self.rowDescriptor.configMode.contentColor;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.contentColor) {
+        return self.rowDescriptor.sectionDescriptor.configMode.contentColor;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentColor) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentColor;
+    }
+    return UIColorHex(333333);
 }
 
 - (UIColor *)formCellPlaceHolderColor
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.placeHolderColor) {
-            if (self.rowDescriptor.configMode.placeHolderColor) {
-                return self.rowDescriptor.configMode.placeHolderColor;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.placeHolderColor;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor;
-        }
-    } else {
-        return UIColorHex(999999);
+    if (self.rowDescriptor.configMode.placeHolderColor) {
+        return self.rowDescriptor.configMode.placeHolderColor;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.placeHolderColor) {
+        return self.rowDescriptor.sectionDescriptor.configMode.placeHolderColor;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor;
+    }
+    return UIColorHex(dbdbdb);
 }
 
 - (UIColor *)formCellDisabledTitleColor
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleColor) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.disabledTitleColor) {
-            if (self.rowDescriptor.configMode.disabledTitleColor) {
-                return self.rowDescriptor.configMode.disabledTitleColor;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.disabledTitleColor;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleColor;
-        }
-    } else {
-        return UIColorHex(dfdfdf);
+    if (self.rowDescriptor.configMode.disabledTitleColor) {
+        return self.rowDescriptor.configMode.disabledTitleColor;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.disabledTitleColor) {
+        return self.rowDescriptor.sectionDescriptor.configMode.disabledTitleColor;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleColor) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleColor;
+    }
+    return UIColorHex(aaaaaa);
 }
 
 - (UIColor *)formCellDisabledContentColor
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.disabledContentColor) {
-            if (self.rowDescriptor.configMode.disabledContentColor) {
-                return self.rowDescriptor.configMode.disabledContentColor;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.disabledContentColor;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor;
-        }
-    } else {
-        return UIColorHex(dbdbdb);
+    if (self.rowDescriptor.configMode.disabledContentColor) {
+        return self.rowDescriptor.configMode.disabledContentColor;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.disabledContentColor) {
+        return self.rowDescriptor.sectionDescriptor.configMode.disabledContentColor;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor;
+    }
+    return UIColorHex(aaaaaa);
 }
 
 - (UIFont *)formCellTitleFont
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleFont) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.titleFont) {
-            if (self.rowDescriptor.configMode.titleFont) {
-                return self.rowDescriptor.configMode.titleFont;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.titleFont;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleFont;
-        }
-    } else {
-        return [UIFont systemFontOfSize:15.];
+    if (self.rowDescriptor.configMode.titleFont) {
+        return self.rowDescriptor.configMode.titleFont;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.titleFont) {
+        return self.rowDescriptor.sectionDescriptor.configMode.titleFont;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleFont) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleFont;
+    }
+    return [UIFont systemFontOfSize:16.];
 }
 
 - (UIFont *)formCellContentFont
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentFont) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.contentFont) {
-            if (self.rowDescriptor.configMode.contentFont) {
-                return self.rowDescriptor.configMode.contentFont;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.contentFont;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentFont;
-        }
-    } else {
-        return [UIFont systemFontOfSize:15.];
+    if (self.rowDescriptor.configMode.contentFont) {
+        return self.rowDescriptor.configMode.contentFont;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.contentFont) {
+        return self.rowDescriptor.sectionDescriptor.configMode.contentFont;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentFont) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentFont;
+    }
+    return [UIFont systemFontOfSize:15.];
 }
 
 - (UIFont *)formCellPlaceHlderFont
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHlderFont) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.placeHlderFont) {
-            if (self.rowDescriptor.configMode.placeHlderFont) {
-                return self.rowDescriptor.configMode.placeHlderFont;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.placeHlderFont;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHlderFont;
-        }
-    } else {
-        return [UIFont systemFontOfSize:15.];
+    if (self.rowDescriptor.configMode.placeHlderFont) {
+        return self.rowDescriptor.configMode.placeHlderFont;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.placeHlderFont) {
+        return self.rowDescriptor.sectionDescriptor.configMode.placeHlderFont;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHlderFont) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHlderFont;
+    }
+    return [UIFont systemFontOfSize:15.];
 }
 
 - (UIFont *)formCellDisabledTitleFont
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleFont) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.disabledTitleFont) {
-            if (self.rowDescriptor.configMode.disabledTitleFont) {
-                return self.rowDescriptor.configMode.disabledTitleFont;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.disabledTitleFont;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleFont;
-        }
-    } else {
-        return [UIFont systemFontOfSize:15.];
+    if (self.rowDescriptor.configMode.disabledTitleFont) {
+        return self.rowDescriptor.configMode.disabledTitleFont;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.disabledTitleFont) {
+        return self.rowDescriptor.sectionDescriptor.configMode.disabledTitleFont;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleFont) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleFont;
+    }
+    return [UIFont systemFontOfSize:16.];
 }
 
 - (UIFont *)formCellDisabledContentFont
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentFont) {
-        if (self.rowDescriptor.sectionDescriptor.configMode.disabledContentFont) {
-            if (self.rowDescriptor.configMode.disabledContentFont) {
-                return self.rowDescriptor.configMode.disabledContentFont;
-            } else {
-                return self.rowDescriptor.sectionDescriptor.configMode.disabledContentFont;
-            }
-        } else {
-            return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentFont;
-        }
-    } else {
-        return [UIFont systemFontOfSize:15.];
+    if (self.rowDescriptor.configMode.disabledContentFont) {
+        return self.rowDescriptor.configMode.disabledContentFont;
     }
+    if (self.rowDescriptor.sectionDescriptor.configMode.disabledContentFont) {
+        return self.rowDescriptor.sectionDescriptor.configMode.disabledContentFont;
+    }
+    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentFont) {
+        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentFont;
+    }
+    return [UIFont systemFontOfSize:15.];
 }
 
 - (UIColor *)highLightTitleColor

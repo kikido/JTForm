@@ -115,7 +115,6 @@
     } else {
         if (self.rowDescriptor.action.rowBlock) {
             self.rowDescriptor.action.rowBlock(self.rowDescriptor);
-            [self.findForm updateFormRow:self.rowDescriptor];
         }
     }
     [[self.findForm tableNode] deselectRowAtIndexPath:[self.rowDescriptor.sectionDescriptor.formDescriptor indexPathForRowDescriptor:self.rowDescriptor] animated:YES];
@@ -153,8 +152,9 @@
                                                                    justifyContent:ASStackLayoutJustifyContentSpaceBetween
                                                                        alignItems: ASStackLayoutAlignItemsCenter
                                                                          children:@[contentStack, _accessoryNode]];
+    allStack.style.minHeight = ASDimensionMake(30.);
 
-    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:allStack];
+    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 15., 12., 15.) child:allStack];
 }
 
 #pragma mark - responder
