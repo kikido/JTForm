@@ -20,15 +20,9 @@
 #import "JTFormFloatTextCell.h"
 #import "JTFormCheckCell.h"
 #import "JTFormStepCounterCell.h"
-
 #import "JTFormNavigationAccessoryView.h"
 
-typedef NS_ENUM (NSUInteger, JTFormRowNavigationDirection) {
-    JTFormRowNavigationDirectionPrevious = 0,
-    JTFormRowNavigationDirectionNext
-};
-
-typedef NS_ENUM(NSUInteger, JTFormErrorCode) {
+typedef NS_ENUM(NSInteger, JTFormErrorCode) {
     JTFormErrorCodeInvalid = -999,
     JTFormErrorCodeRequired = -1000
 };
@@ -36,25 +30,16 @@ typedef NS_ENUM(NSUInteger, JTFormErrorCode) {
 NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 @interface JTForm () <ASTableDelegate, ASTableDataSource, JTFormDescriptorDelegate>
-@property (nonatomic, strong) JTFormNavigationAccessoryView *navigationAccessoryView;
 
-@property (nonatomic, assign) BOOL notFirstShowKeyBoard;
-@property (nonatomic, assign) CGRect orginViewControllerFrame;
-@property (nonatomic, assign) UIEdgeInsets orginTableContentInset;
-/** 代表第一响应者的那一行 */
-@property (nonatomic, strong) JTBaseCell *firstResponderCell;
 @end
 
 @implementation JTForm
 
-- (instancetype)initWithFormDescriptor:(JTFormDescriptor *)formDescriptor
+- (instancetype)initWithDescriptor:(JTFormDescriptor *)formDescriptor
 {
     if (self = [super initWithFrame:CGRectZero]) {
-        _formDescriptor = formDescriptor;
+        _formDescriptor          = formDescriptor;
         _formDescriptor.delegate = self;
-        _showInputAccessoryView = YES;
-        
-
         [self initializeForm];
         [self addNotifications];
     }
@@ -63,7 +48,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 + (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor
 {
-    return [[[self class] alloc] initWithFormDescriptor:formDescriptor];
+    return [[[self class] alloc] initWithDescriptor:formDescriptor];
 }
 
 - (void)initializeForm
@@ -76,18 +61,16 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)dealloc
 {
-    self.tableNode.delegate = nil;
-    self.tableNode.dataSource = nil;
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidHideNotification object:nil];
+    _tableNode.delegate = nil;
+    _tableNode.dataSource = nil;
 }
 
-- (void)layoutSubviews{
+- (void)layoutSubviews
+{
     [super layoutSubviews];
-    self.window.backgroundColor = [UIColor whiteColor];
+    if (!self.window.backgroundColor) {
+        self.window.backgroundColor = [UIColor whiteColor];
+    }
     self.tableNode.frame = self.bounds;
 }
 
@@ -95,59 +78,73 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
-    if (sectionDescriptor.headerView) {
-        return sectionDescriptor.headerView;
-    }
-    if (!sectionDescriptor.headerAttributedString) {
-        return nil;
-    }
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor sectionAtIndex:section];
+    if (sectionDescriptor.headerView)              return sectionDescriptor.headerView;
+    if (!sectionDescriptor.headerAttributedString) return nil;
+    
     UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, sectionDescriptor.headerHeight)];
     header.opaque = YES;
     
+    ASDisplayNode *contentNode = [[ASDisplayNode alloc] init];
+    contentNode.frame = header.bounds;
+    [header addSubnode:contentNode];
+    
     ASTextNode *textNode = [[ASTextNode alloc] init];
     textNode.attributedText = sectionDescriptor.headerAttributedString;
-    textNode.frame = CGRectMake(15., 5., self.bounds.size.width - 30., sectionDescriptor.headerHeight - 10.);
-    [header addSubnode:textNode];
-    
+    [contentNode addSubnode:textNode];
+    [contentNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
+        ASStackLayoutSpec *layoutSpec = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                                spacing:0
+                                                                         justifyContent:ASStackLayoutJustifyContentStart
+                                                                             alignItems:ASStackLayoutAlignItemsEnd
+                                                                               children:@[textNode]];
+        return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(0, 15., 3., 15.) child:layoutSpec];
+    }];
     return header;
 }
 
 - (nullable UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
-    if (sectionDescriptor.footerView) {
-        return sectionDescriptor.footerView;
-    }
-    if (!sectionDescriptor.footerAttributedString) {
-        return nil;
-    }
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor sectionAtIndex:section];
+    if (sectionDescriptor.footerView)               return sectionDescriptor.footerView;
+    if (!sectionDescriptor.footerAttributedString)  return nil;
+    
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, sectionDescriptor.footerHeight)];
     footer.opaque = YES;
     
+    ASDisplayNode *contentNode = [[ASDisplayNode alloc] init];
+    contentNode.frame = footer.bounds;
+    [footer addSubnode:contentNode];
+    
     ASTextNode *textNode = [[ASTextNode alloc] init];
     textNode.attributedText = sectionDescriptor.headerAttributedString;
-    textNode.frame = CGRectMake(15., 5., self.bounds.size.width - 30., sectionDescriptor.footerHeight - 10.);
-    [footer addSubnode:textNode];
-    
+    [contentNode addSubnode:textNode];
+    [contentNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
+        ASStackLayoutSpec *layoutSpec = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                                spacing:0
+                                                                         justifyContent:ASStackLayoutJustifyContentStart
+                                                                             alignItems:ASStackLayoutAlignItemsEnd
+                                                                               children:@[textNode]];
+        return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(3., 15., 0., 15.) child:layoutSpec];
+    }];
     return footer;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor sectionAtIndex:section];
     return sectionDescriptor.headerHeight;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor formSectionAtIndex:section];
+    JTSectionDescriptor *sectionDescriptor = [self.formDescriptor sectionAtIndex:section];
     return sectionDescriptor.footerHeight;
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JTSectionDescriptor *section = [self.formDescriptor formSectionAtIndex:indexPath.section];
+    JTSectionDescriptor *section = [self.formDescriptor sectionAtIndex:indexPath.section];
     if (section.sectionOptions & JTFormSectionOptionCanDelete) {
         return UITableViewCellEditingStyleDelete;
     }
@@ -165,18 +162,14 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        JTRowDescriptor *row = [self.formDescriptor formRowAtIndex:indexPath];
-        UITableViewCell *cell = [self.tableNode cellForRowAtIndexPath:indexPath];
-        UIView *firstResponder = [cell findFirstResponder];
+    if(editingStyle != UITableViewCellEditingStyleDelete) return;
+    
+    // 删除行
+    [self.tableView endEditing:YES];
+    [self removeRowAtIndexPath:indexPath];
 
-        if (firstResponder) {
-            [self.tableNode.view endEditing:YES];
-        }
-        [row.sectionDescriptor removeFormRowAtIndex:indexPath.row];
-        if ([self.editDelegate respondsToSelector:@selector(jtForm:commitEditingStyle:forRowAtIndexPath:)]) {
-            [self.editDelegate jtForm:self commitEditingStyle:JTFormCellEditingStyleDelete forRowAtIndexPath:indexPath];
-        }
+    if ([self.delegate respondsToSelector:@selector(form:commitEditingStyle:forRowAtIndexPath:)]) {
+        [self.delegate form:self commitEditingStyle:JTFormCellEditingStyleDelete forRowAtIndexPath:indexPath];
     }
 }
 
@@ -188,109 +181,39 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
                                              selector:@selector(contentSizeCategoryChanged:)
                                                  name:UIContentSizeCategoryDidChangeNotification
                                                object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:UIKeyboardWillShowNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:UIKeyboardWillHideNotification
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidHide:)
-                                                 name:UIKeyboardDidHideNotification
-                                               object:nil];
 }
 
 - (void)contentSizeCategoryChanged:(NSNotification *)notification
 {
-    [self updateAllFormRows];
-}
-
-- (void)keyboardWillShow:(NSNotification *)notification
-{
-    if (_firstResponderCell && self.tableNode.closestViewController && self.showInputAccessoryView && self.tableNode.isVisible) {
-
-        NSDictionary *keyboardInfo = notification.userInfo;
-        CGRect keybordEndFrame = [keyboardInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-        if (!_notFirstShowKeyBoard) {
-            // 第一次弹出键盘
-            _notFirstShowKeyBoard = YES;
-            _orginTableContentInset = self.tableNode.contentInset;
-            _orginViewControllerFrame =  self.tableNode.closestViewController.view.frame;
-        }
-        self.tableNode.closestViewController.view.transform = CGAffineTransformIdentity;
-        CGFloat ty = _orginViewControllerFrame.size.height + _orginViewControllerFrame.origin.y - keybordEndFrame.origin.y;
-        
-//        CGRect keybordBeginFrame = [keyboardInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-//        NSLog(@"[JTForm] keybordBeginFrame:%@",NSStringFromCGRect(keybordBeginFrame));
-//        NSLog(@"[JTForm] keybordEndFrame:%@",NSStringFromCGRect(keybordEndFrame));
-//        NSLog(@"[JTForm] superFrame:%@",NSStringFromCGRect(_orginViewControllerFrame));
-//        NSLog(@"[JTForm] superFrame:%@",NSStringFromUIEdgeInsets(_orginTableContentInset));
-//        NSLog(@"[JTForm] real superFrame:%@",NSStringFromCGRect(self.tableNode.closestViewController.view.frame));
-//        NSLog(@"[JTForm] ty:%f", ty);
-
-        if (ty > 0) {
-            UIEdgeInsets newTableInset = UIEdgeInsetsMake(_orginTableContentInset.top + ty, _orginTableContentInset.left, _orginTableContentInset.bottom, _orginTableContentInset.right);
-            [UIView animateWithDuration:[keyboardInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue] animations:^{
-                self.tableNode.contentInset = newTableInset;
-                self.tableNode.closestViewController.view.frame = CGRectMake(self.orginViewControllerFrame.origin.x, self.orginViewControllerFrame.origin.y-ty, self.orginViewControllerFrame.size.width, self.orginViewControllerFrame.size.height);
-                [self.tableNode scrollToRowAtIndexPath:[self.tableNode indexPathForNode:self.firstResponderCell] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-            } completion:nil];
-        }
-    }
-}
-
-- (void)keyboardWillHide:(NSNotification *)notification
-{
-    if (_notFirstShowKeyBoard) {
-        self.tableNode.contentInset = _orginTableContentInset;
-        self.tableNode.closestViewController.view.frame = _orginViewControllerFrame;
-    }
-}
-
-- (void)keyboardDidHide:(NSNotification *)notification
-{
-    _orginTableContentInset = UIEdgeInsetsZero;
-    _notFirstShowKeyBoard = false;
-    _orginViewControllerFrame = CGRectZero;
-    _firstResponderCell = nil;
+    [self updateAllRows];
 }
 
 #pragma mark - JTFormDescriptorDelegate
 
 - (void)formSectionsHaveBeenRemovedAtIndexes:(NSIndexSet *)indexSet
 {
-    [self.tableNode performBatchUpdates:^{
-        [self.tableNode deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
-    } completion:nil];
+    [self.tableNode deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)formSectionsHaveBeenAddedAtIndexes:(NSIndexSet *)indexSet
 {
-    [self.tableNode performBatchUpdates:^{
-        [self.tableNode insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
-    } completion:nil];
+    [self.tableNode insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
 }
 
-- (void)formRowsHaveBeenAddedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
+- (void)formRowHasBeenAddedAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableNode performBatchUpdates:^{
-        [self.tableNode insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-    } completion:nil];
+    [self.tableNode insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
-- (void)formRowsHaveBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
+- (void)formRowHasBeenRemovedAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableNode performBatchUpdates:^{
-        [self.tableNode deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-    } completion:nil];
+    [self.tableNode deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)formRowDescriptorValueHasChanged:(JTRowDescriptor *)formRow oldValue:(id)oldValue newValue:(id)newValue
 {
     if (self.delegate) {
-        [self.delegate formRowDescriptorValueHasChanged:self formRow:formRow oldValue:oldValue newValue:newValue];
+        [self.delegate form:self rowValueHasChanged:formRow oldValue:oldValue newValue:newValue];
     }
 }
 
@@ -309,9 +232,9 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JTRowDescriptor *rowDescriptor = [self.formDescriptor formRowAtIndex:indexPath];
+    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
     JTBaseCell *cell = [rowDescriptor cellInForm];
-    [self upadteCell:cell];
+    [rowDescriptor updateUI];
     
     return cell;
 }
@@ -320,14 +243,11 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)tableNode:(ASTableNode *)tableNode didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JTRowDescriptor *rowDescriptor = [self.formDescriptor formRowAtIndex:indexPath];
-    if (rowDescriptor.disabled) {
-        return;
-    }
+    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
+    if (rowDescriptor.disabled) return;
+    
     JTBaseCell *cellNode = [rowDescriptor cellInForm];
-    if (!([cellNode formCellCanBecomeFirstResponder] && [cellNode formCellBecomeFirstResponder])) {
-        [self.tableNode.view endEditing:YES];
-    }
+    if (!([cellNode cellCanBecomeFirstResponder] && [cellNode cellBecomeFirstResponder])) {}
     if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
         [cellNode formCellDidSelected];
     }
@@ -335,7 +255,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (ASSizeRange)tableNode:(ASTableNode *)tableNode constrainedSizeForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JTRowDescriptor *row = [self.formDescriptor formRowAtIndex:indexPath];
+    JTRowDescriptor *row = [self.formDescriptor rowAtIndexPath:indexPath];
     if (row.height == JTFormUnspecifiedCellHeight || row.height <= 0) {
         return ASSizeRangeUnconstrained;
     } else {
@@ -345,28 +265,13 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)tableNode:(ASTableNode *)tableNode willBeginBatchFetchWithContext:(ASBatchContext *)context
 {
-    if (self.tailDelegate) {
-        if ([self.tailDelegate respondsToSelector:@selector(tailLoadWithContent:)]) {
-            [context beginBatchFetching];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tailDelegate tailLoadWithContent:context];
-            });
-        }
-    }
-}
-
-#pragma mark - cell
-
-- (void)upadteCell:(JTBaseCell *)cell
-{
-    [cell update];
-    [cell.rowDescriptor.cellConfigAfterUpdate enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        [cell setValue:obj == [NSNull null] ? nil : obj forKeyPath:key];
-    }];
-    if (cell.rowDescriptor.disabled) {
-        [cell.rowDescriptor.cellConfigWhenDisabled enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-            [cell setValue:(obj == [NSNull null] ? nil : obj) forKeyPath:key];
-        }];
+    if (!self.delegate) return;
+    
+    if ([self.delegate respondsToSelector:@selector(tailLoadWithContent:)]) {
+        [context beginBatchFetching];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate tailLoadWithContent:context];
+        });
     }
 }
 
@@ -378,40 +283,34 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _cellClassesForRowTypes = @{
-                                    JTFormRowTypeText : [JTFormTextFieldCell class],
-                                    JTFormRowTypeName : [JTFormTextFieldCell class],
-                                    JTFormRowTypeEmail : [JTFormTextFieldCell class],
-                                    JTFormRowTypeNumber : [JTFormTextFieldCell class],
-                                    JTFormRowTypeInteger : [JTFormTextFieldCell class],
-                                    JTFormRowTypeDecimal : [JTFormTextFieldCell class],
-                                    JTFormRowTypePassword : [JTFormTextFieldCell class],
-                                    JTFormRowTypePhone : [JTFormTextFieldCell class],
-                                    JTFormRowTypeURL : [JTFormTextFieldCell class],
-                                      
-                                    JTFormRowTypeTextView : [JTFormTextViewCell class],
-                                    JTFormRowTypeInfo : [JTFormTextViewCell class],
-                                      
-                                    JTFormRowTypePushSelect : [JTFormSelectCell class],
-                                    JTFormRowTypeMultipleSelect : [JTFormSelectCell class],
-                                    JTFormRowTypeSheetSelect : [JTFormSelectCell class],
-                                    JTFormRowTypeAlertSelect : [JTFormSelectCell class],
-                                    JTFormRowTypePickerSelect : [JTFormSelectCell class],
-                                    JTFormRowTypePushButton : [JTFormSelectCell class],
-                                      
-                                    JTFormRowTypeDate : [JTFormDateCell class],
-                                    JTFormRowTypeTime : [JTFormDateCell class],
-                                    JTFormRowTypeDateTime : [JTFormDateCell class],
-                                    JTFormRowTypeCountDownTimer : [JTFormDateCell class],
-                                    JTFormRowTypeDateInline : [JTFormDateCell class],
-                                    JTFormRowTypeInlineDatePicker : [JTFormDateInlineCell class],
-                                    
-                                    JTFormRowTypeSwitch : [JTFromSwitchCell class],
-                                    JTFormRowTypeCheck : [JTFormCheckCell class],
-                                    JTFormRowTypeStepCounter : [JTFormStepCounterCell class],
-                                    JTFormRowTypeSegmentedControl : [JTFormSegmentCell class],
-                                    JTFormRowTypeSlider : [JTFormSliderCell class],
-                                    
-                                    JTFormRowTypeFloatText : [JTFormFloatTextCell class]
+                                    JTFormRowTypeText               : [JTFormTextFieldCell class],
+                                    JTFormRowTypeName               : [JTFormTextFieldCell class],
+                                    JTFormRowTypeEmail              : [JTFormTextFieldCell class],
+                                    JTFormRowTypeNumber             : [JTFormTextFieldCell class],
+                                    JTFormRowTypeInteger            : [JTFormTextFieldCell class],
+                                    JTFormRowTypeDecimal            : [JTFormTextFieldCell class],
+                                    JTFormRowTypePassword           : [JTFormTextFieldCell class],
+                                    JTFormRowTypePhone              : [JTFormTextFieldCell class],
+                                    JTFormRowTypeURL                : [JTFormTextFieldCell class],
+                                    JTFormRowTypeTextView           : [JTFormTextViewCell class],
+                                    JTFormRowTypeInfo               : [JTFormTextViewCell class],
+                                    JTFormRowTypePushSelect         : [JTFormSelectCell class],
+                                    JTFormRowTypeMultipleSelect     : [JTFormSelectCell class],
+                                    JTFormRowTypeSheetSelect        : [JTFormSelectCell class],
+                                    JTFormRowTypeAlertSelect        : [JTFormSelectCell class],
+                                    JTFormRowTypePickerSelect       : [JTFormSelectCell class],
+                                    JTFormRowTypePushButton         : [JTFormSelectCell class],
+                                    JTFormRowTypeDate               : [JTFormDateCell class],
+                                    JTFormRowTypeTime               : [JTFormDateCell class],
+                                    JTFormRowTypeDateTime           : [JTFormDateCell class],
+                                    JTFormRowTypeCountDownTimer     : [JTFormDateCell class],
+                                    JTFormRowTypeDateInline         : [JTFormDateInlineCell class],
+                                    JTFormRowTypeSwitch             : [JTFromSwitchCell class],
+                                    JTFormRowTypeCheck              : [JTFormCheckCell class],
+                                    JTFormRowTypeStepCounter        : [JTFormStepCounterCell class],
+                                    JTFormRowTypeSegmentedControl   : [JTFormSegmentCell class],
+                                    JTFormRowTypeSlider             : [JTFormSliderCell class],
+                                    JTFormRowTypeFloatText          : [JTFormFloatTextCell class]
                                     }.mutableCopy;
     });
     return _cellClassesForRowTypes;
@@ -424,9 +323,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     static NSMutableDictionary *_inlineRowTypesForRowTypes;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _inlineRowTypesForRowTypes = @{
-                                       JTFormRowTypeDateInline : JTFormRowTypeInlineDatePicker
-                                       }.mutableCopy;
+        // 映射关系：row type -> 被关联的 rowType
+        _inlineRowTypesForRowTypes = [NSMutableDictionary dictionary];
     });
     return _inlineRowTypesForRowTypes;
 }
@@ -434,138 +332,89 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 - (void)ensureRowIsVisible:(JTRowDescriptor *)rowDescriptor
 {
     JTBaseCell *inlineCell = [rowDescriptor cellInForm];
-    if (!inlineCell.isVisible) {
-        NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+    if (inlineCell.isVisible) return;
+    
+    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+    dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
-    }
+    });
 }
 
 #pragma mark - edit text delegate
 
-- (BOOL)editableTextShouldBeginEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
+- (BOOL)textTypeRowShouldBeginEditing:(JTRowDescriptor *)row
+                            textField:(nullable UITextField *)textField
+                     editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    JTBaseCell *cell = [row cellInForm];
-    _firstResponderCell = cell;
+    return !row.disabled;
+}
 
-    if (editableTextNode && self.showInputAccessoryView) {
-        editableTextNode.textView.inputAccessoryView = [self inputAccessoryViewForCell:cell];
-    } else if (textField && self.showInputAccessoryView) {
-        textField.inputAccessoryView = [self inputAccessoryViewForCell:cell];;
+- (void)textTypeRowDidBeginEditing:(JTRowDescriptor *)row
+                         textField:(nullable UITextField *)textField
+                  editableTextNode:(nullable ASEditableTextNode *)editableTextNode
+{
+    NSString *editText = [row editTextValue];
+    textField.text = editText;
+    editableTextNode.textView.text = editText;
+    
+    [self beginEditing:row];
+}
+
+- (BOOL)textTypeRowShouldChangeTextInRange:(NSRange)range
+                           replacementText:(NSString *)text
+                             rowDescriptor:(JTRowDescriptor *)row
+                                 textField:(nullable UITextField *)textField
+                          editableTextNode:(nullable ASEditableTextNode *)editableTextNode
+{
+    if (row.maxNumberOfCharacters) {
+        NSString *existString = textField ? textField.text : editableTextNode.textView.text;
+        NSString *newString = [existString stringByReplacingCharactersInRange:range withString:text];
+        if (newString.length > row.maxNumberOfCharacters.integerValue) {
+            return NO;
+        }
     }
     return YES;
 }
 
-- (void)editableTextDidBeginEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
+- (void)textTypeRowDidEndEditing:(JTRowDescriptor *)row
+                       textField:(nullable UITextField *)textField
+                editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    [self beginEditing:row];
-}
+    NSString *text = textField ? textField.text : editableTextNode.textView.text;
+    
+    if (text.length > 0) {
+        NSString *rowType = row.rowType;
+        if ([rowType isEqualToString:JTFormRowTypeNumber] ||
+            [rowType isEqualToString:JTFormRowTypeDecimal])
+        {
+            // 浮点数
+            row.value = [NSDecimalNumber decimalNumberWithString:text locale:NSLocale.currentLocale];
+        }
+        else
+        {
+            row.value = text;
+        }
+    } else {
+        row.value = nil;
+    }
+    NSString *displayText = [row displayTextValue];
+    textField.text = displayText;
+    editableTextNode.textView.text = displayText;
 
-- (BOOL)editableTextNode:(nullable ASEditableTextNode *)editableTextNode textField:(nullable UITextField *)textField shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    return YES;
-}
-
-- (void)editableTextDidEndEditing:(JTRowDescriptor *)row textField:(nullable UITextField *)textField editableTextNode:(nullable ASEditableTextNode *)editableTextNode
-{
     [self endEditing:row];
 }
 
 - (void)beginEditing:(JTRowDescriptor *)row
 {
-    [[row cellInForm] formCellHighlight];
+    [[row cellInForm] cellHighLight];
 }
 
 - (void)endEditing:(JTRowDescriptor *)row
 {
-    [[row cellInForm] formCellUnhighlight];
-    
-}
-
-#pragma mark - navigation
-
-- (JTFormNavigationAccessoryView *)navigationAccessoryView
-{
-    if (_navigationAccessoryView == nil) {
-        _navigationAccessoryView = [JTFormNavigationAccessoryView new];
-        _navigationAccessoryView.previousButton.target = self;
-        _navigationAccessoryView.previousButton.action = @selector(rowNavigationAction:);
-        _navigationAccessoryView.nextButton.target = self;
-        _navigationAccessoryView.nextButton.action = @selector(rowNavigationAction:);
-        _navigationAccessoryView.doneButton.target = self;
-        _navigationAccessoryView.doneButton.action = @selector(rowNavigationDone:);
-        _navigationAccessoryView.tintColor = self.tintColor;
-    }
-    return _navigationAccessoryView;
-}
-
-- (void)rowNavigationAction:(UIBarButtonItem *)sender
-{
-    [self navigateToDirection:sender == self.navigationAccessoryView.nextButton ? JTFormRowNavigationDirectionNext : JTFormRowNavigationDirectionPrevious];
-}
-
-- (void)rowNavigationDone:(UIBarButtonItem *)sender
-{
-    [self.tableNode.view endEditing:YES];
-}
-
-- (void)navigateToDirection:(JTFormRowNavigationDirection)direction
-{
-    JTBaseCell *currentCell = _firstResponderCell;
-    JTRowDescriptor *currentRow = currentCell.rowDescriptor;
-    JTRowDescriptor *nextRow = [self nextRowDescriptorForRow:currentRow direction:direction];
-    
-    if (nextRow) {
-        JTBaseCell *nextCell = [nextRow cellInForm];
-        if ([nextCell formCellCanBecomeFirstResponder]){
-            NSIndexPath *indexPath = [self.tableNode indexPathForNode:nextCell];
-            [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-            [nextCell formCellBecomeFirstResponder];
-        }
-    }
-}
-
-- (UIView *)inputAccessoryViewForCell:(JTBaseCell *)cell
-{
-    JTRowDescriptor *currentRow = cell.rowDescriptor;
-    if ([[JTForm inlineRowTypesForRowTypes].allKeys containsObject:currentRow.rowType]) {
-        return nil;
-    }
-    if (![cell formCellCanBecomeFirstResponder]) {
-        return  nil;
-    }
-    JTRowDescriptor *previousRow = [self nextRowDescriptorForRow:currentRow direction:JTFormRowNavigationDirectionPrevious];
-    JTRowDescriptor *nextRow = [self nextRowDescriptorForRow:currentRow direction:JTFormRowNavigationDirectionNext];
-    
-    [self.navigationAccessoryView.previousButton setEnabled:previousRow != nil];
-    [self.navigationAccessoryView.nextButton setEnabled:nextRow != nil];
-
-    self.navigationAccessoryView.previousButton.enabled = previousRow != nil;
-    self.navigationAccessoryView.nextButton.enabled = nextRow != nil;
-    
-    return self.navigationAccessoryView;
-}
-
-- (JTRowDescriptor *)nextRowDescriptorForRow:(JTRowDescriptor *)currentRow direction:(JTFormRowNavigationDirection)direction
-{
-    if (!currentRow) {
-        return nil;
-    }
-    JTRowDescriptor *nextRow = (direction == JTFormRowNavigationDirectionNext) ? [self.formDescriptor nextRowDescriptorForRow:currentRow] : [self.formDescriptor previousRowDescriptorForRow:currentRow];
-    JTBaseCell *cell = [nextRow cellInForm];
-    
-    if (!nextRow.disabled && [cell formCellCanBecomeFirstResponder]) {
-        return nextRow;
-    }
-    return [self nextRowDescriptorForRow:nextRow direction:direction];
+    [[row cellInForm] cellUnHighLight];
 }
 
 #pragma mark - get data
-
-- (id)findRowValueByTag:(NSString *)tag
-{
-    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
-    return [row.value cellValue];
-}
 
 - (NSDictionary *)formValues
 {
@@ -586,7 +435,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     for (JTSectionDescriptor *section in self.formDescriptor.allSections) {
         for (JTRowDescriptor *row in section.allRows) {
             if (row.tag) {
-                [result setObject:[row.value cellValue] ? [row.value cellValue] : [NSNull null] forKey:row.tag];
+                id rowValue = [row.value cellValue];
+                [result setObject:rowValue ? rowValue : [NSNull null] forKey:row.tag];
             }
         }
     }
@@ -596,6 +446,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 - (NSArray<NSError *> *)sectionValidationErrors:(JTSectionDescriptor *)sectionDescriptor
 {
     NSMutableArray *result = @[].mutableCopy;
+    
     for (JTRowDescriptor *row in sectionDescriptor.formRows) {
         JTFormValidateObject *vObject = [row doValidate];
         if (vObject && !vObject.valid) {
@@ -608,7 +459,6 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     }
     return [result copy];
 }
-
 
 - (NSArray<NSError *> *)formValidationErrors
 {
@@ -631,95 +481,128 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)showFormValidationError:(NSError *)error
 {
-    if (!error || !self.tableNode.closestViewController) {
-        return;
-    }
+    if (!error || !self.tableNode.closestViewController) return;
+    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[NSString jt_localizedStringForKey:@"error"]
                                                                              message:error.localizedDescription
                                                                       preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:[NSString jt_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:nil]];
-    [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
+    });
 }
 
 - (void)showFormValidationError:(NSError *)error withTitle:(NSString*)title
 {
-    if (!error || !self.tableNode.closestViewController) {
-        return;
-    }
+    if (!error || !self.tableNode.closestViewController) return;
+    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
                                                                              message:error.localizedDescription
                                                                       preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:[NSString jt_localizedStringForKey:@"ok"] style:UIAlertActionStyleDefault handler:nil]];
-    [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableNode.closestViewController presentViewController:alertController animated:YES completion:nil];
+    });
 }
 
-#pragma mark - delete && add
+#pragma mark - row
 
-- (void)addFormRow:(JTRowDescriptor *)formRow afterRow:(JTRowDescriptor *)afterRow
+- (void)addRow:(JTRowDescriptor *)formRow afterRow:(JTRowDescriptor *)afterRow
 {
-    if (afterRow.sectionDescriptor){
-        [afterRow.sectionDescriptor addFormRow:formRow afterRow:afterRow];
+    if (afterRow.sectionDescriptor && [self.formDescriptor.formSections containsObject:afterRow.sectionDescriptor]){
+        [afterRow.sectionDescriptor addRow:formRow afterRow:afterRow];
     } else{
-        [[self.formDescriptor.formSections lastObject] addFormRow:formRow afterRow:afterRow];
+        [[self.formDescriptor.formSections lastObject] addRow:formRow];
     }
 }
 
--(void)addFormRow:(JTRowDescriptor *)formRow beforeRow:(JTRowDescriptor *)beforeRow
+-(void)addRow:(JTRowDescriptor *)formRow beforeRow:(JTRowDescriptor *)beforeRow
 {
-    if (beforeRow.sectionDescriptor){
-        [beforeRow.sectionDescriptor addFormRow:formRow beforeRow:beforeRow];
+    if (beforeRow.sectionDescriptor && [self.formDescriptor.formSections containsObject:beforeRow.sectionDescriptor]){
+        [beforeRow.sectionDescriptor addRow:formRow beforeRow:beforeRow];
     } else{
-        [[self.formDescriptor.formSections lastObject] addFormRow:formRow beforeRow:beforeRow];
+        [[self.formDescriptor.formSections lastObject] addRow:formRow];
     }
 }
 
-- (void)addFormRow:(JTRowDescriptor *)formRow afterRowWithTag:(NSString *)afterRowTag
+- (void)addRow:(JTRowDescriptor *)formRow afterRowWithTag:(NSString *)afterRowTag
 {
-    if ([afterRowTag jt_contentIsNotEmpty]) {
-        return;
-    }
     JTRowDescriptor *afterRow = [self.formDescriptor formRowWithTag:afterRowTag];
-    [self addFormRow:formRow afterRow:afterRow];
+    [self addRow:formRow afterRow:afterRow];
 }
 
-- (void)addFormRow:(JTRowDescriptor *)formRow beforeRowWithTag:(NSString *)beforeRowTag
+- (void)addRow:(JTRowDescriptor *)formRow beforeRowWithTag:(NSString *)beforeRowTag
 {
-    if ([beforeRowTag jt_contentIsNotEmpty]) {
-        return;
-    }
     JTRowDescriptor *beforeRow = [self.formDescriptor formRowWithTag:beforeRowTag];
-    [self addFormRow:formRow beforeRow:beforeRow];
+    [self addRow:formRow beforeRow:beforeRow];
 }
 
--(void)removeFormRow:(JTRowDescriptor *)row
+- (void)addRow:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath
 {
-    if (!row) {
-        return;
-    }
-    for (JTSectionDescriptor *section in self.formDescriptor.formSections){
-        if ([section.formRows containsObject:row]){
-            [section removeFormRow:row];
-            return;
-        }
+    if (indexPath.row >=0 &&
+        indexPath.section >= 0 &&
+        indexPath.section < self.formDescriptor.formSections.count)
+    {
+        JTSectionDescriptor *section = self.formDescriptor.formSections[indexPath.section];
+        [section addRow:formRow atIndex:indexPath.row];
     }
 }
 
--(void)removeFormRowByTag:(NSString *)tag
+- (void)addRow:(JTRowDescriptor *)formRow
 {
-    if ([tag jt_contentIsNotEmpty]) {
-        return;
+    JTSectionDescriptor *section = [self.formDescriptor.formSections lastObject];
+    [section addRow:formRow];
+}
+
+-(void)removeRow:(JTRowDescriptor *)row
+{
+    if ([self.formDescriptor.formSections containsObject:row.sectionDescriptor]) {
+        [row.sectionDescriptor removeRow:row];
     }
+}
+
+- (void)removeRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row >=0 &&
+        indexPath.section >= 0 &&
+        indexPath.section < self.formDescriptor.formSections.count)
+    {
+        JTSectionDescriptor *section = self.formDescriptor.formSections[indexPath.section];
+        [section removeRowAtIndex:indexPath.row];
+    }
+}
+
+-(void)removeRowByTag:(NSString *)tag
+{
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
-    [self removeFormRow:row];
+    [self removeRow:row];
 }
 
-#pragma mark - update and reload
+- (nullable JTRowDescriptor *)findRowByTag:(NSString *)tag
+{
+    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
+    return row;
+}
+
+- (JTRowDescriptor *)rowAtIndexPath:(NSIndexPath *)indexPath
+{
+    JTRowDescriptor *row = [self.formDescriptor rowAtIndexPath:indexPath];
+    return row;
+}
+
+- (nullable id)findRowValueByTag:(NSString *)tag
+{
+    JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
+    return [row.value cellValue];
+}
+
+- (nullable NSIndexPath *)indexPathForRow:(JTRowDescriptor *)rowDescriptor
+{
+    return [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
+}
 
 - (void)setRowsHidden:(BOOL)hidden byTags:(NSArray<NSString *> *)tags
 {
-    if ([tags jt_contentIsNotEmpty]) {
-        return;
-    }
     [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
         row.hidden = hidden;
@@ -728,9 +611,6 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)setRowsDisabled:(BOOL)disabled byTags:(NSArray<NSString *> *)tags
 {
-    if ([tags jt_contentIsNotEmpty]) {
-        return;
-    }
     [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
         row.disabled = disabled;
@@ -739,63 +619,107 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)setRowsRequired:(BOOL)required byTags:(NSArray<NSString *> *)tags
 {
-    if ([tags jt_contentIsNotEmpty]) {
-        return;
-    }
     [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
+        if (!row) return;
+
         row.required = required;
+        [row updateUI];
     }];
 }
 
 - (void)setRowValue:(nullable id)value byTag:(NSString *)tag
 {
-    if ([tag jt_contentIsNotEmpty]) {
-        return;
-    }
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
     row.value = value;
+    [row updateUI];
 }
 
-- (void)updateRowByTags:(NSArray<NSString *> *)tags
+- (void)updateRowsByTags:(NSArray<NSString *> *)tags
 {
-    if ([tags jt_contentIsNotEmpty]) {
-        return;
-    }
     [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
-        [self updateFormRow:row];
+        [row updateUI];
     }];
 }
 
-- (void)updateFormRow:(JTRowDescriptor *)rowDescriptor
+- (void)updateRow:(JTRowDescriptor *)rowDescriptor
 {
-    JTBaseCell *cell = [rowDescriptor cellInForm];
-    [self upadteCell:cell];
+    [rowDescriptor updateUI];
 }
 
-- (void)updateAllFormRows
+- (void)updateAllRows
 {
     for (JTSectionDescriptor *section in self.formDescriptor.formSections) {
         for (JTRowDescriptor *row in section.formRows) {
-            JTBaseCell *cell = [row cellInForm];
-            [cell update];
+            [row updateUI];
         }
     }
 }
 
-- (void)reloadFormRow:(JTRowDescriptor *)rowDescriptor
+- (void)reloadRows:(NSArray <JTRowDescriptor *>*)rowDescriptors
 {
-    NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
-    if (indexPath) {
-        [rowDescriptor reloadCell];
-        [self.tableNode reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+    NSMutableArray *array = [NSMutableArray array];
+    for (JTRowDescriptor *row in rowDescriptors) {
+        NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:row];
+        [array addObject:indexPath];
+    }
+    if (array.count != 0) {
+        [self.tableNode reloadRowsAtIndexPaths:array withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
 - (void)reloadForm
 {
     [self.tableNode reloadData];
+}
+
+#pragma mark - section
+
+- (void)addSection:(JTSectionDescriptor *)section
+{
+    [self.formDescriptor addSection:section];
+}
+
+- (void)addSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index
+{
+    [self.formDescriptor addSection:section atIndex:index];
+}
+
+- (void)addSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection
+{
+    [self.formDescriptor addSection:section afterSection:afterSection];
+}
+
+- (void)addSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection
+{
+    [self.formDescriptor addSection:section beforeSection:beforeSection];
+}
+
+- (void)removeSection:(JTSectionDescriptor *)section
+{
+    [self.formDescriptor removeSection:section];
+}
+
+- (void)removeSectionAtIndex:(NSUInteger)index
+{
+    [self.formDescriptor removeSectionAtIndex:index];
+}
+
+- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes
+{
+    [self.formDescriptor removeSectionsAtIndexes:indexes];
+}
+
+- (nullable JTSectionDescriptor *)sectionAtIndex:(NSUInteger)index
+{
+    if (index<0 || index>=self.formDescriptor.formSections.count) return nil;
+    return self.formDescriptor.formSections[index];
+}
+
+- (NSUInteger)indexForSection:(JTSectionDescriptor *)sectionDescriptor
+{
+    return [self.formDescriptor.formSections indexOfObject:sectionDescriptor];
 }
 
 #pragma mark - helper

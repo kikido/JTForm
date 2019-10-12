@@ -24,36 +24,23 @@
         [slider addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return slider;
     }];
-    _steps = 0;
-    _maximumValue = 0.;
-    _minimumValue = 0.;
 }
 
 - (void)update
 {
     [super update];
     
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
     UISlider *slider = (UISlider *)self.sliderNode.view;
-    slider.enabled = !self.rowDescriptor.disabled;
-    if (self.maximumValue != 0) {
-        slider.maximumValue = self.maximumValue;
+    slider.enabled   = !self.rowDescriptor.disabled;
+    slider.value     = [self.rowDescriptor.value floatValue];
+    
+    if (self.maximumValue) slider.maximumValue = [self.maximumValue floatValue];
+    if (self.minimumValue) slider.minimumValue = [self.minimumValue floatValue];
+    if (self.steps) {
+        NSUInteger steps = [self.steps unsignedIntegerValue];
+        slider.value = roundf((slider.value - slider.minimumValue)/(slider.maximumValue - slider.minimumValue)*steps)*(slider.maximumValue-slider.minimumValue)/steps + slider.minimumValue;
     }
-    if (self.minimumValue != 0) {
-        slider.minimumValue = self.minimumValue;
-    }
-    slider.value = [self.rowDescriptor.value floatValue];
-    [self valueChanged:slider];
     _slider = slider;
-
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
 }
 
 + (CGFloat)formCellHeightForRowDescriptor:(JTRowDescriptor *)row
@@ -96,17 +83,16 @@
 
 - (void)valueChanged:(UISlider *)sender
 {
-    if (self.steps != 0) {
-        sender.value = roundf((sender.value - sender.minimumValue)/(sender.maximumValue - sender.minimumValue)*self.steps)*(sender.maximumValue-sender.minimumValue)/self.steps + sender.minimumValue;
+    if (self.steps) {
+        NSUInteger steps = [self.steps unsignedIntegerValue];
+        sender.value = roundf((sender.value - sender.minimumValue)/(sender.maximumValue - sender.minimumValue)*steps)*(sender.maximumValue-sender.minimumValue)/steps + sender.minimumValue;
     }
-    UIFont *font = self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont];
-    UIColor *color = self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor];
+    UIFont *font = [self cellContentFont];
+    UIColor *color = [self cellContentColor];
     NSString *displayContent = sender.maximumValue > 1 ? [NSString stringWithFormat:@"%.f",sender.value] : [NSString stringWithFormat:@"%.2f",sender.value];
-    self.contentNode.attributedText = [NSAttributedString rightAttributedStringWithString:displayContent
-                                                                                     font:font
-                                                                                    color:color];
-    
-    self.rowDescriptor.value = @(sender.value);
+    self.contentNode.attributedText = [NSAttributedString jt_rightAttributedStringWithString:displayContent
+                                                                                        font:font
+                                                                                       color:color];
+    self.rowDescriptor.value = [NSDecimalNumber numberWithFloat:sender.value];
 }
-
 @end

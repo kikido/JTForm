@@ -15,41 +15,109 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * JTForm 的 cell，
+ *
+ * @note 如果你需要自定义单元行，请继承于该类
+ * @discuss 继承自 Texture 的 ASCellNode，达到流畅目的。当 cell 被添加到 JTForm 中时，如果需要重新更新 cell frame 大小，
+ * 你可以手动调用 ‘- setNeedsLayout’ 方法
+ */
 @interface JTBaseCell : ASCellNode <JTBaseCellDelegate>
-/** 行描述。数据源 */
+/** 数据源：行描述 */
 @property (nonatomic, weak) JTRowDescriptor *rowDescriptor;
 
+/**
+ * title label
+ *
+ * 在 JTFrorm 中的单元行处于左边位置
+ */
 @property (nonatomic, strong) ASTextNode *titleNode;
+
+/**
+ * content label
+ *
+ * 在 JTForm 中的单元行处于右边位置
+ */
 @property (nonatomic, strong) ASTextNode *contentNode;
+
+/**
+ * title image
+ *
+ * 在 JTForm 中的单元行处于 titleNode 前面的位置
+ */
 @property (nonatomic, strong) JTNetworkImageNode *imageNode;
 
+/**
+ * 初始化控件
+ *
+ * 不需要为控件设置 frame，不需要为控件设置内容。
+ * 创建后只会调用一次该方法，除非使用方法 ‘-reloadCellWithNewRowType’
+ */
+- (void)config NS_REQUIRES_SUPER;
+
+/**
+ * 更新控件内容
+ *
+ * 可能会被多次调用
+ */
+- (void)update NS_REQUIRES_SUPER;
+
+/**
+ * 查找被添加的表单
+ *
+ * @return 表单
+ */
 - (JTForm *)findForm;
 
+/**
+ * 查找被添加的表单的表描述
+ *
+ * @return 表描述
+ */
 - (JTFormDescriptor *)findFormDescriptor;
 
-- (UIColor *)formCellBgColor;
+//------------------------------
+/// @name responder
+///-----------------------------
 
-- (UIColor *)formCellTitleColor;
+- (BOOL)cellCanBecomeFirstResponder;
 
-- (UIColor *)formCellContentColor;
+- (BOOL)cellBecomeFirstResponder;
 
-- (UIColor *)formCellPlaceHolderColor;
+//------------------------------
+/// @name UI
+///-----------------------------
 
-- (UIColor *)formCellDisabledTitleColor;
+- (UIColor *)cellTitleColor;
 
-- (UIColor *)formCellDisabledContentColor;
+- (UIColor *)cellContentColor;
 
-- (UIFont *)formCellTitleFont;
+/**
+ * 只读时详情的字体颜色
+ *
+ * @note 在 JTForm 中，该方法仅用在 JTFormRowTypeInfo 样式的单元行中，
+ * 因为这个样式的单元行内容本身就是只读的，不受 disabled 属性的影响。
+ * 通常情况下请使用 ‘-cellContentColor’方法获取字体颜色
+ *
+ * @return 颜色
+ */
+- (UIColor *)cellDisabledContentColor;
 
-- (UIFont *)formCellContentFont;
+- (UIColor *)cellPlaceHolerColor;
 
-- (UIFont *)formCellPlaceHlderFont;
+- (UIFont *)cellTitleFont;
 
-- (UIFont *)formCellDisabledTitleFont;
+- (UIFont *)cellContentFont;
 
-- (UIFont *)formCellDisabledContentFont;
+- (UIFont *)cellPlaceHolerFont;
 
-- (UIColor *)highLightTitleColor;
+- (UIFont *)cellDisabledContentFont;
+
+- (UIColor *)cellBackgroundColor;
+
+- (void)cellHighLight NS_REQUIRES_SUPER;
+
+- (void)cellUnHighLight NS_REQUIRES_SUPER;
 
 @end
 

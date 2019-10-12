@@ -18,6 +18,7 @@
     [super viewDidLoad];
     
     JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
+    formDescriptor.disabled = true;
     formDescriptor.addAsteriskToRequiredRowsTitle = YES;
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
@@ -26,78 +27,78 @@
 #pragma mark - date
     
     section = [JTSectionDescriptor formSection];
-    
-    [formDescriptor addFormSection:section];
+    section.disabled = true;
+    [formDescriptor addSection:section];
 
     NSDate *now = [[NSDate alloc] init];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
     row.value = now;
-    [section addFormRow:row];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
     row.value = now;
-    [section addFormRow:row];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
     row.value = now;
-    [section addFormRow:row];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
     row.value = now;
-    [section addFormRow:row];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
     row.value = now;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"00" rowType:JTFormRowTypeDate title:@"短"];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"00" rowType:JTFormRowTypeDate title:@"短"];
     row.placeHolder = @"请选择日期";
     row.image = [UIImage imageNamed:@"jt_money"];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"01" rowType:JTFormRowTypeDate title:@"短"];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"01" rowType:JTFormRowTypeDate title:@"短"];
     row.placeHolder = @"请选择日期";
     row.image = [UIImage imageNamed:@"jt_money"];
     row.imageUrl = netImageUrl(30., 30.);
-    [section addFormRow:row];
+    [section addRow:row];
     
     #pragma mark - formatter
     
     section = [JTSectionDescriptor formSection];
-    section.headerAttributedString = [NSAttributedString attributedStringWithString:@"formatter" font:nil color:nil firstWordColor:nil];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"formatter" font:nil color:nil firstWordColor:nil];
     section.headerHeight = 30.;
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd hh:mm:ss";
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
     row.value = now;
     row.valueFormatter = dateFormatter;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
     row.value = now;
     row.valueFormatter = dateFormatter;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
     row.value = now;
     row.valueFormatter = dateFormatter;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
     row.value = now;
     row.valueFormatter = dateFormatter;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
     row.value = now;
     row.valueFormatter = dateFormatter;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = self.view.bounds;
     [self.view addSubview:form];
     self.form = form;

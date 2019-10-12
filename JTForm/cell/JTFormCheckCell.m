@@ -26,15 +26,6 @@
 {
     [super update];
     
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
     _accessoryNode.image = [self.rowDescriptor.value boolValue] ? [UIImage imageNamed:@"JTForm.bundle/jt_mark"] : nil;
 }
 

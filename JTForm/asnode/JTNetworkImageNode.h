@@ -15,11 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class ASDisplayNode;
 /**
- 为了避免reload时'ASNetworkImageNode'闪烁的问题，所自定义的替代类
+ * 为了避免表单 reload 时 ASNetworkImageNode 闪烁的问题，自定义的替代类
  */
 @interface JTNetworkImageNode : ASDisplayNode
 
-@property (nonatomic, copy  ) NSURL          *URL;
+@property (nonatomic, strong) NSURL          *URL;
 
 @property (nonatomic, strong) UIColor        *placeholderColor;
 

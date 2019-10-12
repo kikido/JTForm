@@ -11,8 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JTFormDateInlineCell : JTBaseCell <JTFormInlineCellDelegate>
-@property (nonatomic, strong, readonly) UIDatePicker *datePicker;
+@interface JTFormDateInlineCell : JTBaseCell
 @end
 
 NS_ASSUME_NONNULL_END

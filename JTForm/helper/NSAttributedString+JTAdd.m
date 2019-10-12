@@ -11,55 +11,55 @@
 
 @implementation NSAttributedString (JTAdd)
 
-+ (NSAttributedString *)attributedStringWithString:(NSString *)string
-                                              font:(nullable UIFont *)font
-                                             color:(nullable UIColor *)color
-                                    firstWordColor:(nullable UIColor *)firstWordColor
++ (NSAttributedString *)jt_attributedStringWithString:(NSString *)string
+                                                 font:(nullable UIFont *)font
+                                                color:(nullable UIColor *)color
+                                       firstWordColor:(nullable UIColor *)firstWordColor
 {
-    if (!string) {
-        return nil;
-    }
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-    if (!font) {
-        font = [UIFont systemFontOfSize:16.];
-    }
-    if (string) {
-        NSDictionary *attributes = @{NSForegroundColorAttributeName: color ? : [UIColor blackColor],
-                                                NSFontAttributeName: font};
-        attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-        [attributedString addAttributes:attributes range:NSMakeRange(0, string.length)];
-        
-        if (firstWordColor) {
-            NSRange firstWordRange  = NSMakeRange(0, 1);
-            [attributedString addAttribute:NSForegroundColorAttributeName value:firstWordColor range:firstWordRange];
-        }
-    }
+    if (!string) return nil;
+    if (!font)  font = [UIFont systemFontOfSize:16.];
+    if (!color) color = [UIColor blackColor];
     
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
+    NSDictionary *attributes = @{
+                                 NSForegroundColorAttributeName: color,
+                                 NSFontAttributeName: font                                 
+                                 };
+    attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+    [attributedString addAttributes:attributes range:NSMakeRange(0, string.length)];
+    
+    if (firstWordColor) {
+        [attributedString addAttribute:NSForegroundColorAttributeName value:firstWordColor range:NSMakeRange(0, 1)];
+    }
     return attributedString;
 }
 
-+ (NSAttributedString *)rightAttributedStringWithString:(NSString *)string
-                                                   font:(nullable UIFont *)font
-                                                  color:(nullable UIColor *)color
++ (NSAttributedString *)jt_attributedStringWithString:(NSString *)string
+                                                 font:(nullable UIFont *)font
+                                                color:(nullable UIColor *)color
 {
-    if (!string) {
-        return nil;
-    }
+    return [NSAttributedString jt_attributedStringWithString:string font:font color:color firstWordColor:nil];
+}
+
+
++ (NSAttributedString *)jt_rightAttributedStringWithString:(NSString *)string
+                                                      font:(nullable UIFont *)font
+                                                     color:(nullable UIColor *)color
+{
+    if (!string) return nil;
+    if (!font)  font = [UIFont systemFontOfSize:16.];
+    if (!color) color = [UIColor blackColor];
+    NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+    paragraph.alignment = NSTextAlignmentRight;
+
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] init];
-    if (!font) {
-        font = [UIFont systemFontOfSize:16.];
-    }
-    if (string) {
-        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
-        paragraph.alignment = NSTextAlignmentRight;
-        NSDictionary *attributes = @{
-                                     NSForegroundColorAttributeName: color ? : [UIColor blackColor],
-                                     NSFontAttributeName: font,
-                                     NSParagraphStyleAttributeName:paragraph
-                                     };
-        attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-        [attributedString addAttributes:attributes range:NSMakeRange(0, string.length)];
-    }
+    NSDictionary *attributes = @{
+                                 NSForegroundColorAttributeName: color,
+                                 NSFontAttributeName: font,
+                                 NSParagraphStyleAttributeName:paragraph
+                                 };
+    attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+    [attributedString addAttributes:attributes range:NSMakeRange(0, string.length)];
     
     return attributedString;
 }

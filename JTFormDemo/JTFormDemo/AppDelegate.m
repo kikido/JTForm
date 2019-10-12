@@ -11,6 +11,8 @@
 #import <UIKit/UIKit.h>
 #import "YYFPSLabel.h"
 #import <SDImageCache.h>
+#import "IQKeyboardManager.h"
+#import "TextViewController.h"
 
 @interface AppDelegate ()
 
@@ -25,16 +27,19 @@
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
         
     ViewController *vc = [[ViewController alloc] init];
+//    TextViewController *vc = [[TextViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.navigationBar.translucent = false;
     self.window.rootViewController = nav;
     
-    CGFloat width = [[UIScreen mainScreen] bounds].size.width;
-    YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(width/2. - 50, 34, 100, 30.)];
-    [nav.view addSubview:fps];
+    // fps
+//    CGFloat width = [[UIScreen mainScreen] bounds].size.width;
+//    YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(width/2. - 50, 34, 100, 30.)];
+//    [nav.view addSubview:fps];
     
     [self.window makeKeyAndVisible];
     [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
+//    [IQKeyboardManager sharedManager].enableDebugging = true;
     
     return YES;
 }

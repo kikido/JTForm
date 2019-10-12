@@ -19,13 +19,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JTBaseDescriptor : NSObject
 
-/** Bool值，决定是否隐藏当前的控件(单元行，节，以及整个表单) */
+/**
+ * 当前控件是否隐藏，默认值为 NO
+ *
+ * @discuss：该属性决定是否隐藏控件，无需手动刷新 UI。在某些情况下，
+ * 例如 JTFormRowTypeAlertSelect 样式的单元行弹出 UIAlertController 后设置 hidden 为 YES
+ * 隐藏单元行，UIAlertController 并不会消失。
+ */
 @property (nonatomic, assign) BOOL hidden;
 
-/** Bool值，决定当前控件是否接受响应事件。如果为YES，则不能编辑当前控件内容，仅仅作为展示用 */
+/**
+ * 当前控件是否只读，默认为 NO
+ *
+ * @discuss：如果为 YES，则不能编辑当前控件，只读。在某些情况下，
+ * 例如 JTFormRowTypeAlertSelect 样式的单元行弹出 UIAlertController 后设置 hidden 为 YES
+ * 隐藏单元行，UIAlertController 并不会消失。
+ */
 @property (nonatomic, assign) BOOL disabled;
 
-/** 配置模型。优先级为row > section > form > 默认 */
+/**
+ * 控件 UI 配置模型
+ *
+ * 优先级 row > section > form > 默认值，默认值可在 JTFormCellLayout.h 文件中修改
+ */
 @property (nonatomic, strong, nullable) JTFormConfigMode *configMode;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
@@ -34,9 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
 /**
- UI配置的模型。可以设置以下内容：
+ UI配置的模型。
+ 
+ 可以设置以下内容：
  - 背景颜色
  - 占位符颜色和字体
 
@@ -60,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 禁用时内容颜色 */
 @property (nonatomic, strong, nullable) UIColor *disabledContentColor;
 /** 控件背景颜色 */
-@property (nonatomic, strong, nullable) UIColor *bgColor;
+@property (nonatomic, strong, nullable) UIColor *backgroundColor;
 
 /** 标题字体 */
 @property (nonatomic, strong, nullable) UIFont *titleFont;

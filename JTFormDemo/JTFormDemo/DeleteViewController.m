@@ -19,52 +19,53 @@
     
     JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
     formDescriptor.addAsteriskToRequiredRowsTitle = YES;
+    formDescriptor.disabled = true;
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
     
 #pragma mark - delete
     
     section = [JTSectionDescriptor formSection];
-    section.sectionOptions = JTFormSectionOptionCanDelete;
-    [formDescriptor addFormSection:section];
+    section.sectionOptions |= JTFormSectionOptionCanDelete;
+    [formDescriptor addSection:section];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"00" rowType:JTFormRowTypeName title:@"1"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"00" rowType:JTFormRowTypeName title:@"1"];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"01" rowType:JTFormRowTypeName title:@"2"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"01" rowType:JTFormRowTypeName title:@"2"];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"02" rowType:JTFormRowTypeName title:@"3"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"02" rowType:JTFormRowTypeName title:@"3"];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"03" rowType:JTFormRowTypeName title:@"4"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"03" rowType:JTFormRowTypeName title:@"4"];
+    [section addRow:row];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"04" rowType:JTFormRowTypeName title:@"5"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"04" rowType:JTFormRowTypeName title:@"5"];
+    [section addRow:row];
     
     #pragma mark - common
     
     section = [JTSectionDescriptor formSection];
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"10" rowType:JTFormRowTypeName title:@"1"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"10" rowType:JTFormRowTypeName title:@"1"];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"11" rowType:JTFormRowTypeName title:@"2"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"11" rowType:JTFormRowTypeName title:@"2"];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"12" rowType:JTFormRowTypeName title:@"3"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"12" rowType:JTFormRowTypeName title:@"3"];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"13" rowType:JTFormRowTypeName title:@"4"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"13" rowType:JTFormRowTypeName title:@"4"];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"14" rowType:JTFormRowTypeName title:@"5"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"14" rowType:JTFormRowTypeName title:@"5"];
+    [section addRow:row];
 
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;

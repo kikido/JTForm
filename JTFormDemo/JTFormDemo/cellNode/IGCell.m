@@ -75,12 +75,30 @@ NSString *const JTFormRowTypeIGCell = @"JTFormRowTypeIGCell";
     _userAvatarImageNode.URL = mode.ownerUserProfile.userPicURL;
     _photoImageNode.URL      = mode.URL;
 
-    _userNameLabel.attributedText = [NSAttributedString attributedStringWithString:mode.ownerUserProfile.username font:[UIFont systemFontOfSize:14.] color:[UIColor blackColor] firstWordColor:nil];
-    _photoLocationLabel.attributedText = [NSAttributedString attributedStringWithString:mode.location font:[UIFont systemFontOfSize:14.] color:[UIColor blackColor] firstWordColor:nil];
-    
-    _photoTimeIntervalSincePostLabel.attributedText = [NSAttributedString attributedStringWithString:mode.uploadDateString font:[UIFont systemFontOfSize:14.] color:[UIColor blackColor] firstWordColor:nil];
-    _photoLikesLabel.attributedText = [NSAttributedString attributedStringWithString:[NSString stringWithFormat:@"♥︎ %lu likes", (unsigned long)mode.likesCount] font:[UIFont systemFontOfSize:14.] color:[UIColor blackColor] firstWordColor:nil];
-    _photoDescriptionLabel.attributedText = [NSAttributedString attributedStringWithString:[NSString stringWithFormat:@"%@ %@", mode.ownerUserProfile.username, mode.descriptionText] font:[UIFont systemFontOfSize:14.] color:[UIColor blackColor] firstWordColor:nil];
+    _userNameLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:mode.ownerUserProfile.username
+                                                 font:[UIFont systemFontOfSize:14.]
+                                                color:[UIColor blackColor]
+                                       firstWordColor:nil];
+    _photoLocationLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:mode.location
+                                                 font:[UIFont systemFontOfSize:14.]
+                                                color:[UIColor blackColor]
+                                       firstWordColor:nil];    
+    _photoTimeIntervalSincePostLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:mode.uploadDateString
+                                                 font:[UIFont systemFontOfSize:14.]
+                                                color:[UIColor blackColor]
+                                       firstWordColor:nil];
+    _photoLikesLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"♥︎ %lu likes", (unsigned long)mode.likesCount]
+                                                 font:[UIFont systemFontOfSize:14.]
+                                                color:[UIColor blackColor] firstWordColor:nil];
+    _photoDescriptionLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@ %@", mode.ownerUserProfile.username, mode.descriptionText]
+                                                 font:[UIFont systemFontOfSize:14.]
+                                                color:[UIColor blackColor]
+                                       firstWordColor:nil];
     
 }
 

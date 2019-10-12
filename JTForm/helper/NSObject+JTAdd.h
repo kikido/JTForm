@@ -17,9 +17,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)cellText;
 
-- (BOOL)jt_isEqual:(id)object;
 
-- (BOOL)jt_contentIsNotEmpty;
+/**
+ * 判断一个对象是否为空
+ *
+ * @param object oc 对象
+ * @return 判断结果，YES 表示为空，NO 表示不为空
+ */
+BOOL JTIsValueEmpty(id object);
+
+/**
+ * 比较两个对象是否相等
+ *
+ * @discuss 如果对象时 JTOptionObject 类型，当两个对象的 formValue 相等时，
+ * 那么我们也认为这两个对象‘相等’
+ *
+ * @param object 比较对象
+ * @return 比较结果
+ */
+- (BOOL)jt_isEqual:(id)object;
 @end
 
 NS_ASSUME_NONNULL_END

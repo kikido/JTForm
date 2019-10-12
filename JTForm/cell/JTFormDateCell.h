@@ -12,10 +12,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormDateCell : JTBaseCell
-@property (nonatomic, strong) NSDate *minimumDate;
-@property (nonatomic, strong) NSDate *maximumDate;
-@property (nonatomic, assign) NSInteger minuteInterval;
-@property (nonatomic, strong) NSLocale *locale;
+@property (nonatomic, strong) NSDate    *minimumDate;
+@property (nonatomic, strong) NSDate    *maximumDate;
+@property (nonatomic, strong) NSLocale  *locale;
+/** 分钟间隔。取值范围 1~30，必须要能被60整除 */
+@property (nonatomic, strong) NSNumber  *minuteInterval;
 @end
 
 NS_ASSUME_NONNULL_END

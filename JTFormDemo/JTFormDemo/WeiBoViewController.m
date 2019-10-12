@@ -13,7 +13,7 @@
 
 #define unsplash_IMAGES_PER_PAGE    30
 
-@interface WeiBoViewController () <JTFormTailLoadDelegate>
+@interface WeiBoViewController () <JTFormDelegate>
 {
     JTSectionDescriptor *_section;
     NSUInteger _currentPage;
@@ -32,12 +32,12 @@
     JTSectionDescriptor *section = nil;
     
     section = [JTSectionDescriptor formSection];
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     _section = section;
 
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
-    form.tailDelegate = self;
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
+    form.delegate = self;
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;
@@ -64,12 +64,12 @@
         JTRowDescriptor *row;
         NSMutableArray *temp = @[].mutableCopy;
         for (WBStatus *status in item.statuses) {
-            row = [JTRowDescriptor formRowDescriptorWithTag:nil rowType:JTFormRowTypeWBCell title:nil];
+            row = [JTRowDescriptor rowDescriptorWithTag:nil rowType:JTFormRowTypeWBCell title:nil];
             row.mode = status;
             [temp addObject:row];
         }
        dispatch_async(dispatch_get_main_queue(), ^{
-           [_section addFormRows:temp];
+           [_section addRows:temp];
        });
     }];
 }

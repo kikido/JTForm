@@ -18,9 +18,7 @@
 - (void)config
 {
     [super config];
-    
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
-    
+        
     _textViewNode = [[ASEditableTextNode alloc] init];
     _textViewNode.delegate = self;
     _textViewNode.scrollEnabled = false;
@@ -32,34 +30,29 @@
 {
     [super update];
     
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInfo]) {
-        self.contentNode.attributedText = [NSAttributedString rightAttributedStringWithString:[self.rowDescriptor displayContentValue]
-                                                                                     font:[self formCellDisabledContentFont]
-                                                                                    color:[self formCellDisabledContentColor]];
-    } else {
-        _textViewNode.textView.editable = !self.rowDescriptor.disabled;
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInfo])
+    {
+        self.contentNode.attributedText =
+        [NSAttributedString jt_rightAttributedStringWithString:[self.rowDescriptor displayTextValue]
+                                                          font:[self cellDisabledContentFont]
+                                                         color:[self cellDisabledContentColor]];
+    }
+    else
+    {
         NSMutableParagraphStyle *paragraphStyle = NSMutableParagraphStyle.new;
         paragraphStyle.alignment                = NSTextAlignmentRight;
+
+        _textViewNode.textView.editable = !self.rowDescriptor.disabled;
         _textViewNode.typingAttributes = @{
-                                           NSFontAttributeName : self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont],
-                                           NSForegroundColorAttributeName : self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor],
+                                           NSFontAttributeName : [self cellContentFont],
+                                           NSForegroundColorAttributeName : [self cellContentColor],
                                            NSParagraphStyleAttributeName : paragraphStyle
                                            };
-        _textViewNode.textView.text = [self.rowDescriptor displayContentValue];
-        _textViewNode.attributedPlaceholderText = [NSAttributedString attributedStringWithString:self.rowDescriptor.placeHolder
-                                                                                            font:[self formCellDisabledContentFont]
-                                                                                           color:[self formCellDisabledContentColor]
-                                                                                  firstWordColor:nil];
+        _textViewNode.textView.text = [self.rowDescriptor displayTextValue];
+        _textViewNode.attributedPlaceholderText = [NSAttributedString jt_attributedStringWithString:self.rowDescriptor.placeHolder
+                                                                                               font:[self cellPlaceHolerFont]
+                                                                                              color:[self cellPlaceHolerColor]
+                                                                                     firstWordColor:nil];
         _textView = _textViewNode.textView;
     }
 }
@@ -109,32 +102,39 @@
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 15., 12., 15.) child:contentStack];
 }
 
-#pragma mark  -
+#pragma mark  - responder
 
-- (BOOL)formCellCanBecomeFirstResponder
+- (BOOL)cellCanBecomeFirstResponder
 {
-    return !self.rowDescriptor.disabled;
+    return (!self.rowDescriptor.disabled && ![self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInfo]);
 }
 
-- (BOOL)formCellBecomeFirstResponder
+- (BOOL)cellBecomeFirstResponder
 {
     return [_textViewNode becomeFirstResponder];
 }
 
-- (BOOL)formCellResignFirstResponder
+- (BOOL)isFirstResponder
 {
+    [super isFirstResponder];
+    return [_textViewNode isFirstResponder];
+}
+
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
     return [_textViewNode resignFirstResponder];
 }
 
-- (void)formCellHighlight
+- (void)cellHighLight
 {
-    [super formCellHighlight];
+    [super cellHighLight];
     _textViewNode.scrollEnabled = YES;
 }
 
-- (void)formCellUnhighlight
+- (void)cellUnHighLight
 {
-    [super formCellUnhighlight];
+    [super cellUnHighLight];
     _textViewNode.scrollEnabled = NO;
 }
 
@@ -142,39 +142,21 @@
 
 - (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    return [self.findForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    return [[self findForm] textTypeRowShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
-    if (self.rowDescriptor.valueFormatter) {
-        editableTextNode.textView.text = [self.rowDescriptor editTextValue];
-    }
+    [[self findForm] textTypeRowDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (BOOL)editableTextNode:(ASEditableTextNode *)editableTextNode shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-    if (self.rowDescriptor.maxNumberOfCharacters) {
-        NSString *newString = [editableTextNode.textView.text stringByReplacingCharactersInRange:range withString:text];
-        if (newString.length > [self.rowDescriptor.maxNumberOfCharacters integerValue]) {
-            return NO;
-        }
-    }
-    return YES;
+    return [[self findForm] textTypeRowShouldChangeTextInRange:range replacementText:text rowDescriptor:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
 
 - (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
 {
-    if (editableTextNode.textView.text.length > 0) {
-        self.rowDescriptor.value = editableTextNode.textView.text;
-    } else {
-        self.rowDescriptor.value = nil;
-    }
-    if (self.rowDescriptor.valueFormatter) {
-        _textViewNode.textView.text = [self.rowDescriptor displayContentValue];
-    }
-    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [[self findForm] textTypeRowDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
 }
-
 @end

@@ -15,100 +15,166 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTSectionDescriptor;
 @class JTForm;
 
-
 /**
- 表描述，即表单的数据源。
+ * 表描述，即表单的数据源。
  */
 @interface JTFormDescriptor : JTBaseDescriptor
 
-/** 是否在表单里为必录项前面添加‘*’符号。默认值为‘NO’ */
+/** 是否在必录单元行的标题前面添加红色的星号*。默认值为 NO */
 @property (nonatomic, assign) BOOL addAsteriskToRequiredRowsTitle;
 
-/** 一个集合：key为单元行的tag值，value为单元行。 */
-@property (nonatomic, strong) NSMutableDictionary *allRowsByTag;
+/** tag -> 单元行，的集合 */
+@property (nonatomic, strong, readonly) NSMutableDictionary *allRowsByTag;
 
-/** 代理，执行一些行、节的增减操作 */
+/** 代理 */
 @property (nonatomic, weak) id<JTFormDescriptorDelegate> delegate;
 
-- (instancetype)init NS_UNAVAILABLE;
+/**
+ * 没有value的选择项是否显示文本。default is NO，即没有 value 时不显示 text
+ *
+ * @note：该属性仅适用于 `选择项` 样式的单元行
+ * 某些公司的数据库可能比较老，一些选择项可能只有文本但没有 value，
+ * 刚好你又碰上某些产品经理要你显示选择的文本(即使没有value)。所以使用这个属性来控制，默认是没有value时不显示文本
+ */
+@property (nonatomic, assign) BOOL noValueShowText;
+
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 + (nonnull instancetype)formDescriptor;
 
-#pragma mark - section
 
-/** 当前表单所有能看到section的集合(不包括隐藏掉的section) */
+//------------------------------
+/// @name section
+///-----------------------------
+
+/**
+ * 表单中所有显示的节
+ *
+ * @note 不包括隐藏的或者移除掉的节
+ */
 @property (nonatomic, strong, readonly) NSMutableArray<JTSectionDescriptor *> *formSections;
 
-/** 当前表单所有包含着的section集合(包括隐藏掉的，但不包括移除掉的) */
+/**
+ * 表单中所有存在的节
+ *
+ * @note 包括隐藏的节
+ */
 @property (nonatomic, strong, readonly) NSMutableArray<JTSectionDescriptor *> *allSections;
 
-/** 添加节 */
-- (void)addFormSection:(JTSectionDescriptor *)section;
+/**
+ * 在表单上添加节
+ *
+ * @param section 节描述
+ */
+- (void)addSection:(JTSectionDescriptor *)section;
 
-/** 在指定位置添加节 */
-- (void)addFormSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index;
+/**
+ * 在表单上指定位置添加节
+ *
+ * @param section 节描述
+ * @param index 在表单中的索引位置
+ */
+- (void)addSection:(JTSectionDescriptor *)section atIndex:(NSUInteger)index;
 
-/** 在指定节后面添加节 */
-- (void)addFormSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection;
+/**
+ * 在指定节后面添加新的节
+ *
+ * @param section 新添加节的节描述
+ * @param afterSection 表单中已存在的节
+ */
+- (void)addSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection;
 
-/** 在指定节前面添加节 */
-- (void)addFormSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
+/**
+ * 在指定节前面添加新的节
+ *
+ * @param section 新添加节的节描述
+ * @param beforeSection 表单中已存在的节
+ */
+- (void)addSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
 
-/** 移除节 */
-- (void)removeFormSection:(JTSectionDescriptor *)section;
+/**
+ * 在表单中移除节
+ *
+ * @param section 需要移除节的节描述
+ */
+- (void)removeSection:(JTSectionDescriptor *)section;
 
-/** 移除某个位置的节 */
-- (void)removeFormSectionAtIndex:(NSUInteger)index;
+/**
+ * 移除表单中某个位置的节
+ *
+ * @param index 需要移除节的索引位置
+ */
+- (void)removeSectionAtIndex:(NSUInteger)index;
 
-/**  移除某些位置的节 */
-- (void)removeFormSectionsAtIndexes:(NSIndexSet *)indexes;
+/**
+ * 移除某些索引位置上的节
+ *
+ * @param indexes 节的索引集合
+ */
+- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes;
 
-/** 根据节描述的‘hidden’，来进行相应的隐藏、显示操作 */
+/**
+ * 对节执行隐藏或者显示操作
+ *
+ * @param section 节描述
+ */
 - (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section;
 
-#pragma mark - section
-
-- (JTSectionDescriptor *)formSectionAtIndex:(NSUInteger)index;
-
-#pragma mark - row
-
 /**
- 找出在当前行描述后面的行描述
-
- @return 排在当前行描述后面的行描述。该行描述代表的单元行是显示在表单中的
+ * 查找给定索引位置的节描述
+ *
+ * @param index 给定的索引位置
+ * @return 节描述。如果不在表单范围内则返回 nil
  */
-- (JTRowDescriptor *)nextRowDescriptorForRow:(JTRowDescriptor *)currentRow;
+- (JTSectionDescriptor *)sectionAtIndex:(NSUInteger)index;
+
+
+//------------------------------
+/// @name row
+///-----------------------------
 
 /**
- 找出在当前行描述前面的行描述
- 
- @return 排在当前行描述前面的行描述。该行描述代表的单元行是显示在表单中的
+ * 查找给定单元行在表单中的索引位置
+ *
+ * @param rowDescriptor 行描述
+ * @return 单元行的索引位置，如果不在表单范围内则返回 nil
  */
-- (JTRowDescriptor *)previousRowDescriptorForRow:(JTRowDescriptor *)currentRow;
-
-/** 返回一个‘NSIndexPath’对象，表示单元行在表单中位置 */
-- (NSIndexPath *)indexPathForRowDescriptor:(JTRowDescriptor *)rowDescriptor;
-
-/** 根据tag值找到对应的行描述 */
-- (JTRowDescriptor *)formRowWithTag:(NSString *)tag;
-
-/** 根据‘NSIndexPath’值找到对应的行描述 */
-- (JTRowDescriptor *)formRowAtIndex:(NSIndexPath *)indexPath;
-
-
-#pragma mark - tag collection
+- (nullable NSIndexPath *)indexPathForRowDescriptor:(JTRowDescriptor *)rowDescriptor;
 
 /**
- 将单元行添加到属性`allRowsByTag`中
- 
- @param row 单元行tag值不能为空
+ * 根据 tag 查找对应的单元行
+ *
+ * @param tag 单元行的 tag
+ * @return 行描述
+ */
+- (nullable JTRowDescriptor *)formRowWithTag:(NSString *)tag;
+
+/**
+ * 根据指定的索引查找相应的单元行
+ *
+ * @param indexPath 在表单中的索引位置
+ * @return 索引指示的单元行。如果索引超出范围则返回 nil
+ */
+- (nullable JTRowDescriptor *)rowAtIndexPath:(NSIndexPath *)indexPath;
+
+
+//------------------------------
+/// @name tag collection
+///-----------------------------
+
+/**
+ * 将单元行存储在 tag 集合中
+ *
+ * @note 映射关系为 tag -> 单元行，所以 tag 不能重复
+ *
+ * @param row 行描述
  */
 - (void)addRowToTagCollection:(JTRowDescriptor *)row;
 
 /**
- 从属性`allRowsByTag中移除单元行`
-
- @param row 单元行tag值不能为空
+ * 将单元行从 tag 集合中移除
+ *
+ * @param row 行描述
  */
 - (void)removeRowFromTagCollection:(JTRowDescriptor *)row;
 

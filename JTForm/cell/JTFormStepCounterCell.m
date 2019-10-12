@@ -20,7 +20,7 @@
     [super config];
     
     _stepNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
-        UIStepper *stepControl = [[UIStepper alloc] init];
+        UIStepper *stepControl      = [[UIStepper alloc] init];
         stepControl.backgroundColor = [UIColor clearColor];
         [stepControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return stepControl;
@@ -31,34 +31,24 @@
 {
     [super update];
     
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
     UIStepper *stepControl = (UIStepper *)self.stepNode.view;
-    stepControl.enabled = !self.rowDescriptor.disabled;
-    stepControl.value = [self.rowDescriptor.value doubleValue];
+    stepControl.enabled    = !self.rowDescriptor.disabled;
+    stepControl.value      = [self.rowDescriptor.value doubleValue];    
     self.stepControl = stepControl;
     
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    
-    self.contentNode.attributedText = [NSAttributedString
-                                       rightAttributedStringWithString:self.rowDescriptor.value ? [NSString stringWithFormat:@"%@", self.rowDescriptor.value] : nil
-                                       font:self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont]
-                                       color:self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor]];
+    self.contentNode.attributedText =
+    [NSAttributedString jt_rightAttributedStringWithString:self.rowDescriptor.value ? [NSString stringWithFormat:@"%@", self.rowDescriptor.value] : nil
+                                                      font:[self cellContentFont]
+                                                     color:[self cellContentColor]];
 }
 
 - (void)valueChanged:(UIStepper *)sender
 {
     self.rowDescriptor.value = @(sender.value);
-    self.contentNode.attributedText = [NSAttributedString
-                                       rightAttributedStringWithString:self.rowDescriptor.value ? [NSString stringWithFormat:@"%@", self.rowDescriptor.value] : nil
-                                       font:self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont]
-                                       color:self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor]];
+    self.contentNode.attributedText =
+    [NSAttributedString jt_rightAttributedStringWithString:self.rowDescriptor.value ? [NSString stringWithFormat:@"%@", self.rowDescriptor.value] : nil
+                                                      font:[self cellContentFont]
+                                                     color:[self cellContentColor]];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize

@@ -20,9 +20,9 @@
     }
     return self;
 }
+
 @end
 
 
 @implementation JTFormConfigMode
-
 @end

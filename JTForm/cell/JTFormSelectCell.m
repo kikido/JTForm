@@ -10,11 +10,24 @@
 #import "JTFormSelectCell.h"
 #import "JTFormOptionsViewController.h"
 
+/** [-imageNode-titleNode-contentNode-accssoryNode-] */
+
 @interface JTFormSelectCell () <ASEditableTextNodeDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 
-/** 因为实在不知道怎么替换当前view的‘inputView’属性，所以当类型为‘JTFormRowTypePickerSelect’时，只能让这个属性成为第一响应者，然后用‘pickerView’属性替换掉它的‘textview.inputView’ */
+/**
+ * 辅助 node
+ *
+ * 用于 JTFormRowTypePickerSelect 样式的单元行。因为不知道怎么在 cellNode 上面替换自定义的键盘 `inputView`,
+ * 所以使用该属性。用 ASEditableTextNode 来充当第一响应者，然后在开始编辑的时候用 UIPickerView 替换掉系统键盘
+ */
 @property (nonatomic, strong) ASEditableTextNode *tempNode;
-/** 如果用了‘self.accessoryType’属性，更替‘contentNode’内容时布局会乱掉。因为不知道怎么改且时间紧张，自己定义一个‘accessoryType’ */
+
+/**
+ * 用来替代 UITableViewCell 上的 Accessory View
+ *
+ * @discuss 如果使用 accessoryType 属性，在改变详情的内容时布局会乱掉。
+ * 暂时没找到解决方法，先这样子解决一下
+ */
 @property (nonatomic, strong) ASImageNode *accessoryNode;
 
 @property (nonatomic, strong) UIPickerView *pickerView;
@@ -25,94 +38,77 @@
 - (void)config
 {
     [super config];
-    
-    _accessoryNode = [[ASImageNode alloc] init];
+
+    _accessoryNode       = [[ASImageNode alloc] init];
     _accessoryNode.image = [UIImage imageNamed:@"JTForm.bundle/jt_cell_disclosureIndicator.png"];
 }
 
 - (void)update
 {
     [super update];
-    
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
-        _tempNode = [[ASEditableTextNode alloc] init];
-        _tempNode.delegate = self;
-        _tempNode.scrollEnabled = false;
+        
+    if (!_tempNode && [self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
+        _tempNode                     = [[ASEditableTextNode alloc] init];
+        _tempNode.delegate            = self;
+        _tempNode.scrollEnabled       = false;
         _tempNode.style.preferredSize = CGSizeMake(0.01, 0.01);
     }
-
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    
-    self.contentNode.attributedText = [self cellDisplayContent];
+    self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
 - (void)formCellDidSelected
 {
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePushSelect] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeMultipleSelect]) {
+    NSString *rowType = self.rowDescriptor.rowType;
+    if ([rowType isEqualToString:JTFormRowTypePushSelect] ||
+        [rowType isEqualToString:JTFormRowTypeMultipleSelect])
+    {
         UIViewController *controllerToPresent = [self controllerToPresent];
-        if (controllerToPresent) {
+        if (controllerToPresent)
+        {
             NSAssert([controllerToPresent conformsToProtocol:@protocol(JTFormSelectViewControllerDelegate)], @"viewcontroller should implement JTFormSelectViewControllerDelegate protocol");
             UIViewController<JTFormSelectViewControllerDelegate> *selectorViewController = (UIViewController<JTFormSelectViewControllerDelegate> *)controllerToPresent;
             selectorViewController.rowDescriptor = self.rowDescriptor;
-            selectorViewController.title = self.rowDescriptor.selectorTitle;
+            selectorViewController.form          = [self findForm];
+            selectorViewController.title         = [self _cellSelectTitle];
             
             [self.closestViewController.navigationController pushViewController:selectorViewController animated:YES];
         }
-        else if (self.rowDescriptor.selectorOptions) {
+        else if (self.rowDescriptor.selectorOptions)
+        {
             JTFormOptionsViewController *optionViewController = [[JTFormOptionsViewController alloc] init];
             optionViewController.rowDescriptor = self.rowDescriptor;
-            optionViewController.form = [self findForm];
-            optionViewController.title = self.rowDescriptor.selectorTitle;
+            optionViewController.form          = [self findForm];
+            optionViewController.title         = [self _cellSelectTitle];
         
             [self.closestViewController.navigationController pushViewController:optionViewController animated:YES];
         }
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeSheetSelect]) {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:self.rowDescriptor.selectorTitle
+    else if ([rowType isEqualToString:JTFormRowTypeSheetSelect] ||
+             [rowType isEqualToString:JTFormRowTypeAlertSelect])
+    {
+        UIAlertControllerStyle alertStyle = [rowType isEqualToString:JTFormRowTypeSheetSelect] ? UIAlertControllerStyleActionSheet: UIAlertControllerStyleAlert;
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[self _cellSelectTitle]
                                                                                  message:nil
-                                                                          preferredStyle:UIAlertControllerStyleActionSheet];
-        
+                                                                          preferredStyle:alertStyle];
         [alertController addAction:[UIAlertAction actionWithTitle:[NSString jt_localizedStringForKey:@"JTForm_Alert_Cancle"]
                                                             style:UIAlertActionStyleCancel
                                                           handler:nil]];
         __weak typeof(self) weakSelf = self;
-        [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            __strong typeof(weakSelf) strongSelf = self;
-            NSString *selectTitle = [self cellSelectorDisplayTitle:(JTOptionObject *)obj];
+        [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(JTOptionObject *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            NSString *selectTitle = [strongSelf _selectorDisplayTitle:obj];
             [alertController addAction:[UIAlertAction actionWithTitle:selectTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 strongSelf.rowDescriptor.value = obj;
-                strongSelf.contentNode.attributedText = [strongSelf cellDisplayContent];
+                strongSelf.contentNode.attributedText = [strongSelf _cellDisplayContent];
             }]];
         }];
-        [self.closestViewController presentViewController:alertController animated:YES completion:nil];
+        // 异步任务执行，不然有时候界面出来的特别慢
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.closestViewController presentViewController:alertController animated:YES completion:nil];
+        });
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeAlertSelect]) {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:self.rowDescriptor.selectorTitle
-                                                                                 message:nil
-                                                                          preferredStyle:UIAlertControllerStyleAlert];
-        
-        [alertController addAction:[UIAlertAction actionWithTitle:[NSString jt_localizedStringForKey:@"JTForm_Alert_Cancle"]
-                                                            style:UIAlertActionStyleCancel
-                                                          handler:nil]];
-        __weak typeof(self) weakSelf = self;
-        [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            __strong typeof(weakSelf) strongSelf = self;
-            NSString *selectTitle = [self cellSelectorDisplayTitle:(JTOptionObject *)obj];
-            [alertController addAction:[UIAlertAction actionWithTitle:selectTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                strongSelf.rowDescriptor.value = obj;
-                strongSelf.contentNode.attributedText = [strongSelf cellDisplayContent];
-            }]];
-        }];
-        [self.closestViewController presentViewController:alertController animated:YES completion:nil];
-    } else {
+    else
+    {
         if (self.rowDescriptor.action.rowBlock) {
             self.rowDescriptor.action.rowBlock(self.rowDescriptor);
         }
@@ -159,7 +155,7 @@
 
 #pragma mark - responder
 
-- (BOOL)formCellCanBecomeFirstResponder
+- (BOOL)cellCanBecomeFirstResponder
 {
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
         return !self.rowDescriptor.disabled;
@@ -167,7 +163,7 @@
     return NO;
 }
 
-- (BOOL)formCellBecomeFirstResponder
+- (BOOL)cellBecomeFirstResponder
 {
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
         return [_tempNode becomeFirstResponder];
@@ -175,14 +171,16 @@
     return NO;
 }
 
-- (void)formCellHighlight
+- (BOOL)isFirstResponder
 {
-    [super formCellHighlight];
+    [super isFirstResponder];
+    return [_tempNode isFirstResponder];
 }
 
-- (void)formCellUnhighlight
+- (BOOL)resignFirstResponder
 {
-    [super formCellUnhighlight];
+    [super resignFirstResponder];
+    return [_tempNode resignFirstResponder];
 }
 
 #pragma mark - property
@@ -190,13 +188,14 @@
 - (UIPickerView *)pickerView
 {
     if (_pickerView == nil) {
-        _pickerView = [UIPickerView new];
-        _pickerView.delegate = self;
+        _pickerView            = [UIPickerView new];
+        _pickerView.delegate   = self;
         _pickerView.dataSource = self;
+        
         if (self.rowDescriptor.value) {
             [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([self.rowDescriptor.value jt_isEqual:obj]) {
-                    [self.pickerView selectRow:idx inComponent:0 animated:NO];
+                    [self->_pickerView selectRow:idx inComponent:0 animated:NO];
                     *stop = YES;
                 }
             }];
@@ -209,15 +208,13 @@
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    return [self.rowDescriptor.selectorOptions[row] cellText];
+    return [self _selectorDisplayTitle:self.rowDescriptor.selectorOptions[row]];
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
-        self.rowDescriptor.value = self.rowDescriptor.selectorOptions[row];
-        self.contentNode.attributedText = [self cellDisplayContent];
-    }
+    self.rowDescriptor.value        = self.rowDescriptor.selectorOptions[row];
+    self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
 #pragma mark - UIPickerViewDataSource
@@ -232,27 +229,28 @@
     return self.rowDescriptor.selectorOptions.count;
 }
 
-#pragma mark - helper
+#pragma mark - 
 
-- (NSAttributedString *)cellDisplayContent
+- (NSAttributedString *)_cellDisplayContent
 {
     BOOL noValue = false;
     NSString *displayContent = nil;
     
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeMultipleSelect]) {
-        // 没有值
-        if (!self.rowDescriptor.value || [self.rowDescriptor.value count] == 0) {
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeMultipleSelect])
+    {
+        if (!self.rowDescriptor.value || [self.rowDescriptor.value count] == 0)
+        {
             noValue = YES;
             displayContent = self.rowDescriptor.placeHolder;
-        } else {
+        }
+        else
+        {
             if (self.rowDescriptor.valueTransformer) {
-                // 有值，有‘valueTransformer’
                 NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]], @"valueTransformer is not a subclass of NSValueTransformer");
-                NSValueTransformer *valueTransformer = [[self.rowDescriptor.valueTransformer alloc] init];
-                displayContent = [valueTransformer transformedValue:[self.rowDescriptor.value cellValue]];
+                NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:NSStringFromClass(self.rowDescriptor.valueTransformer)];
+                displayContent = [valueTransformer transformedValue:self.rowDescriptor.value];
             } else {
-                // 有值，没有‘valueTransformer’
-                NSMutableArray *descriptionArray = @[].mutableCopy;
+                NSMutableArray *descriptionArray = [NSMutableArray array];
                 for (NSInteger i = 0; i < [self.rowDescriptor.value count]; i++) {
                     JTOptionObject *selectObject = self.rowDescriptor.value[i];
                     [descriptionArray addObject:[selectObject cellText]];
@@ -260,34 +258,37 @@
                 displayContent = [descriptionArray componentsJoinedByString:@", "];
             }
         }
-    } else {
+    }
+    else
+    {
         if (!self.rowDescriptor.value) {
             noValue = YES;
             displayContent = self.rowDescriptor.placeHolder;
         } else {
-            if (self.rowDescriptor.valueTransformer) {
+            BOOL show = self.rowDescriptor.sectionDescriptor.formDescriptor.noValueShowText;
+            
+            if (!show && JTIsValueEmpty([self.rowDescriptor.value cellValue]))
+            {
+                noValue = YES;
+                displayContent = self.rowDescriptor.placeHolder;
+            }
+            else if (self.rowDescriptor.valueTransformer)
+            {
                 NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]], @"valueTransformer is not a subclass of NSValueTransformer");
-                NSValueTransformer *valueTransformer = [self.rowDescriptor.valueTransformer new];
+                NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:NSStringFromClass(self.rowDescriptor.valueTransformer)];
                 displayContent = [valueTransformer transformedValue:[self.rowDescriptor.value cellText]];
-            } else {
+            }
+            else
+            {
                 displayContent = [self.rowDescriptor.value cellText];
             }
         }
     }
-    if (displayContent.length == 0) {
-        return nil;
-    }
+    if (displayContent.length == 0) return nil;
     
-    UIFont *font =
-    noValue
-    ? ([self formCellPlaceHlderFont])
-    : (self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont]);
-    UIColor *color =
-    noValue
-    ? ([self formCellPlaceHolderColor])
-    : (self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor]);
-    
-    return [NSAttributedString rightAttributedStringWithString:displayContent font:font color:color];
+    UIFont *font = noValue ? [self cellPlaceHolerFont] : [self cellContentFont];
+    UIColor *color = noValue ? [self cellPlaceHolerColor] : [self cellContentColor];
+    return [NSAttributedString jt_rightAttributedStringWithString:displayContent font:font color:color];
 }
 
 - (UIViewController *)controllerToPresent
@@ -298,44 +299,48 @@
     return nil;
 }
 
-- (NSString *)cellSelectorDisplayTitle:(JTOptionObject *)optionObject
+- (NSString *)_selectorDisplayTitle:(JTOptionObject *)optionObject
 {
     NSString *optionTitle = [optionObject cellText];
     if (self.rowDescriptor.valueTransformer) {
-        NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]], @"valueTransformer is not a subclass of NSValueTransformer");
-        NSValueTransformer * valueTransformer = [self.rowDescriptor.valueTransformer new];
-        NSString * transformValue = [valueTransformer transformedValue:optionTitle];
-        if (transformValue) {
-            optionTitle = transformValue;
+        NSAssert([self.rowDescriptor.valueTransformer isSubclassOfClass:[NSValueTransformer class]],
+                 @"valueTransformer is not a subclass of NSValueTransformer");
+        NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:NSStringFromClass(self.rowDescriptor.valueTransformer)];
+        NSString *transformtitle = [valueTransformer transformedValue:optionTitle];
+        if (transformtitle) {
+            optionTitle = transformtitle;
         }
     }
     return optionTitle;
 }
 
-- (UIView *)jtFormCellInputView
+- (NSString *)_cellSelectTitle
+{
+    return self.rowDescriptor.selectorTitle ? self.rowDescriptor.selectorTitle : self.rowDescriptor.title;
+}
+
+- (UIView *)_cellInputView
 {
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePickerSelect]) {
+        if (!self.rowDescriptor.value) {
+            self.rowDescriptor.value = [self.rowDescriptor.selectorOptions firstObject];
+        }
         return self.pickerView;
     }
     return nil;
 }
 
-
 #pragma mark - ASEditableTextNodeDelegate
 
 - (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
 {
-    editableTextNode.textView.inputView = [self jtFormCellInputView];
-    return [self.findForm editableTextShouldBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
-}
-
-- (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
-{
-    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm beginEditing:self.rowDescriptor];
+    editableTextNode.textView.inputView = [self _cellInputView];
+    return YES;
 }
 
 - (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
 {
-    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:nil editableTextNode:editableTextNode];
+    [self.findForm endEditing:self.rowDescriptor];
 }
 @end

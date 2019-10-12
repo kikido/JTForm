@@ -14,9 +14,6 @@
 
 - (id)cellValue
 {
-    if ([self isKindOfClass:[NSString class]] || [self isKindOfClass:[NSNumber class]] || [self isKindOfClass:[NSDate class]]){
-        return self;
-    }
     if ([self isKindOfClass:[NSArray class]]) {
         NSMutableArray * result = [NSMutableArray array];
         [(NSArray *)self enumerateObjectsUsingBlock:^(id obj, NSUInteger __unused idx, BOOL __unused *stop) {
@@ -30,93 +27,112 @@
     return self;
 }
 
-- (BOOL)jt_contentIsNotEmpty
+BOOL JTIsValueEmpty(id object)
 {
-    if (!self) {
-        return false;
+    if (!object)                               return true;
+    if ([object isKindOfClass:[NSNull class]]) return true;
+    
+    if ([object isKindOfClass:[NSString class]] && [(NSString *)object length] == 0)
+    {
+        return true;
     }
-    if ([self isKindOfClass:[NSNull class]]) {
-        return false;
+    else if ([object isKindOfClass:[NSArray class]] && [(NSArray *)object count] == 0)
+    {
+        return true;
     }
-    if ([self isKindOfClass:[NSString class]] && [(NSString *)self length] == 0) {
-        return false;
+    else if ([object isKindOfClass:[NSDictionary class]] && [[(NSDictionary *)object allKeys] count] == 0)
+    {
+        return true;
     }
-    if ([self isKindOfClass:[NSArray class]] && [(NSArray *)self count] == 0) {
-        return false;
-    }
-    if ([self isKindOfClass:[NSDictionary class]] && [[(NSDictionary *)self allKeys] count] == 0) {
-        return false;
-    }
-    return YES;
+    return false;
 }
+
 
 - (BOOL)jt_isEqual:(id)object
 {
-    if (!object) {
-        return NO;
-    }
-    if (self == object) {
-        return YES;
-    }
-    if (![object isMemberOfClass:[self class]]) {
-        return NO;
-    }
-    if ([object isKindOfClass:[NSString class]]) {
+    if (!object)                                return false;
+    if (self == object)                         return true;
+    if (![object isKindOfClass:[self class]])   return false;
+    
+    if ([object isKindOfClass:[NSString class]])
+    {
         return [(NSString *)object isEqualToString:(NSString *)self];
     }
-    else if ([object isKindOfClass:[NSAttributedString class]]) {
+    else if ([object isKindOfClass:[JTOptionObject class]])
+    {
+        return [(JTOptionObject *)object isEqualToOptionObject:(JTOptionObject *)self];
+    }
+    else if ([object isKindOfClass:[NSAttributedString class]])
+    {
         return [(NSAttributedString *)object isEqualToAttributedString:(NSAttributedString *)self];
     }
-    else if ([object isKindOfClass:[NSData class]]) {
+    else if ([object isKindOfClass:[NSData class]])
+    {
         return [(NSData *)object isEqualToData:(NSData *)self];
     }
-    else if ([object isKindOfClass:[NSDate class]]) {
+    else if ([object isKindOfClass:[NSDate class]])
+    {
         return [(NSDate *)object isEqualToDate:(NSDate *)self];
     }
-    else if ([object isKindOfClass:[NSDictionary class]]) {
+    else if ([object isKindOfClass:[NSDictionary class]])
+    {
         return [(NSDictionary *)object isEqualToDictionary:(NSDictionary *)self];
     }
-    else if ([object isKindOfClass:[NSHashTable class]]) {
+    else if ([object isKindOfClass:[NSHashTable class]])
+    {
         return [(NSHashTable *)object isEqualToHashTable:(NSHashTable *)self];
     }
-    else if ([object isKindOfClass:[NSIndexSet class]]) {
+    else if ([object isKindOfClass:[NSIndexSet class]])
+    {
         return [(NSIndexSet *)object isEqualToIndexSet:(NSIndexSet *)self];
     }
-    else if ([object isKindOfClass:[NSNumber class]]) {
+    else if ([object isKindOfClass:[NSNumber class]])
+    {
         return [(NSNumber *)object isEqualToNumber:(NSNumber *)self];
     }
-    else if ([object isKindOfClass:[NSOrderedSet class]]) {
+    else if ([object isKindOfClass:[NSOrderedSet class]])
+    {
         return [(NSOrderedSet *)object isEqualToOrderedSet:(NSOrderedSet *)self];
     }
-    else if ([object isKindOfClass:[NSSet class]]) {
+    else if ([object isKindOfClass:[NSSet class]])
+    {
         return [(NSSet *)object isEqualToSet:(NSSet *)self];
     }
-    else if ([object isKindOfClass:[NSTimeZone class]]) {
+    else if ([object isKindOfClass:[NSTimeZone class]])
+    {
         return [(NSTimeZone *)object isEqualToTimeZone:(NSTimeZone *)self];
     }
-    else if ([object isKindOfClass:[NSValue class]]) {
+    else if ([object isKindOfClass:[NSValue class]])
+    {
         return [(NSValue *)object isEqualToValue:(NSValue *)self];
     }
-    else if ([object isKindOfClass:[NSArray class]]) {
+    else if ([object isKindOfClass:[NSArray class]])
+    {
         return [(NSArray *)object isEqualToArray:(NSArray *)self];
-    } else if ([object isKindOfClass:[JTOptionObject class]]) {
-        return [(JTOptionObject *)object isEqualToOptionObject:(JTOptionObject *)self];
-    } else {
+    }
+    else
+    {
         return [self isEqual:object];
     }
 }
 
 - (NSString *)cellText
 {
-    if ([self isKindOfClass:[NSString class]]) {
+    if ([self isKindOfClass:[NSString class]])
+    {
         return (NSString *)self;
-    } else if ([self isKindOfClass:[NSNumber class]]) {
+    }
+    else if ([self isKindOfClass:[NSNumber class]])
+    {
         return [(NSNumber *)self stringValue];
-    } else if ([self isKindOfClass:[JTOptionObject class]]) {
+    }
+    else if ([self isKindOfClass:[JTOptionObject class]])
+    {
         return [(JTOptionObject *)self formDisplayText];
-    } else {
+    }
+    else
+    {
         return self.description;
     }
 }
-
 @end

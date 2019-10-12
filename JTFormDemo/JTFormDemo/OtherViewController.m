@@ -26,63 +26,63 @@
 #pragma mark - other
     
     section = [JTSectionDescriptor formSection];
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSwitch rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitch"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSwitch rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitch"];
     row.value = @YES;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSwitch rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitch"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSwitch rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitch"];
+    row.imageUrl = netImageUrl(130, 30);
+    row.required = YES;
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCheck rowType:JTFormRowTypeCheck title:@"JTFormRowTypeCheck"];
+    row.value = @YES;
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCheck rowType:JTFormRowTypeCheck title:@"JTFormRowTypeCheckJTFormRowTypeCheckJTFormRowTypeCheckJTFormRowTypeCheck"];
     row.imageUrl = netImageUrl(30, 30);
     row.required = YES;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCheck rowType:JTFormRowTypeCheck title:@"JTFormRowTypeCheck"];
-    row.value = @YES;
-    [section addFormRow:row];
-    
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeCheck rowType:JTFormRowTypeCheck title:@"JTFormRowTypeCheckJTFormRowTypeCheckJTFormRowTypeCheckJTFormRowTypeCheck"];
-    row.imageUrl = netImageUrl(30, 30);
-    row.required = YES;
-    [section addFormRow:row];
-    
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounter"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounter"];
     row.value = @50;
     [row.cellConfigAfterUpdate setObject:@YES forKey:@"stepControl.wraps"];
     [row.cellConfigAfterUpdate setObject:@10 forKey:@"stepControl.stepValue"];
     [row.cellConfigAfterUpdate setObject:@10 forKey:@"stepControl.minimumValue"];
     [row.cellConfigAfterUpdate setObject:@100 forKey:@"stepControl.maximumValue"];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounter"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounter"];
     row.required = YES;
     row.imageUrl = netImageUrl(30, 30);
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSegmentedControl rowType:JTFormRowTypeSegmentedControl title:@"JTFormRowTypeSegmentedControl"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSegmentedControl rowType:JTFormRowTypeSegmentedControl title:@"JTFormRowTypeSegmentedControl"];
     row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3] displayTexts:@[@"早上", @"中午", @"晚上"]];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSegmentedControl rowType:JTFormRowTypeSegmentedControl title:@"JTFormRowTypeSegmentedControl"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSegmentedControl rowType:JTFormRowTypeSegmentedControl title:@"JTFormRowTypeSegmentedControl"];
     row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3] displayTexts:@[@"早上", @"中午", @"晚上"]];
     row.value = [JTOptionObject formOptionsObjectWithValue:@1 displayText:@"早上"];
     row.required = YES;
     row.imageUrl = netImageUrl(30, 30);
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSlider rowType:JTFormRowTypeSlider title:@"JTFormRowTypeSlider"];
-    [section addFormRow:row];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSlider rowType:JTFormRowTypeSlider title:@"JTFormRowTypeSlider"];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSlider rowType:JTFormRowTypeSlider title:@"JTFormRowTypeSliderJTFormRowTypeSliderJTFormRowTypeSliderJTFormRowTypeSlider"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSlider rowType:JTFormRowTypeSlider title:@"JTFormRowTypeSliderJTFormRowTypeSliderJTFormRowTypeSliderJTFormRowTypeSlider"];
     row.value = @(30.);
     [row.cellConfigAtConfigure setObject:@(100.) forKey:@"maximumValue"];
     [row.cellConfigAtConfigure setObject:@(10.) forKey:@"minimumValue"];
     [row.cellConfigAfterUpdate setObject:@(4) forKey:@"steps"];
     row.required = YES;
     row.imageUrl = netImageUrl(30, 30);
-    [section addFormRow:row];
+    [section addRow:row];
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = self.view.bounds;
     [self.view addSubview:form];
     self.form = form;

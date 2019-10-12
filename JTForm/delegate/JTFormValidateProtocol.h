@@ -15,6 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @class JTRowDescriptor;
 
 @protocol JTFormValidateProtocol <NSObject>
+
+/**
+ 验证单元行的 value 是否符合规则
+
+ @param rowDescriptor 单元行
+ @return 验证结果。验证失败会返回一个 JTFormValidateObject 实例，在 JTForm 中验证成功均返回 nil
+ */
 - (JTFormValidateObject *)isValid:(JTRowDescriptor *)rowDescriptor;
 @end
 

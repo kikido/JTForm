@@ -39,24 +39,15 @@
 
 - (BOOL)isEqualToOptionObject:(JTOptionObject *)optionObject
 {
-    if (!optionObject) {
-        return NO;
-    }
-    if (![optionObject isKindOfClass:[JTOptionObject class]]) {
-        return NO;
-    }
-    if (self == optionObject) {
-        return YES;
-    }
-    if ([[self cellValue] jt_isEqual:[optionObject cellValue]]) {
-        return YES;
-    }
-    return NO;
+    if (![optionObject isKindOfClass:[JTOptionObject class]]) return false;
+    if (self == optionObject)                                 return true;
+    
+    return [[self cellValue] jt_isEqual:[optionObject cellValue]];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p>: text:%@ value:%@", NSStringFromClass([self class]), self, self.formDisplayText, self.formValue];
+    return [NSString stringWithFormat:@"<%@ %p> text:%@ value:%@", NSStringFromClass([self class]), self, self.formDisplayText, self.formValue];
 }
 
 @end

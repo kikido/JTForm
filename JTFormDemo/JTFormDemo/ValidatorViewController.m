@@ -27,26 +27,26 @@
 #pragma mark - validator
     
     section = [JTSectionDescriptor formSection];
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"姓名"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"姓名"];
     row.required = YES;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeEmail rowType:JTFormRowTypeEmail title:@"验证邮箱"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeEmail rowType:JTFormRowTypeEmail title:@"验证邮箱"];
     [row addValidator:[JTFormRegexValidator formRegexValidatorWithMsg:@"邮箱格式错误" regex:@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,11}"]];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePassword rowType:JTFormRowTypePassword title:@"验证密码"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePassword rowType:JTFormRowTypePassword title:@"验证密码"];
     [row addValidator:[JTFormRegexValidator formRegexValidatorWithMsg:@"密码长度应在6~32位之间,且至少包含一个数字和字母" regex:@"(?=.*\\d)(?=.*[A-Za-z])^.{6,32}$"]];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeInteger rowType:JTFormRowTypeInteger title:@"验证数字"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeInteger rowType:JTFormRowTypeInteger title:@"验证数字"];
     [row addValidator:[JTFormRegexValidator formRegexValidatorWithMsg:@"应大于等于50或者小于等于100" regex:@"^([5-9][0-9]|100)$"]];
-    [section addFormRow:row];
+    [section addRow:row];
     
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;

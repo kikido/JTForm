@@ -20,7 +20,7 @@
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     _accessoryNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
-        UISwitch *switchControl = [[UISwitch alloc] init];
+        UISwitch *switchControl       = [[UISwitch alloc] init];
         switchControl.backgroundColor = [UIColor clearColor];
         [switchControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return switchControl;
@@ -31,20 +31,10 @@
 {
     [super update];
     
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    
     UISwitch *switchControl = (UISwitch *)self.accessoryNode.view;
-    switchControl.on = [self.rowDescriptor.value boolValue];
-    switchControl.enabled = !self.rowDescriptor.disabled;
-    self.switchControl = switchControl;
+    switchControl.on        = [self.rowDescriptor.value boolValue];
+    switchControl.enabled   = !self.rowDescriptor.disabled;
+    self.switchControl      = switchControl;
 }
 
 - (void)valueChanged:(UISwitch *)sender
@@ -75,5 +65,4 @@
     
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(15., 15., 15., 15.) child:contentStack];
 }
-
 @end

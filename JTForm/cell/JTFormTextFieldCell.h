@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormTextFieldCell : JTBaseCell
-@property (nonatomic, strong) UITextField *textField;
+@property (nonatomic, strong, readonly) UITextField *textField;
 @end
 
 NS_ASSUME_NONNULL_END

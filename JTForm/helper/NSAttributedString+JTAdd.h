@@ -14,15 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSAttributedString (JTAdd)
 
-+ (NSAttributedString *)attributedStringWithString:(NSString *)string
-                                              font:(nullable UIFont *)font
-                                             color:(nullable UIColor *)color
-                                    firstWordColor:(nullable UIColor *)firstWordColor;
++ (NSAttributedString *)jt_attributedStringWithString:(NSString *)string
+                                                 font:(nullable UIFont *)font
+                                                color:(nullable UIColor *)color
+                                       firstWordColor:(nullable UIColor *)firstWordColor;
 
-+ (NSAttributedString *)rightAttributedStringWithString:(NSString *)string
-                                                   font:(nullable UIFont *)font
-                                                  color:(nullable UIColor *)color;
++ (NSAttributedString *)jt_attributedStringWithString:(NSString *)string
+                                                 font:(nullable UIFont *)font
+                                                color:(nullable UIColor *)color;
 
++ (NSAttributedString *)jt_rightAttributedStringWithString:(NSString *)string
+                                                      font:(nullable UIFont *)font
+                                                     color:(nullable UIColor *)color;
 @end
 
 NS_ASSUME_NONNULL_END

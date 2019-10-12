@@ -49,10 +49,10 @@
     JTSectionDescriptor *section = nil;
     
     section = [JTSectionDescriptor formSection];
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     _section = section;
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;
@@ -71,13 +71,13 @@
     [self refreshFeedWithCompletionBlock:^(NSArray<PhotoModel *> *results) {
         NSMutableArray *temp = @[].mutableCopy;
         [results enumerateObjectsUsingBlock:^(PhotoModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            JTRowDescriptor *row = [JTRowDescriptor formRowDescriptorWithTag:nil rowType:JTFormRowTypeIGCell title:nil];
+            JTRowDescriptor *row = [JTRowDescriptor rowDescriptorWithTag:nil rowType:JTFormRowTypeIGCell title:nil];
             row.mode = obj;
             [temp addObject:row];
             
             [self.form.tableView.mj_header endRefreshing];
         }];
-        [_section replaceAllRows:[temp copy]];
+        [self->_section replaceAllRows:[temp copy]];
         
     } numResultsToReturn:20];
 }
@@ -87,13 +87,13 @@
     [self refreshFeedWithCompletionBlock:^(NSArray<PhotoModel *> *results) {
         NSMutableArray *temp = @[].mutableCopy;
         [results enumerateObjectsUsingBlock:^(PhotoModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            JTRowDescriptor *row = [JTRowDescriptor formRowDescriptorWithTag:nil rowType:JTFormRowTypeIGCell title:nil];
+            JTRowDescriptor *row = [JTRowDescriptor rowDescriptorWithTag:nil rowType:JTFormRowTypeIGCell title:nil];
             row.mode = obj;
             [temp addObject:row];
             
             [self.form.tableView.mj_footer endRefreshing];
         }];
-        [_section addFormRows:[temp copy]];
+        [_section addRows:[temp copy]];
         
     } numResultsToReturn:20];
 }

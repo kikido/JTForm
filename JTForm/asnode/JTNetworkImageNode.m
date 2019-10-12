@@ -8,7 +8,9 @@
 //
 
 #import "JTNetworkImageNode.h"
+#import "JTBaseCell.h"
 #import <SDWebImage/SDImageCache.h>
+#import <objc/message.h>
 
 @interface JTNetworkImageNode () <ASNetworkImageNodeDelegate>
 @property (nonatomic, strong) ASNetworkImageNode *networkImageNode;
@@ -27,11 +29,13 @@
 - (void)setPlaceholderColor:(UIColor *)placeholderColor
 {
     _networkImageNode.placeholderColor = placeholderColor;
+    _imageNode.placeholderColor        = placeholderColor;
 }
 
 - (void)setJtPlaceholderFadeDuratinonatomicon:(NSTimeInterval)jtPlaceholderFadeDuration
 {
     _networkImageNode.placeholderFadeDuration = jtPlaceholderFadeDuration;
+    _imageNode.placeholderFadeDuration        = jtPlaceholderFadeDuration;
 }
 
 - (void)setDefaultImage:(UIImage *)defaultImage
@@ -41,6 +45,8 @@
 
 - (void)setURL:(NSURL *)URL
 {
+    if (!URL) return;
+    
     NSURL *u = URL;
     UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:u.absoluteString];
     if (cacheImage) {
@@ -52,16 +58,16 @@
 
 - (void)setImageModificationBlock:(asimagenode_modification_block_t)imageModificationBlock
 {
-    self.imageNode.imageModificationBlock = imageModificationBlock;
+    self.imageNode.imageModificationBlock        = imageModificationBlock;
     self.networkImageNode.imageModificationBlock = imageModificationBlock;
 }
 
 - (instancetype)init
 {
     if (self = [super init]) {
-        _imageNode = [[ASImageNode alloc] init];
-        _networkImageNode = [[ASNetworkImageNode alloc] init];
-        _networkImageNode.delegate = self;
+        _imageNode                         = [[ASImageNode alloc] init];
+        _networkImageNode                  = [[ASNetworkImageNode alloc] init];
+        _networkImageNode.delegate         = self;
         _networkImageNode.shouldCacheImage = false;
         [self addSubnode:_imageNode];
         [self addSubnode:_networkImageNode];
@@ -85,18 +91,37 @@
 
 - (void)imageNode:(ASNetworkImageNode *)imageNode didLoadImage:(UIImage *)image
 {
+    // 不同版本的 sdwebimage 做不同的处理
     SDImageCache *imageCache = [SDImageCache sharedImageCache];
-    [imageCache storeImage:image forKey:imageNode.URL.absoluteString toDisk:YES completion:nil];
+    if ([imageCache respondsToSelector:@selector(storeImage:imageData:forKey:toDisk:completion:)]) {
+        [imageCache storeImage:image forKey:imageNode.URL.absoluteString toDisk:YES completion:nil];
+    } else if ([imageCache respondsToSelector:@selector(storeImage:forKey:toDisk:)]) {
+        ((void (*)(id, SEL, UIImage *, NSString *, BOOL))(void *) objc_msgSend)((id)imageCache, @selector(storeImage:forKey:toDisk:), image, imageNode.URL.absoluteString, YES);
+    }
+    
+    static CGFloat scale;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        scale = [UIScreen mainScreen].scale;
+    });
+    /// 因为 ASNetworkImageNode 在 image 下载完之前并不知道具体内容的大小，所以这里等 image 下载完成后，
+    /// 根据 scale 给 ASNetworkImageNode 赋值 size，并刷新 cell 的布局
+    if ([self.supernode isKindOfClass:[JTBaseCell class]]) {
+        self.style.preferredSize = CGSizeMake(image.size.width/scale, image.size.height/scale);
+        [self.supernode setNeedsLayout];
+        [self.supernode layoutIfNeeded];
+    }
+}
+
+- (void)imageNode:(ASNetworkImageNode *)imageNode didFailWithError:(NSError *)error
+{
+    NSLog(@"[JTNetworkImageNode] error: %@", error.localizedDescription);
 }
 
 - (BOOL)hasContent
 {
-    if (_networkImageNode.URL) {
-        return YES;
-    }
-    if (_imageNode.image) {
-        return YES;
-    }
+    if (_networkImageNode.URL )   return YES;
+    if (_imageNode.image)         return YES;
     return NO;
 }
 

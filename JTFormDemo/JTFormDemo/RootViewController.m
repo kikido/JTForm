@@ -39,7 +39,7 @@
 {
     if (sender.tag == 99) {
         self.form.formDescriptor.disabled = !self.form.formDescriptor.disabled;
-        [self.form.tableNode reloadData];
+//        [self.form.tableNode reloadData];
         
         if (self.form.formDescriptor.disabled) {
             [sender setTitle:@"Enable" forState:UIControlStateNormal];

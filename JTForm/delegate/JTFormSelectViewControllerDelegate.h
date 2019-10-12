@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol JTFormSelectViewControllerDelegate <NSObject>
 @required
 @property (nonatomic, strong) JTRowDescriptor *rowDescriptor;
-@property (nonatomic, strong) JTForm *form;
+@property (nonatomic, strong) JTForm          *form;
 @end
 
 NS_ASSUME_NONNULL_END

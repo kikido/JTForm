@@ -8,8 +8,40 @@
 //
 
 #import "JTBaseCell.h"
+#import <objc/message.h>
+#import <objc/runtime.h>
 
 @implementation JTBaseCell
+
+static inline Ivar JTFormRowIvar() {
+    static Ivar ivar = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        const char *name = [@"_configMode" UTF8String];
+        ivar = class_getInstanceVariable([JTRowDescriptor class], name);
+    });
+    return ivar;
+}
+
+static inline Ivar JTFormSectionIvar() {
+    static Ivar ivar = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        const char *name = [@"_configMode" UTF8String];
+        ivar = class_getInstanceVariable([JTSectionDescriptor class], name);
+    });
+    return ivar;
+}
+
+static inline Ivar JTFormIvar() {
+    static Ivar ivar = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        const char *name = [@"_configMode" UTF8String];
+        ivar = class_getInstanceVariable([JTFormDescriptor class], name);
+    });
+    return ivar;
+}
 
 - (instancetype)init
 {
@@ -21,96 +53,85 @@
 
 - (void)config
 {
-    self.separatorInset= UIEdgeInsetsMake(0, 15., 0, 0);
+    self.separatorInset = UIEdgeInsetsMake(0, 15., 0, 0);
     self.selectionStyle = UITableViewCellSelectionStyleNone;
+    // 根据布局方法 ‘layoutSpecThatFits:’ 来决定添加或者移除 node
     self.automaticallyManagesSubnodes = YES;
-    
-    _titleNode = [[ASTextNode alloc] init];
-    _titleNode.layerBacked = YES;
-    _titleNode.style.flexShrink = 1.;
-    
-    _contentNode = [[ASTextNode alloc] init];
-    _contentNode.layerBacked = YES;
-    
-    _imageNode = [[JTNetworkImageNode alloc] init];
-    _imageNode.layerBacked = YES;
 }
 
 - (void)update
 {
-    self.backgroundColor = [self formCellBgColor];
-}
-
-- (void)formCellHighlight
-{
+    self.backgroundColor = [self cellBackgroundColor];
     
+    // 设置 title image
+    if (self.rowDescriptor.image) {
+        self.imageNode.image = self.rowDescriptor.image;
+    }
+    if (self.rowDescriptor.imageUrl) {
+        self.imageNode.URL = self.rowDescriptor.imageUrl;
+    }
+    // 为必录的单元行设置红色的 *
+    BOOL required = self.rowDescriptor.required && [self findFormDescriptor].addAsteriskToRequiredRowsTitle;
+    self.titleNode.attributedText =
+    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@", required ? @"*" : @"", self.rowDescriptor.title]
+                                                 font:[self cellTitleFont]
+                                                color:[self cellTitleColor]
+                                       firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
 }
 
-- (void)formCellUnhighlight
+#pragma mark - responder
+
+- (BOOL)cellCanBecomeFirstResponder
 {
-    
+    return false;
 }
 
-- (BOOL)formCellCanBecomeFirstResponder
+- (BOOL)cellBecomeFirstResponder
 {
-    return NO;
-}
-
-- (BOOL)formCellBecomeFirstResponder
-{
-    BOOL result = [super becomeFirstResponder];
-    return result;
-}
-
-- (BOOL)formCellResignFirstResponder
-{
-    BOOL result = [super resignFirstResponder];
-    return result;
+    return false;
 }
 
 - (BOOL)canBecomeFirstResponder
 {
     [super canBecomeFirstResponder];
-    return YES;
+    return false;
 }
 
 - (BOOL)becomeFirstResponder
 {
     [super becomeFirstResponder];
-    return YES;
+    return false;
+}
+
+- (BOOL)isFirstResponder
+{
+    return [super isFirstResponder];
 }
 
 - (BOOL)canResignFirstResponder
 {
     [super canResignFirstResponder];
-    return YES;
+    return true;
 }
 
 - (BOOL)resignFirstResponder
 {
     [super resignFirstResponder];
-    return YES;
+    return true;
 }
+
+#pragma mark - layout
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method 'update'" userInfo:nil];
+    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method layoutSpecThatFits：" userInfo:nil];
 }
 
 #pragma mark - helper
 
-- (UIView *)cellInputView
-{
-    return nil;
-}
-
 - (JTForm *)findForm
 {
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.delegate) {
-        return (JTForm *)self.rowDescriptor.sectionDescriptor.formDescriptor.delegate;
-    } else {
-        return nil;
-    }
+    return (JTForm *)self.rowDescriptor.sectionDescriptor.formDescriptor.delegate;
 }
 
 - (JTFormDescriptor *)findFormDescriptor
@@ -118,175 +139,287 @@
     return self.rowDescriptor.sectionDescriptor.formDescriptor;
 }
 
-- (JTForm *)jtForm
-{
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.delegate) {
-        return (JTForm *)self.rowDescriptor.sectionDescriptor.formDescriptor.delegate;
-    } else {
-        return nil;
-    }
-}
-
 #pragma mark - config
 
-- (UIColor *)formCellBgColor
+- (UIColor *)cellTitleColor
 {
-    if (self.rowDescriptor.configMode.bgColor) {
-        return self.rowDescriptor.configMode.bgColor;
+    if (self.rowDescriptor.disabled) {
+        return [self _formCellDisabledTitleColor];
     }
-    if (self.rowDescriptor.sectionDescriptor.configMode.bgColor) {
-        return self.rowDescriptor.sectionDescriptor.configMode.bgColor;
+    return [self _formCellTitleColor];
+}
+
+- (UIColor *)cellContentColor
+{
+    if (self.rowDescriptor.disabled) {
+        return [self cellDisabledContentColor];
     }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.bgColor) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.bgColor;
+    return [self _formCellContentColor];
+}
+
+- (UIColor *)cellPlaceHolerColor
+{
+    return [self _formCellPlaceHolderColor];
+}
+
+- (UIFont *)cellTitleFont
+{
+    if (self.rowDescriptor.disabled) {
+        return [self _formCellDisabledTitleFont];
     }
+    return [self _formCellTitleFont];
+}
+
+- (UIFont *)cellContentFont
+{
+    if (self.rowDescriptor.disabled) {
+        return [self cellDisabledContentFont];
+    }
+    return [self _formCellContentFont];
+}
+
+- (UIFont *)cellPlaceHolerFont
+{
+    return [self _formCellPlaceHlderFont];
+}
+
+
+- (UIColor *)cellBackgroundColor
+{
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.backgroundColor;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.backgroundColor;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.backgroundColor;
+    
     return [UIColor whiteColor];
 }
 
-- (UIColor *)formCellTitleColor
+#pragma mark -
+
+- (UIColor *)_formCellTitleColor
 {
-    if (self.rowDescriptor.configMode.titleColor) {
-        return self.rowDescriptor.configMode.titleColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.titleColor) {
-        return self.rowDescriptor.sectionDescriptor.configMode.titleColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleColor) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleColor;
-    }
+    // 优先级 row > section > form
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.titleColor;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.titleColor;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.titleColor;
+    
     return UIColorHex(333333);
 }
 
-- (UIColor *)formCellContentColor
+- (UIColor *)_formCellContentColor
 {
-    if (self.rowDescriptor.configMode.contentColor) {
-        return self.rowDescriptor.configMode.contentColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.contentColor) {
-        return self.rowDescriptor.sectionDescriptor.configMode.contentColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentColor) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentColor;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.contentColor;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.contentColor;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.contentColor;
+    
     return UIColorHex(333333);
 }
 
-- (UIColor *)formCellPlaceHolderColor
+- (UIColor *)_formCellPlaceHolderColor
 {
-    if (self.rowDescriptor.configMode.placeHolderColor) {
-        return self.rowDescriptor.configMode.placeHolderColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.placeHolderColor) {
-        return self.rowDescriptor.sectionDescriptor.configMode.placeHolderColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHolderColor;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.placeHolderColor;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.placeHolderColor;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.placeHolderColor;
+    
     return UIColorHex(dbdbdb);
 }
 
-- (UIColor *)formCellDisabledTitleColor
+- (UIColor *)_formCellDisabledTitleColor
 {
-    if (self.rowDescriptor.configMode.disabledTitleColor) {
-        return self.rowDescriptor.configMode.disabledTitleColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.disabledTitleColor) {
-        return self.rowDescriptor.sectionDescriptor.configMode.disabledTitleColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleColor) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleColor;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.disabledTitleColor;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.disabledTitleColor;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.disabledTitleColor;
+    
     return UIColorHex(aaaaaa);
 }
 
-- (UIColor *)formCellDisabledContentColor
+- (UIColor *)cellDisabledContentColor
 {
-    if (self.rowDescriptor.configMode.disabledContentColor) {
-        return self.rowDescriptor.configMode.disabledContentColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.disabledContentColor) {
-        return self.rowDescriptor.sectionDescriptor.configMode.disabledContentColor;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentColor;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.disabledContentColor;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.disabledContentColor;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.disabledContentColor;
+    
     return UIColorHex(aaaaaa);
 }
 
-- (UIFont *)formCellTitleFont
+- (UIFont *)_formCellTitleFont
 {
-    if (self.rowDescriptor.configMode.titleFont) {
-        return self.rowDescriptor.configMode.titleFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.titleFont) {
-        return self.rowDescriptor.sectionDescriptor.configMode.titleFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleFont) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.titleFont;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.titleFont;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.titleFont;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.titleFont;
+    
     return [UIFont systemFontOfSize:16.];
 }
 
-- (UIFont *)formCellContentFont
+- (UIFont *)_formCellContentFont
 {
-    if (self.rowDescriptor.configMode.contentFont) {
-        return self.rowDescriptor.configMode.contentFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.contentFont) {
-        return self.rowDescriptor.sectionDescriptor.configMode.contentFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentFont) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.contentFont;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.contentFont;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.contentFont;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.contentFont;
+    
     return [UIFont systemFontOfSize:15.];
 }
 
-- (UIFont *)formCellPlaceHlderFont
+- (UIFont *)_formCellPlaceHlderFont
 {
-    if (self.rowDescriptor.configMode.placeHlderFont) {
-        return self.rowDescriptor.configMode.placeHlderFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.placeHlderFont) {
-        return self.rowDescriptor.sectionDescriptor.configMode.placeHlderFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHlderFont) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.placeHlderFont;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.placeHlderFont;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.placeHlderFont;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.placeHlderFont;
+    
     return [UIFont systemFontOfSize:15.];
 }
 
-- (UIFont *)formCellDisabledTitleFont
+- (UIFont *)_formCellDisabledTitleFont
 {
-    if (self.rowDescriptor.configMode.disabledTitleFont) {
-        return self.rowDescriptor.configMode.disabledTitleFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.disabledTitleFont) {
-        return self.rowDescriptor.sectionDescriptor.configMode.disabledTitleFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleFont) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledTitleFont;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.disabledTitleFont;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.disabledTitleFont;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.disabledTitleFont;
+    
     return [UIFont systemFontOfSize:16.];
 }
 
-- (UIFont *)formCellDisabledContentFont
+- (UIFont *)cellDisabledContentFont
 {
-    if (self.rowDescriptor.configMode.disabledContentFont) {
-        return self.rowDescriptor.configMode.disabledContentFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.configMode.disabledContentFont) {
-        return self.rowDescriptor.sectionDescriptor.configMode.disabledContentFont;
-    }
-    if (self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentFont) {
-        return self.rowDescriptor.sectionDescriptor.formDescriptor.configMode.disabledContentFont;
-    }
+    Ivar rowIvar = JTFormRowIvar();
+    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
+    if (rowMode.placeHlderFont)  return rowMode.disabledContentFont;
+    
+    Ivar sectionIvar = JTFormSectionIvar();
+    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
+    if (sectionMode.placeHlderFont)  return sectionMode.disabledContentFont;
+    
+    Ivar formIvar = JTFormIvar();
+    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
+    if (formMode.placeHlderFont)  return formMode.disabledContentFont;
+    
     return [UIFont systemFontOfSize:15.];
 }
 
-- (UIColor *)highLightTitleColor
+- (void)cellHighLight
 {
-    return UIColorHex(ff3131);
+    NSMutableAttributedString *title = [self.titleNode.attributedText mutableCopy];
+    [title addAttribute:NSForegroundColorAttributeName
+                  value:kJTFormHighLightColor
+                  range:[title.string containsString:@"*"] ? NSMakeRange(1, title.length-1) : NSMakeRange(0, title.length)];
+    self.titleNode.attributedText = [title copy];
 }
 
+- (void)cellUnHighLight
+{
+    NSMutableAttributedString *title = [self.titleNode.attributedText mutableCopy];
+    [title addAttribute:NSForegroundColorAttributeName
+                  value:[self cellTitleColor]
+                  range:[title.string containsString:@"*"] ? NSMakeRange(1, title.length-1) : NSMakeRange(0, title.length)];
+    self.titleNode.attributedText = [title copy];
+}
+
+#pragma mark - lazy load
+
+- (ASTextNode *)titleNode
+{
+    if (!_titleNode) {
+        _titleNode                  = [[ASTextNode alloc] init];
+        _titleNode.layerBacked      = YES;
+        _titleNode.style.flexShrink = 1.;
+    }
+    return _titleNode;
+}
+
+- (ASTextNode *)contentNode
+{
+    if (!_contentNode) {
+        _contentNode             = [[ASTextNode alloc] init];
+        _contentNode.layerBacked = YES;
+    }
+    return _contentNode;
+}
+
+- (JTNetworkImageNode *)imageNode
+{
+    if (!_imageNode) {
+        _imageNode             = [[JTNetworkImageNode alloc] init];
+        _imageNode.layerBacked = YES;
+    }
+    return _imageNode;
+}
 
 @end

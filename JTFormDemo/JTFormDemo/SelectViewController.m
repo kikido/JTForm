@@ -27,68 +27,68 @@
     #pragma mark - select
     
     section = [JTSectionDescriptor formSection];
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
     
     NSArray *selectOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"早饭", @"午饭", @"晚饭", @"名字很长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长"]];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePushSelect rowType:JTFormRowTypePushSelect title:@"JTFormRowTypePushSelect"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePushSelect rowType:JTFormRowTypePushSelect title:@"JTFormRowTypePushSelect"];
     row.selectorOptions = selectOptions;
     row.selectorTitle = @"吃饭";
     row.required = YES;
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeMultipleSelect rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeMultipleSelect rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
     row.selectorOptions = selectOptions;
     row.placeHolder = @"请选择吃饭类型...";
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeSheetSelect rowType:JTFormRowTypeSheetSelect title:@"JTFormRowTypeSheetSelect"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSheetSelect rowType:JTFormRowTypeSheetSelect title:@"JTFormRowTypeSheetSelect"];
     row.selectorOptions = selectOptions;
     row.image = [UIImage imageNamed:@"jt_money"];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypeAlertSelect rowType:JTFormRowTypeAlertSelect title:@"JTFormRowTypeAlertSelect"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeAlertSelect rowType:JTFormRowTypeAlertSelect title:@"JTFormRowTypeAlertSelect"];
     row.selectorOptions = selectOptions;
-    row.imageUrl = netImageUrl(30., 30.);
-    [section addFormRow:row];
+    row.imageUrl = netImageUrl(31., 31.);
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePickerSelect rowType:JTFormRowTypePickerSelect title:@"JTFormRowTypePickerSelect"];
-    row.selectorOptions = selectOptions;
-    row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
-    [section addFormRow:row];
-    
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"0" rowType:JTFormRowTypePickerSelect title:@"短"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePickerSelect rowType:JTFormRowTypePickerSelect title:@"JTFormRowTypePickerSelect"];
     row.selectorOptions = selectOptions;
     row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:JTFormRowTypePushButton rowType:JTFormRowTypePushButton title:@"JTFormRowTypePushButton"];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"0" rowType:JTFormRowTypePickerSelect title:@"短"];
+    row.selectorOptions = selectOptions;
+    row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePushButton rowType:JTFormRowTypePushButton title:@"JTFormRowTypePushButton"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
         RootViewController *vc = [[RootViewController alloc] init];
         vc.title = @"do something";
         [self.navigationController pushViewController:vc animated:YES];
     };
-    [section addFormRow:row];
+    [section addRow:row];
     
     #pragma mark - value transformer
     section = [JTSectionDescriptor formSection];
-    section.headerAttributedString = [NSAttributedString attributedStringWithString:@"value transformer" font:nil color:nil firstWordColor:nil];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"value transformer" font:nil color:nil firstWordColor:nil];
     section.headerHeight = 30.;
-    [formDescriptor addFormSection:section];
+    [formDescriptor addSection:section];
 
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"10" rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"10" rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
     row.selectorOptions = selectOptions;
     row.valueTransformer = [JTTransform class];
     row.value = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2] displayTexts:@[@"早饭", @"午饭"]];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    row = [JTRowDescriptor formRowDescriptorWithTag:@"11" rowType:JTFormRowTypePickerSelect title:@"短"];
+    row = [JTRowDescriptor rowDescriptorWithTag:@"11" rowType:JTFormRowTypePickerSelect title:@"短"];
     row.selectorOptions = selectOptions;
     row.valueTransformer = [JTTransform class];
     row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
-    [section addFormRow:row];
+    [section addRow:row];
     
-    JTForm *form = [[JTForm alloc] initWithFormDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = self.view.bounds;
     [self.view addSubview:form];
     self.form = form;

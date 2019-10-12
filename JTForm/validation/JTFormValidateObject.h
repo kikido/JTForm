@@ -17,6 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 /** 是否通过验证 */
 @property (nonatomic, assign) BOOL valid;
 
+/**
+ 创建一个 JTFormValidateObjects 实例
+
+ @param errorMsg 自定义的错误提示
+ @param valid 是否通过
+ @return 返回该实例
+ */
 - (instancetype)initWithErrorMsg:(nullable NSString *)errorMsg valid:(BOOL)valid;
 
 + (instancetype)formValidateObjectWithErrorMsg:(nullable NSString *)errorMsg valid:(BOOL)valid;

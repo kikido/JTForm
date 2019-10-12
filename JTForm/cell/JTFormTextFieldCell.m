@@ -9,10 +9,8 @@
 
 #import "JTFormTextFieldCell.h"
 
-@interface JTFormTextFieldCell () <ASEditableTextNodeDelegate, ASTextNodeDelegate, UITextFieldDelegate>
-
+@interface JTFormTextFieldCell () <UITextFieldDelegate>
 @property (nonatomic, strong) ASDisplayNode *textFieldNode;
-
 @end
 
 @implementation JTFormTextFieldCell
@@ -31,57 +29,56 @@
 - (void)update
 {
     [super update];
-
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
     
     UITextField *textField = (UITextField *)self.textFieldNode.view;
     textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     textField.enabled = !self.rowDescriptor.disabled;
+    textField.font = [self cellContentFont];
+    textField.textColor = [self cellContentColor];
+    textField.textAlignment = NSTextAlignmentRight;
+    textField.text = [self.rowDescriptor displayTextValue];
+    textField.attributedPlaceholder =
+    [NSAttributedString jt_attributedStringWithString:self.rowDescriptor.placeHolder
+                                                 font:[self cellPlaceHolerFont]
+                                                color:[self cellPlaceHolerColor]
+                                       firstWordColor:nil];
     _textField = textField;
     
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeText]) {
+    NSString *rowType = self.rowDescriptor.rowType;
+    if ([rowType isEqualToString:JTFormRowTypeText])
+    {
         textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         textField.autocorrectionType = UITextAutocorrectionTypeDefault;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeName]) {
+    else if ([rowType isEqualToString:JTFormRowTypeName])
+    {
         textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeEmail]) {
+    else if ([rowType isEqualToString:JTFormRowTypeEmail])
+    {
         textField.keyboardType = UIKeyboardTypeEmailAddress;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber]) {
+    else if ([rowType isEqualToString:JTFormRowTypeNumber])
+    {
         textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInteger] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypePhone]) {
+    else if ([rowType isEqualToString:JTFormRowTypeInteger] || [rowType isEqualToString:JTFormRowTypePhone])
+    {
         textField.keyboardType = UIKeyboardTypeNumberPad;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
+    else if ([rowType isEqualToString:JTFormRowTypeDecimal])
+    {
         textField.keyboardType = UIKeyboardTypeDecimalPad;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypePassword]) {
+    else if ([rowType isEqualToString:JTFormRowTypePassword])
+    {
         textField.keyboardType = UIKeyboardTypeASCIICapable;
         textField.secureTextEntry = YES;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeURL]) {
+    else if ([rowType isEqualToString:JTFormRowTypeURL])
+    {
         textField.keyboardType = UIKeyboardTypeURL;
     }
-    
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                 attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                 font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                 color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                 firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    
-    textField.font = self.rowDescriptor.disabled ? [self formCellDisabledContentFont] : [self formCellContentFont];
-    textField.textColor = self.rowDescriptor.disabled ? [self formCellDisabledContentColor] : [self formCellContentColor];
-    textField.textAlignment = NSTextAlignmentRight;
-    textField.text = [self.rowDescriptor displayContentValue];
-    textField.attributedPlaceholder = [NSAttributedString attributedStringWithString:self.rowDescriptor.placeHolder
-                                                                                font:[self formCellPlaceHlderFont]
-                                                                               color:[self formCellPlaceHolderColor]
-                                                                      firstWordColor:nil];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
@@ -110,72 +107,48 @@
 
 #pragma mark  - responder
 
-- (BOOL)formCellCanBecomeFirstResponder
+- (BOOL)cellCanBecomeFirstResponder
 {
     return !self.rowDescriptor.disabled;
 }
 
-- (BOOL)formCellBecomeFirstResponder
+- (BOOL)cellBecomeFirstResponder
 {
     return [_textField becomeFirstResponder];
 }
 
-- (BOOL)formCellResignFirstResponder
+- (BOOL)isFirstResponder
 {
+    [super isFirstResponder];
+    return [_textField isFirstResponder];
+}
+
+- (BOOL)resignFirstResponder
+{
+    [super resignFirstResponder];
     return [_textField resignFirstResponder];
-}
-
-- (void)formCellHighlight
-{
-    [super formCellHighlight];
-}
-
-- (void)formCellUnhighlight
-{
-    [super formCellUnhighlight];
 }
 
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return [[self findForm] editableTextShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    return [[self findForm] textTypeRowShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if (self.rowDescriptor.maxNumberOfCharacters) {
-        NSString *newString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-        if (newString.length > self.rowDescriptor.maxNumberOfCharacters.integerValue) {
-            return NO;
-        }
-    }
-    return YES;
+    return [[self findForm] textTypeRowShouldChangeTextInRange:range replacementText:string rowDescriptor:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    [self.findForm editableTextDidBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
-    if (self.rowDescriptor.valueFormatter) {
-        textField.text = [self.rowDescriptor editTextValue];
-    }
+    [self.findForm textTypeRowDidBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    if (textField.text.length > 0) {
-        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeNumber] || [self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDecimal]) {
-            self.rowDescriptor.value = [NSDecimalNumber decimalNumberWithString:textField.text locale:NSLocale.currentLocale];
-        } else {
-            self.rowDescriptor.value = textField.text;
-        }
-    } else {
-        self.rowDescriptor.value = nil;
-    }
-    if (self.rowDescriptor.valueFormatter) {
-        textField.text = [self.rowDescriptor displayContentValue];
-    }
-    [self.findForm editableTextDidEndEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    [self.findForm textTypeRowDidEndEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 @end

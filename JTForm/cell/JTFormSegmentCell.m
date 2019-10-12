@@ -30,21 +30,11 @@
 {
     [super update];
     
-    self.imageNode.image = self.rowDescriptor.image;
-    self.imageNode.URL = self.rowDescriptor.imageUrl;
-    
     UISegmentedControl *segmentControl = (UISegmentedControl *)self.segmentNode.view;
     segmentControl.enabled = !self.rowDescriptor.disabled;
     [self updateSegmentedControl:segmentControl];
     segmentControl.selectedSegmentIndex = [self selectedIndex];
     self.segmentControl = segmentControl;
-    
-    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText = [NSAttributedString
-                                     attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
-                                     font:self.rowDescriptor.disabled ? [self formCellDisabledTitleFont] : [self formCellTitleFont]
-                                     color:self.rowDescriptor.disabled ? [self formCellDisabledTitleColor] : [self formCellTitleColor]
-                                     firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
@@ -98,5 +88,4 @@
     }
     return UISegmentedControlNoSegment;
 }
-
 @end
