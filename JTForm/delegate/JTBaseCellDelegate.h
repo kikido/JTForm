@@ -20,16 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 /** 指定单元行的高度 */
 + (CGFloat)formCellHeightForRowDescriptor:(JTRowDescriptor *)row;
 
-/**
- 返回一个bool值，指示单元行是否能够成为第一响应者, 默认返回NO
- */
-//- (BOOL)formCellCanBecomeFirstResponder;
-//
-//
-///** 单元行成为第一响应者 */
-//- (BOOL)formCellBecomeFirstResponder;
-//
-
 /**  当前的单元行被选中了 */
 - (void)formCellDidSelected;
 

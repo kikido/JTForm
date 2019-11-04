@@ -12,6 +12,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormDateInlineCell : JTBaseCell
+
+@property (nonatomic, strong) NSDate    *minimumDate;
+@property (nonatomic, strong) NSDate    *maximumDate;
+@property (nonatomic, strong) NSLocale  *locale;
+
 @end
 
 NS_ASSUME_NONNULL_END

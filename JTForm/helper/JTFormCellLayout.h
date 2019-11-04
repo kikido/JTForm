@@ -60,7 +60,7 @@
  * 本来想用 tintcolor，但是在某种情况下发现系统的 tintcolor 会改变（从 blue 到 gray），
  * 所以还是自己自定义一个颜色吧
  */
-#define kJTFormHighLightColor ([UIColor blueColor])
+#define kJTFormHighLightColor UIColorHex(407eea)
 /** 屏幕高度 */
 #define kJTScreenHeight ([UIScreen mainScreen].bounds.size.height)
 /** 屏幕宽度 */

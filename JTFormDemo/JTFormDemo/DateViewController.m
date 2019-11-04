@@ -18,7 +18,6 @@
     [super viewDidLoad];
     
     JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
-    formDescriptor.disabled = true;
     formDescriptor.addAsteriskToRequiredRowsTitle = YES;
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
@@ -27,7 +26,6 @@
 #pragma mark - date
     
     section = [JTSectionDescriptor formSection];
-    section.disabled = true;
     [formDescriptor addSection:section];
 
     NSDate *now = [[NSDate alloc] init];
@@ -49,7 +47,6 @@
     [section addRow:row];
 
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
-    row.value = now;
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"00" rowType:JTFormRowTypeDate title:@"短"];

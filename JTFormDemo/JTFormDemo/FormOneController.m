@@ -127,16 +127,7 @@
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;
-    
-    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kJTScreenWidth, 200)];
-    
-    ASNetworkImageNode *imageNode = [[ASNetworkImageNode alloc] init];
-    imageNode.frame = CGRectMake(0, 0, 200, 200);
-    imageNode.URL = netImageUrl(200, 200);
-    [header addSubnode:imageNode];
-    
-    self.form.tableView.tableHeaderView = header;
-    
+            
 //    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, kJTScreenHeight- 64. -90., kJTScreenWidth, 90.)];
 //    view.backgroundColor = [UIColor blackColor];
 //    [self.view addSubview:view];

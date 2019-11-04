@@ -30,6 +30,7 @@
     [formDescriptor addSection:section];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeFloatText rowType:JTFormRowTypeFloatText title:@"测试"];
+    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
     row.required = YES;
     [section addRow:row];
     

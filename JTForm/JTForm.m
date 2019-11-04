@@ -93,6 +93,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     textNode.attributedText = sectionDescriptor.headerAttributedString;
     [contentNode addSubnode:textNode];
     [contentNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
+        textNode.style.width = ASDimensionMake(constrainedSize.min.width - 30.);
         ASStackLayoutSpec *layoutSpec = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                                 spacing:0
                                                                          justifyContent:ASStackLayoutJustifyContentStart
@@ -120,6 +121,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     textNode.attributedText = sectionDescriptor.headerAttributedString;
     [contentNode addSubnode:textNode];
     [contentNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
+        textNode.style.width = ASDimensionMake(constrainedSize.min.width - 30.);
         ASStackLayoutSpec *layoutSpec = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                                 spacing:0
                                                                          justifyContent:ASStackLayoutJustifyContentStart
@@ -578,7 +580,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self removeRow:row];
 }
 
-- (nullable JTRowDescriptor *)findRowByTag:(NSString *)tag
+- (nullable JTRowDescriptor *)findRowByTag:(id<NSCopying>)tag
 {
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
     return row;
@@ -590,7 +592,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     return row;
 }
 
-- (nullable id)findRowValueByTag:(NSString *)tag
+- (nullable id)findRowValueByTag:(id<NSCopying>)tag
 {
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
     return [row.value cellValue];

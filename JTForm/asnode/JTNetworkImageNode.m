@@ -93,12 +93,14 @@
 {
     // 不同版本的 sdwebimage 做不同的处理
     SDImageCache *imageCache = [SDImageCache sharedImageCache];
-    if ([imageCache respondsToSelector:@selector(storeImage:imageData:forKey:toDisk:completion:)]) {
-        [imageCache storeImage:image forKey:imageNode.URL.absoluteString toDisk:YES completion:nil];
-    } else if ([imageCache respondsToSelector:@selector(storeImage:forKey:toDisk:)]) {
+    if ([imageCache respondsToSelector:@selector(storeImage:forKey:toDisk:completion:)])
+    {
+        ((void (*)(id, SEL, UIImage *, NSString *, BOOL, SDWebImageNoParamsBlock))(void *) objc_msgSend)((id)imageCache, @selector(storeImage:forKey:toDisk:completion:), image, imageNode.URL.absoluteString, YES, nil);
+    }
+    else if ([imageCache respondsToSelector:@selector(storeImage:forKey:toDisk:)])
+    {
         ((void (*)(id, SEL, UIImage *, NSString *, BOOL))(void *) objc_msgSend)((id)imageCache, @selector(storeImage:forKey:toDisk:), image, imageNode.URL.absoluteString, YES);
     }
-    
     static CGFloat scale;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

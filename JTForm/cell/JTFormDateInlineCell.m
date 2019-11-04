@@ -63,6 +63,10 @@
     if ([self isFirstResponder]) {
         return [self resignFirstResponder];
     } else {
+        if (!self.rowDescriptor.value) {
+            self.rowDescriptor.value = [NSDate date];
+            self.contentNode.attributedText = [self _cellDisplayContent];
+        }
         return [self becomeFirstResponder];
     }
 }
@@ -183,6 +187,10 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
     if (_connectedRowDescriptor.value) {
         [_datePicker setDate:_connectedRowDescriptor.value animated:NO];
     }
+    JTFormDateInlineCell *connectCell = (JTFormDateInlineCell *)[self.connectedRowDescriptor cellInForm];
+    if (connectCell.minimumDate)    _datePicker.minimumDate = connectCell.minimumDate;
+    if (connectCell.maximumDate)    _datePicker.maximumDate = connectCell.maximumDate;
+    if (connectCell.locale)         _datePicker.locale = connectCell.locale;
 }
 
 + (CGFloat)formCellHeightForRowDescriptor:(JTRowDescriptor *)row

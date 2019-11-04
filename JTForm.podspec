@@ -18,8 +18,8 @@ Pod::Spec.new do |s|
   s.source        = { :git => "https://github.com/kikido/JTForm.git", :tag => s.version.to_s }
   s.source_files  = "JTForm", "JTForm/**/*.{h,m}"
   s.resource      = 'JTForm/JTForm.bundle'
-  s.dependency "SDWebImage", "~> 4.4.6"
-  s.dependency "Texture", '~> 2.8'
+  s.dependency "SDWebImage"
+  s.dependency "Texture"
   s.requires_arc = true
   s.ios.deployment_target = '9.0'
   s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SRCROOT)/SDWebImage" }

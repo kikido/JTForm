@@ -238,7 +238,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tag 单元行的 tag
  * @return 行描述
  */
-- (nullable JTRowDescriptor *)findRowByTag:(NSString *)tag;
+- (nullable JTRowDescriptor *)findRowByTag:(id<NSCopying>)tag;
 
 /**
  * 根据给定索引查找相应的单元行
@@ -254,7 +254,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tag 单元行的 tag
  * @return 单元行的 value。如果是选择项样式的单元行，那么返回值是选择项的 formValue
  */
-- (nullable id)findRowValueByTag:(NSString *)tag;
+- (nullable id)findRowValueByTag:(id<NSCopying>)tag;
 
 /**
  * 查找给定单元行在表单中的索引位置

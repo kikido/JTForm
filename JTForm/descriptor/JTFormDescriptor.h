@@ -147,7 +147,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param tag 单元行的 tag
  * @return 行描述
  */
-- (nullable JTRowDescriptor *)formRowWithTag:(NSString *)tag;
+- (nullable JTRowDescriptor *)formRowWithTag:(id<NSCopying>)tag;
 
 /**
  * 根据指定的索引查找相应的单元行

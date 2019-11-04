@@ -25,21 +25,19 @@
     // Override point for customization after application launch.
     
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-        
     ViewController *vc = [[ViewController alloc] init];
-//    TextViewController *vc = [[TextViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     nav.navigationBar.translucent = false;
     self.window.rootViewController = nav;
+    [self.window makeKeyAndVisible];
     
     // fps
-//    CGFloat width = [[UIScreen mainScreen] bounds].size.width;
-//    YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(width/2. - 50, 34, 100, 30.)];
-//    [nav.view addSubview:fps];
+    CGFloat width = [[UIScreen mainScreen] bounds].size.width;
+    YYFPSLabel *fps = [[YYFPSLabel alloc] initWithFrame:CGRectMake(width/2. - 50, 34, 100, 30.)];
+    [nav.view addSubview:fps];
     
-    [self.window makeKeyAndVisible];
+    // clear image cache
     [[SDImageCache sharedImageCache] clearDiskOnCompletion:nil];
-//    [IQKeyboardManager sharedManager].enableDebugging = true;
     
     return YES;
 }

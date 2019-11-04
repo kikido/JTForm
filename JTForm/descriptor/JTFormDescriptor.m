@@ -235,7 +235,7 @@
     if (row.tag) [_allRowsByTag removeObjectForKey:row.tag];
 }
 
-- (JTRowDescriptor *)formRowWithTag:(NSString *)tag
+- (JTRowDescriptor *)formRowWithTag:(id<NSCopying>)tag
 {
     if (tag) return self.allRowsByTag[tag];
     return nil;

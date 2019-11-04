@@ -73,7 +73,7 @@ static inline Ivar JTFormIvar() {
     // 为必录的单元行设置红色的 *
     BOOL required = self.rowDescriptor.required && [self findFormDescriptor].addAsteriskToRequiredRowsTitle;
     self.titleNode.attributedText =
-    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@", required ? @"*" : @"", self.rowDescriptor.title]
+    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@", required ? @"*" : @"", self.rowDescriptor.title ? self.rowDescriptor.title : @""]
                                                  font:[self cellTitleFont]
                                                 color:[self cellTitleColor]
                                        firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
@@ -188,15 +188,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.backgroundColor;
+    if (rowMode.backgroundColor)  return rowMode.backgroundColor;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.backgroundColor;
+    if (sectionMode.backgroundColor)  return sectionMode.backgroundColor;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.backgroundColor;
+    if (formMode.backgroundColor)  return formMode.backgroundColor;
     
     return [UIColor whiteColor];
 }
@@ -208,15 +208,15 @@ static inline Ivar JTFormIvar() {
     // 优先级 row > section > form
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.titleColor;
+    if (rowMode.titleColor)  return rowMode.titleColor;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.titleColor;
+    if (sectionMode.titleColor)  return sectionMode.titleColor;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.titleColor;
+    if (formMode.titleColor)  return formMode.titleColor;
     
     return UIColorHex(333333);
 }
@@ -225,15 +225,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.contentColor;
+    if (rowMode.contentColor)  return rowMode.contentColor;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.contentColor;
+    if (sectionMode.contentColor)  return sectionMode.contentColor;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.contentColor;
+    if (formMode.contentColor)  return formMode.contentColor;
     
     return UIColorHex(333333);
 }
@@ -242,15 +242,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.placeHolderColor;
+    if (rowMode.placeHolderColor)  return rowMode.placeHolderColor;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.placeHolderColor;
+    if (sectionMode.placeHolderColor)  return sectionMode.placeHolderColor;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.placeHolderColor;
+    if (formMode.placeHolderColor)  return formMode.placeHolderColor;
     
     return UIColorHex(dbdbdb);
 }
@@ -259,15 +259,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.disabledTitleColor;
+    if (rowMode.disabledTitleColor)  return rowMode.disabledTitleColor;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.disabledTitleColor;
+    if (sectionMode.disabledTitleColor)  return sectionMode.disabledTitleColor;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.disabledTitleColor;
+    if (formMode.disabledTitleColor)  return formMode.disabledTitleColor;
     
     return UIColorHex(aaaaaa);
 }
@@ -276,15 +276,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.disabledContentColor;
+    if (rowMode.disabledContentColor)  return rowMode.disabledContentColor;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.disabledContentColor;
+    if (sectionMode.disabledContentColor)  return sectionMode.disabledContentColor;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.disabledContentColor;
+    if (formMode.disabledContentColor)  return formMode.disabledContentColor;
     
     return UIColorHex(aaaaaa);
 }
@@ -293,15 +293,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.titleFont;
+    if (rowMode.titleFont)  return rowMode.titleFont;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.titleFont;
+    if (sectionMode.titleFont)  return sectionMode.titleFont;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.titleFont;
+    if (formMode.titleFont)  return formMode.titleFont;
     
     return [UIFont systemFontOfSize:16.];
 }
@@ -310,15 +310,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.contentFont;
+    if (rowMode.contentFont)  return rowMode.contentFont;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.contentFont;
+    if (sectionMode.contentFont)  return sectionMode.contentFont;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.contentFont;
+    if (formMode.contentFont)  return formMode.contentFont;
     
     return [UIFont systemFontOfSize:15.];
 }
@@ -344,15 +344,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.disabledTitleFont;
+    if (rowMode.disabledTitleFont)  return rowMode.disabledTitleFont;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.disabledTitleFont;
+    if (sectionMode.disabledTitleFont)  return sectionMode.disabledTitleFont;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.disabledTitleFont;
+    if (formMode.disabledTitleFont)  return formMode.disabledTitleFont;
     
     return [UIFont systemFontOfSize:16.];
 }
@@ -361,15 +361,15 @@ static inline Ivar JTFormIvar() {
 {
     Ivar rowIvar = JTFormRowIvar();
     JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.disabledContentFont;
+    if (rowMode.disabledContentFont)  return rowMode.disabledContentFont;
     
     Ivar sectionIvar = JTFormSectionIvar();
     JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.disabledContentFont;
+    if (sectionMode.disabledContentFont)  return sectionMode.disabledContentFont;
     
     Ivar formIvar = JTFormIvar();
     JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.disabledContentFont;
+    if (formMode.disabledContentFont)  return formMode.disabledContentFont;
     
     return [UIFont systemFontOfSize:15.];
 }
