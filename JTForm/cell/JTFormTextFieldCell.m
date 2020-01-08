@@ -93,7 +93,7 @@
                                                                           children:self.imageNode.hasContent ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
     leftStack.style.flexShrink = 2.;
 
-    _textFieldNode.style.minWidth = ASDimensionMakeWithFraction(.6);
+    _textFieldNode.style.width = ASDimensionMakeWithFraction(.6);
     _textFieldNode.style.height = ASDimensionMake(30.);
     _textFieldNode.style.flexGrow = 1.;
     

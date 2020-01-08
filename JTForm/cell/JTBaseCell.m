@@ -131,7 +131,7 @@ static inline Ivar JTFormIvar() {
 
 - (JTForm *)findForm
 {
-    return (JTForm *)self.rowDescriptor.sectionDescriptor.formDescriptor.delegate;
+    return (JTForm *)self.rowDescriptor.sectionDescriptor.formDescriptor.form;
 }
 
 - (JTFormDescriptor *)findFormDescriptor

@@ -18,6 +18,9 @@
 #import "WeiBoViewController.h"
 #import "IGViewController.h"
 #import "FormOneController.h"
+#import "CollectionViewController.h"
+#import "CollectionViewController2.h"
+#import "CollectionViewController3.h"
 
 @interface ViewController ()
 @end
@@ -33,6 +36,10 @@
     JTRowDescriptor *row = nil;
     
     section = [JTSectionDescriptor formSection];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"table view"
+                                                                                  font:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]
+                                                                                 color:UIColor.grayColor];
+    section.headerHeight = 30.;
     [formDescriptor addSection:section];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"0" rowType:JTFormRowTypePushButton title:@"text"];
@@ -92,17 +99,35 @@
     [section addRow:row];
     
     section = [JTSectionDescriptor formSection];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"collection view"
+                                                                                  font:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]
+                                                                                 color:UIColor.grayColor];
+    section.headerHeight = 30.;
     [formDescriptor addSection:section];
     
-    row = [JTRowDescriptor rowDescriptorWithTag:@"10" rowType:JTFormRowTypePushButton title:@"表单1"];
+    row = [JTRowDescriptor rowDescriptorWithTag:nil rowType:JTFormRowTypePushButton title:@"CollectionColumnFlow"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
-        FormOneController *vc = [[FormOneController alloc] init];
+        CollectionViewController *vc = [[CollectionViewController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    };
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:nil rowType:JTFormRowTypePushButton title:@"CollectionColumnFixed"];
+    row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
+        CollectionViewController2 *vc = [[CollectionViewController2 alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    };
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:nil rowType:JTFormRowTypePushButton title:@"CollectionFixed"];
+    row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
+        CollectionViewController3 *vc = [[CollectionViewController3 alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     };
     [section addRow:row];
     
     JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
-    form.frame = self.view.bounds;
+    form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
 }
 

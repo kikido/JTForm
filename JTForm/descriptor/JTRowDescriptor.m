@@ -46,6 +46,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 
 @interface JTRowDescriptor ()
+// FIXME:ASCellNode不要强引用
 @property (nonnull, nonatomic, strong)  JTBaseCell *cell;
 @property (nullable, nonatomic, strong) NSMutableArray<id<JTFormValidateProtocol>> *validators;
 @end
@@ -87,7 +88,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (void)updateUI
 {
-    if (!self.isCellExist || !self.sectionDescriptor.formDescriptor.delegate) {
+    if (!self.isCellExist || !self.sectionDescriptor.formDescriptor.form) {
         return;
     }
     JTBaseCell *cell = [self cellInForm];
@@ -110,15 +111,14 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     _rowType = rowType;
     _cell = nil;
     _cell = [self cellInForm];
-//    __strong typeof(self) strongSelf = self;
-    [((JTForm *)self.sectionDescriptor.formDescriptor.delegate) reloadRows:@[self]];
+    [((JTForm *)self.sectionDescriptor.formDescriptor.form) reloadRows:@[self]];
 }
 
 - (JTBaseCell *)cellInForm
 {
     if (!_cell) {
         id cellClass = [JTForm cellClassesForRowTypes][self.rowType];
-        NSAssert(cellClass, @"not defined cell like:%@", self.rowType ?: @"null");
+        NSAssert(cellClass, @"not defined cell class for cell type named %@", self.rowType ?: @"null");
         
         if ([cellClass isKindOfClass:[NSString class]]) {
             NSString *cellClassString = cellClass;
@@ -317,7 +317,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (!self.sectionDescriptor.formDescriptor.delegate) return;
+    if (!self.sectionDescriptor.formDescriptor.form) return;
     
     if ([keyPath isEqualToString:@"value"]) {
         if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeSetting)]) {
@@ -329,14 +329,16 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
                     self.valueChangeBlock(oldValue, newValue, self);
                 });
             }
-            if ([self.sectionDescriptor.formDescriptor.delegate respondsToSelector:@selector(formRowDescriptorValueHasChanged:oldValue:newValue:)]) {
+            if ([self.sectionDescriptor.formDescriptor.form respondsToSelector:@selector(formRowDescriptorValueHasChanged:oldValue:newValue:)]) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.sectionDescriptor.formDescriptor.delegate formRowDescriptorValueHasChanged:self oldValue:oldValue newValue:newValue];
+                    [self.sectionDescriptor.formDescriptor.form formRowDescriptorValueHasChanged:self oldValue:oldValue newValue:newValue];
                 });
             }
         }
     }
 }
+
+#pragma mark - private
 
 @end
 

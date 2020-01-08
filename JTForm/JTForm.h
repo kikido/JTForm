@@ -9,6 +9,7 @@
 #import "JTFormDescriptor.h"
 #import "JTSectionDescriptor.h"
 #import "JTRowDescriptor.h"
+#import "JTFormDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,10 +32,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readonly) ASTableView *tableView;
 
+
+@property (nonatomic, strong, readonly) ASCollectionNode *collectionNode;
+
+@property (nonatomic, strong, readonly) ASCollectionView *collectionView;
+
 /**
- * 充当代理的对象
- *
- * 你可以实现协议里面的方法，当单元行的 value 改变时会触发该方法
+ * 代理对象
  */
 @property (nonatomic, weak) id<JTFormDelegate> delegate;
 
@@ -50,12 +54,23 @@ NS_ASSUME_NONNULL_BEGIN
  * @return JTForm实例。在调用这个方法之前，最好将
  * JTSectionDescriptor 和 JTRowDescriptor 添加到 JTFormDescriptor 中
  */
-- (instancetype)initWithDescriptor:(JTFormDescriptor *)formDescriptor NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDescriptor:(JTFormDescriptor *)formDescriptor;
 
 + (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor;
 
-- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
+/**
+ * 用于生成实例
+ *
+ * @discuss 通过该方法，你可以使用 JTForm 创建 UICollectionView 而不仅仅是 UITableView
+ */
+- (instancetype)initWithDescriptor:(JTFormDescriptor *)formDescriptor formType:(JTFormType)formType;
+
++ (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor formType:(JTFormType)formType;
+
+- (instancetype)initWithFrame:(CGRect)frame __unavailable;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder __unavailable;
+- (instancetype)init __unavailable;
+- (instancetype)new __unavailable;
 
 
 //------------------------------

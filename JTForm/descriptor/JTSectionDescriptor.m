@@ -49,7 +49,7 @@ CGFloat const JTFormDefaultSectionFooterHeight = 25.;
 {
     // 节的三种状态 1 显示在表单中 2 没有添加到表单中 3 在表单中但被隐藏了
     // 2和3两种情况下 return
-    if (!self.formDescriptor.delegate || self.hidden) return;
+    if (!self.formDescriptor.form || self.hidden) return;
     
     NSUInteger sectionIndex = [self.formDescriptor.formSections indexOfObject:object];
     if (sectionIndex == NSNotFound) return;
@@ -59,13 +59,13 @@ CGFloat const JTFormDefaultSectionFooterHeight = 25.;
         {
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
             if (indexSet.count != 0)
-                [self.formDescriptor.delegate formRowHasBeenAddedAtIndexPath:[NSIndexPath indexPathForRow:indexSet.firstIndex inSection:sectionIndex]];
+                [self.formDescriptor.form formRowHasBeenAddedAtIndexPath:[NSIndexPath indexPathForRow:indexSet.firstIndex inSection:sectionIndex]];
         }
         else if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeRemoval)])
         {
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
             if (indexSet.count != 0)
-                [self.formDescriptor.delegate formRowHasBeenRemovedAtIndexPath:[NSIndexPath indexPathForRow:indexSet.firstIndex inSection:sectionIndex]];
+                [self.formDescriptor.form formRowHasBeenRemovedAtIndexPath:[NSIndexPath indexPathForRow:indexSet.firstIndex inSection:sectionIndex]];
         }
     }
 }
@@ -244,9 +244,9 @@ CGFloat const JTFormDefaultSectionFooterHeight = 25.;
 {
     if (disabled != _disabled) {
         _disabled = disabled;
-        if (!self.formDescriptor.delegate) return;
+        if (!self.formDescriptor.form) return;
         
-        [[(JTForm *)self.formDescriptor.delegate tableView] endEditing:YES];
+        [[(JTForm *)self.formDescriptor.form tableView] endEditing:YES];
         
         [self.formRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             [obj updateUI];

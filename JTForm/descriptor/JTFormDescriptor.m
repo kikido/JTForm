@@ -12,10 +12,12 @@
 #import "JTRowDescriptor.h"
 #import "JTBaseCell.h"
 #import "JTForm.h"
+#import "JTCollectionLayoutInfo.h"
 
 @interface JTFormDescriptor ()
 @property (nonatomic, strong, readwrite) NSMutableArray *formSections;
 @property (nonatomic, strong, readwrite) NSMutableArray *allSections;
+@property (nonatomic, weak) JTCollectionLayoutInfo *collectionInfo;
 @end
 
 @implementation JTFormDescriptor
@@ -31,6 +33,14 @@
         _addAsteriskToRequiredRowsTitle = false;
         _noValueShowText                = false;
         
+        // collection
+        _numberOfColumn  = 0;
+        _itmeSize        = CGSizeZero;
+        _lineSpace       = 0.;
+        _interItemSpace  = 0.;
+        _sectionInsets   = UIEdgeInsetsZero;
+        _scrollDirection = JTFormScrollDirectionVertical;
+        
         [self addObserver:self forKeyPath:@"formSections" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     }
     return self;
@@ -41,22 +51,60 @@
     return [[JTFormDescriptor alloc] init];
 }
 
+#pragma mark - setter
+
+- (void)setNumberOfColumn:(NSUInteger)numberOfColumn
+{
+    _numberOfColumn = numberOfColumn;
+    _collectionInfo.numberOfColumn = numberOfColumn;
+}
+
+- (void)setItmeSize:(CGSize)itmeSize
+{
+    _itmeSize = itmeSize;
+    _collectionInfo.itemSize = itmeSize;
+}
+
+- (void)setLineSpace:(CGFloat)lineSpace
+{
+    _lineSpace = lineSpace;
+    _collectionInfo.lineSpace = lineSpace;
+}
+
+- (void)setInterItemSpace:(CGFloat)interItemSpace
+{
+    _interItemSpace = interItemSpace;
+    _collectionInfo.interItemSpace = interItemSpace;
+}
+
+- (void)setSectionInsets:(UIEdgeInsets)sectionInsets
+{
+    _sectionInsets = sectionInsets;
+    _collectionInfo.sectionInsets = sectionInsets;
+}
+
+- (void)setScrollDirection:(JTFormScrollDirection)scrollDirection
+{
+    _scrollDirection = scrollDirection;
+    _collectionInfo.scrollDirection = scrollDirection;
+}
+
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
 {
-    if (!self.delegate) return;
+    if (!self.form) return;
     
     if ([keyPath isEqualToString:@"formSections"]) {
         if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeInsertion)])
         {
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-            [self.delegate formSectionsHaveBeenAddedAtIndexes:indexSet];
+            [self.form formSectionsHaveBeenAddedAtIndexes:indexSet];
         }
         else if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeRemoval)])
         {
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
-            [self.delegate formSectionsHaveBeenRemovedAtIndexes:indexSet];
+            [self.form formSectionsHaveBeenRemovedAtIndexes:indexSet];
         }
     }
 }
@@ -146,7 +194,7 @@
 
 - (void)hideFormSection:(JTSectionDescriptor *)section
 {
-    [[(JTForm *)self.delegate tableView] endEditing:YES];
+    [[(JTForm *)self.form tableView] endEditing:YES];
 
     [self _removeFormSectionInFormSections:section];
 }
@@ -154,8 +202,8 @@
 - (void)hideFormSectionsAtIndexes:(NSIndexSet *)indexes
 {
     // fixme 同上，需要优化
-    if ([[(JTForm *)self.delegate tableView] isEditing]) {
-        [[(JTForm *)self.delegate tableView] endEditing:YES];
+    if ([[(JTForm *)self.form tableView] isEditing]) {
+        [[(JTForm *)self.form tableView] endEditing:YES];
     }
     NSArray *sections = [self.allSections objectsAtIndexes:indexes];
     for (JTSectionDescriptor *section in sections) {
@@ -314,9 +362,9 @@
 {
     if (disabled != _disabled) {
         _disabled = disabled;
-        if (!self.delegate) return;
+        if (!self.form) return;
         
-        [[(JTForm *)self.delegate tableView] endEditing:YES];
+        [[(JTForm *)self.form tableView] endEditing:YES];
         
         for (JTSectionDescriptor *section in self.formSections) {
             for (JTRowDescriptor *row in section.formRows) {

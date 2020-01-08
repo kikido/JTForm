@@ -40,6 +40,10 @@
 		1D04D6E4228AA99C004F6E07 /* JTFormRegexValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D04D6C3228AA99C004F6E07 /* JTFormRegexValidator.m */; };
 		1D04D6E5228AA99C004F6E07 /* JTForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D04D6C4228AA99C004F6E07 /* JTForm.m */; };
 		1D15592A228E578200171CE3 /* WBCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D155929228E578200171CE3 /* WBCell.m */; };
+		1D2E728523AA0FBD001EA1C7 /* JTCollectionLayoutInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2E728423AA0FBD001EA1C7 /* JTCollectionLayoutInfo.m */; };
+		1D2E728823AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2E728723AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m */; };
+		1D2E728B23AB6983001EA1C7 /* ImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2E728A23AB6983001EA1C7 /* ImageCell.m */; };
+		1D2E728E23AB6B0F001EA1C7 /* CollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D2E728D23AB6B0F001EA1C7 /* CollectionViewController.m */; };
 		1D39F27C228162440038A831 /* SelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27B228162440038A831 /* SelectViewController.m */; };
 		1D39F27F2281740D0038A831 /* JTTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F27E2281740D0038A831 /* JTTransform.m */; };
 		1D39F28222817AD20038A831 /* DateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D39F28122817AD20038A831 /* DateViewController.m */; };
@@ -129,6 +133,9 @@
 		1D7BF949228EB3B4009790D0 /* UIView+YYText.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D7BF92E228EB3B4009790D0 /* UIView+YYText.m */; };
 		1D7BF94A228EB3B4009790D0 /* YYTextAsyncLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D7BF931228EB3B4009790D0 /* YYTextAsyncLayer.m */; };
 		1D7BF94B228EB3B4009790D0 /* YYTextWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D7BF932228EB3B4009790D0 /* YYTextWeakProxy.m */; };
+		1D873ED823B5FBA500C7CE6E /* SupplementaryNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873ED723B5FBA500C7CE6E /* SupplementaryNode.m */; };
+		1D873EF523C57A7900C7CE6E /* CollectionViewController2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873EF423C57A7900C7CE6E /* CollectionViewController2.m */; };
+		1D873EF823C57A8300C7CE6E /* CollectionViewController3.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873EF723C57A8300C7CE6E /* CollectionViewController3.m */; };
 		1DBF846D22B0D1F800CC4FBA /* FormOneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DBF846C22B0D1F800CC4FBA /* FormOneController.m */; };
 		1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA28225B6DA000652FE6 /* AppDelegate.m */; };
 		1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA2B225B6DA000652FE6 /* ViewController.m */; };
@@ -211,6 +218,14 @@
 		1D1558ED228D349B00171CE3 /* JTBaseCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTBaseCellDelegate.h; sourceTree = "<group>"; };
 		1D155928228E578200171CE3 /* WBCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WBCell.h; sourceTree = "<group>"; };
 		1D155929228E578200171CE3 /* WBCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WBCell.m; sourceTree = "<group>"; };
+		1D2E728323AA0FBD001EA1C7 /* JTCollectionLayoutInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTCollectionLayoutInfo.h; sourceTree = "<group>"; };
+		1D2E728423AA0FBD001EA1C7 /* JTCollectionLayoutInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTCollectionLayoutInfo.m; sourceTree = "<group>"; };
+		1D2E728623AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTCollectionLayoutDelegate.h; sourceTree = "<group>"; };
+		1D2E728723AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTCollectionLayoutDelegate.m; sourceTree = "<group>"; };
+		1D2E728923AB6983001EA1C7 /* ImageCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageCell.h; sourceTree = "<group>"; };
+		1D2E728A23AB6983001EA1C7 /* ImageCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageCell.m; sourceTree = "<group>"; };
+		1D2E728C23AB6B0F001EA1C7 /* CollectionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionViewController.h; sourceTree = "<group>"; };
+		1D2E728D23AB6B0F001EA1C7 /* CollectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionViewController.m; sourceTree = "<group>"; };
 		1D39F27A228162440038A831 /* SelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectViewController.h; sourceTree = "<group>"; };
 		1D39F27B228162440038A831 /* SelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectViewController.m; sourceTree = "<group>"; };
 		1D39F27D2281740D0038A831 /* JTTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTTransform.h; sourceTree = "<group>"; };
@@ -379,6 +394,13 @@
 		1D7BF931228EB3B4009790D0 /* YYTextAsyncLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTextAsyncLayer.m; sourceTree = "<group>"; };
 		1D7BF932228EB3B4009790D0 /* YYTextWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTextWeakProxy.m; sourceTree = "<group>"; };
 		1D7BF933228EB3B4009790D0 /* UIPasteboard+YYText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIPasteboard+YYText.h"; sourceTree = "<group>"; };
+		1D873ED623B5FBA500C7CE6E /* SupplementaryNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SupplementaryNode.h; sourceTree = "<group>"; };
+		1D873ED723B5FBA500C7CE6E /* SupplementaryNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SupplementaryNode.m; sourceTree = "<group>"; };
+		1D873EF223C3068800C7CE6E /* JTFormDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDefines.h; sourceTree = "<group>"; };
+		1D873EF323C57A7900C7CE6E /* CollectionViewController2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionViewController2.h; sourceTree = "<group>"; };
+		1D873EF423C57A7900C7CE6E /* CollectionViewController2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionViewController2.m; sourceTree = "<group>"; };
+		1D873EF623C57A8300C7CE6E /* CollectionViewController3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CollectionViewController3.h; sourceTree = "<group>"; };
+		1D873EF723C57A8300C7CE6E /* CollectionViewController3.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CollectionViewController3.m; sourceTree = "<group>"; };
 		1DBF846B22B0D1F800CC4FBA /* FormOneController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormOneController.h; sourceTree = "<group>"; };
 		1DBF846C22B0D1F800CC4FBA /* FormOneController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormOneController.m; sourceTree = "<group>"; };
 		1DBF846F22B0DE7200CC4FBA /* JTFormDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDelegate.h; sourceTree = "<group>"; };
@@ -419,6 +441,10 @@
 				1D04D675228AA99C004F6E07 /* JTForm.bundle */,
 				1D04D676228AA99C004F6E07 /* JTForm.h */,
 				1D04D6C4228AA99C004F6E07 /* JTForm.m */,
+				1D2E728323AA0FBD001EA1C7 /* JTCollectionLayoutInfo.h */,
+				1D2E728423AA0FBD001EA1C7 /* JTCollectionLayoutInfo.m */,
+				1D2E728623AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.h */,
+				1D2E728723AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m */,
 				1D04D677228AA99C004F6E07 /* delegate */,
 				1D04D67E228AA99C004F6E07 /* cell */,
 				1D04D697228AA99C004F6E07 /* asnode */,
@@ -555,6 +581,7 @@
 				1D04D6BE228AA99C004F6E07 /* NSAttributedString+JTAdd.h */,
 				1D04D6B4228AA99C004F6E07 /* JTFormCellLayout.h */,
 				1D04D6B8228AA99C004F6E07 /* JTHelper.h */,
+				1D873EF223C3068800C7CE6E /* JTFormDefines.h */,
 			);
 			path = helper;
 			sourceTree = "<group>";
@@ -601,6 +628,8 @@
 				1D39F2C322845B030038A831 /* IGCell.m */,
 				1D155928228E578200171CE3 /* WBCell.h */,
 				1D155929228E578200171CE3 /* WBCell.m */,
+				1D2E728923AB6983001EA1C7 /* ImageCell.h */,
+				1D2E728A23AB6983001EA1C7 /* ImageCell.m */,
 			);
 			path = cellNode;
 			sourceTree = "<group>";
@@ -718,6 +747,8 @@
 			children = (
 				1D39F3BF228917CA0038A831 /* UIImage+JTFormAdd.h */,
 				1D39F3C0228917CA0038A831 /* UIImage+JTFormAdd.m */,
+				1D873ED623B5FBA500C7CE6E /* SupplementaryNode.h */,
+				1D873ED723B5FBA500C7CE6E /* SupplementaryNode.m */,
 			);
 			path = helper;
 			sourceTree = "<group>";
@@ -938,6 +969,12 @@
 				1D39F3C3228942B80038A831 /* IGViewController.m */,
 				1D39F2962283B6660038A831 /* JTIdCardValidator.h */,
 				1D39F2972283B6660038A831 /* JTIdCardValidator.m */,
+				1D2E728C23AB6B0F001EA1C7 /* CollectionViewController.h */,
+				1D2E728D23AB6B0F001EA1C7 /* CollectionViewController.m */,
+				1D873EF323C57A7900C7CE6E /* CollectionViewController2.h */,
+				1D873EF423C57A7900C7CE6E /* CollectionViewController2.m */,
+				1D873EF623C57A8300C7CE6E /* CollectionViewController3.h */,
+				1D873EF723C57A8300C7CE6E /* CollectionViewController3.m */,
 				1D39F3BE228917AE0038A831 /* helper */,
 				1D39F2C522850D8F0038A831 /* lib */,
 				1D39F2C122845AE30038A831 /* cellNode */,
@@ -1086,6 +1123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D7BF8E3228E8CAF009790D0 /* WBMode.h in Sources */,
+				1D2E728B23AB6983001EA1C7 /* ImageCell.m in Sources */,
 				1D39F2BA2284574E0038A831 /* PhotoModel.m in Sources */,
 				1D7BF942228EB3B4009790D0 /* YYTextArchiver.m in Sources */,
 				1D04D6D8228AA99C004F6E07 /* JTRowDescriptor.m in Sources */,
@@ -1102,6 +1140,7 @@
 				1D7BF938228EB3B4009790D0 /* YYTextInput.m in Sources */,
 				1D39F2C422845B030038A831 /* IGCell.m in Sources */,
 				1D7BF93F228EB3B4009790D0 /* YYTextRunDelegate.m in Sources */,
+				1D2E728523AA0FBD001EA1C7 /* JTCollectionLayoutInfo.m in Sources */,
 				1D39F30122850D9B0038A831 /* MJRefreshAutoStateFooter.m in Sources */,
 				1D7BF948228EB3B4009790D0 /* YYTextTransaction.m in Sources */,
 				1D39F2952283B5B30038A831 /* ValidatorViewController.m in Sources */,
@@ -1110,6 +1149,7 @@
 				1D04D6DA228AA99C004F6E07 /* JTSectionDescriptor.m in Sources */,
 				1D04D6C8228AA99C004F6E07 /* JTFormSegmentCell.m in Sources */,
 				1D04D6C5228AA99C004F6E07 /* JTOptionObject.m in Sources */,
+				1D873ED823B5FBA500C7CE6E /* SupplementaryNode.m in Sources */,
 				1D39F30822850D9B0038A831 /* MJRefreshHeader.m in Sources */,
 				1D39F30922850D9B0038A831 /* MJRefreshBackFooter.m in Sources */,
 				1D401D9A2320E87F00CC7B44 /* IQTextView.m in Sources */,
@@ -1158,9 +1198,12 @@
 				1D7BF945228EB3B4009790D0 /* NSParagraphStyle+YYText.m in Sources */,
 				1D39F2BD228457C10038A831 /* UserModel.m in Sources */,
 				1D7BF940228EB3B4009790D0 /* YYTextParser.m in Sources */,
+				1D873EF823C57A8300C7CE6E /* CollectionViewController3.m in Sources */,
 				1D04D6CC228AA99C004F6E07 /* JTBaseCell.m in Sources */,
 				1D39F2FE22850D9B0038A831 /* MJRefreshBackGifFooter.m in Sources */,
 				1D401DA12320E87F00CC7B44 /* IQKeyboardManager.m in Sources */,
+				1D2E728823AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m in Sources */,
+				1D873EF523C57A7900C7CE6E /* CollectionViewController2.m in Sources */,
 				1D7BF936228EB3B4009790D0 /* YYTextContainerView.m in Sources */,
 				1D04D6D1228AA99C004F6E07 /* JTFormCheckCell.m in Sources */,
 				1D39F2982283B6660038A831 /* JTIdCardValidator.m in Sources */,
@@ -1190,6 +1233,7 @@
 				1D39F3C4228942B80038A831 /* IGViewController.m in Sources */,
 				1D04D6C7228AA99C004F6E07 /* JTFormSliderCell.m in Sources */,
 				1D39F30622850D9B0038A831 /* MJRefreshGifHeader.m in Sources */,
+				1D2E728E23AB6B0F001EA1C7 /* CollectionViewController.m in Sources */,
 				1D04D6CF228AA99C004F6E07 /* JTFormDateCell.m in Sources */,
 				1D7BF939228EB3B4009790D0 /* YYTextLayout.m in Sources */,
 				1D04D6E1228AA99C004F6E07 /* NSObject+JTAdd.m in Sources */,
@@ -1321,9 +1365,13 @@
 			baseConfigurationReference = 45E58FF64785B22E88E7DA1A /* Pods-JTFormDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = WX88XVVE62;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/JTFormDemo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1341,8 +1389,12 @@
 			baseConfigurationReference = 73046C3A4ECEA74080E7F2C3 /* Pods-JTFormDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WX88XVVE62;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "$(SRCROOT)/JTFormDemo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (

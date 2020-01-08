@@ -21,6 +21,8 @@
 #import "JTFormCheckCell.h"
 #import "JTFormStepCounterCell.h"
 #import "JTFormNavigationAccessoryView.h"
+#import "JTCollectionLayoutDelegate.h"
+
 
 typedef NS_ENUM(NSInteger, JTFormErrorCode) {
     JTFormErrorCodeInvalid = -999,
@@ -29,40 +31,79 @@ typedef NS_ENUM(NSInteger, JTFormErrorCode) {
 
 NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
-@interface JTForm () <ASTableDelegate, ASTableDataSource, JTFormDescriptorDelegate>
-
+@interface JTFormDescriptor ()
+@property (nonatomic, weak) JTCollectionLayoutInfo *collectionInfo;
 @end
 
-@implementation JTForm
+@interface JTForm () <ASTableDelegate, ASTableDataSource, JTFormDescriptorDelegate, ASCollectionDataSource, ASCollectionDelegate, ASCollectionViewLayoutInspecting>
+@end
+
+@implementation JTForm {
+    JTFormType _formType;
+    
+    struct {
+        unsigned int impFormRowValueHasChangedOldValueNewValue:1;
+        unsigned int impFormCommitEditingStyleForRowAtIndexPath:1;
+        unsigned int impTailLoadWithContent:1;
+    } _delegateFlags;
+    
+    
+}
 
 - (instancetype)initWithDescriptor:(JTFormDescriptor *)formDescriptor
 {
+    return [[[self class] alloc] initWithDescriptor:formDescriptor formType:JTFormTypeTable];
+}
+
++ (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor
+{
+    return [[self alloc] initWithDescriptor:formDescriptor formType:JTFormTypeTable];
+}
+
++ (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor formType:(JTFormType)formType
+{
+    return [[self alloc] initWithDescriptor:formDescriptor formType:formType];
+}
+
+- (instancetype)initWithDescriptor:(JTFormDescriptor *)formDescriptor formType:(JTFormType)formType
+{
     if (self = [super initWithFrame:CGRectZero]) {
-        _formDescriptor          = formDescriptor;
-        _formDescriptor.delegate = self;
+        _formDescriptor      = formDescriptor;
+        _formDescriptor.form = self;
+        _formType            = formType;
+        
         [self initializeForm];
         [self addNotifications];
     }
     return self;
 }
 
-+ (instancetype)formWithDescriptor:(JTFormDescriptor *)formDescriptor
-{
-    return [[[self class] alloc] initWithDescriptor:formDescriptor];
-}
-
 - (void)initializeForm
 {
-    _tableNode            = [[ASTableNode alloc] initWithStyle:UITableViewStyleGrouped];
-    _tableNode.dataSource = self;
-    _tableNode.delegate   = self;
-    [self addSubnode:_tableNode];
+    if (_formType == JTFormTypeTable) {
+        _tableNode            = [[ASTableNode alloc] initWithStyle:UITableViewStyleGrouped];
+        _tableNode.dataSource = self;
+        _tableNode.delegate   = self;
+        [self addSubnode:_tableNode];
+    } else {
+        JTCollectionLayoutDelegate *layoutDelegate = [self _layoutDelegateForCollectionNode:nil];
+        _collectionNode = [[ASCollectionNode alloc] initWithLayoutDelegate:layoutDelegate layoutFacilitator:nil];
+        _collectionNode.dataSource = self;
+        _collectionNode.delegate = self;
+        _collectionNode.layoutInspector = self;
+        [_collectionNode registerSupplementaryNodeOfKind:UICollectionElementKindSectionHeader];
+        [_collectionNode registerSupplementaryNodeOfKind:UICollectionElementKindSectionFooter];
+        [self addSubnode:_collectionNode];
+    }
 }
 
 - (void)dealloc
 {
     _tableNode.delegate = nil;
     _tableNode.dataSource = nil;
+    _collectionNode.delegate = nil;
+    _collectionNode.dataSource = nil;
+    _collectionNode.layoutInspector = nil;
 }
 
 - (void)layoutSubviews
@@ -71,7 +112,42 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     if (!self.window.backgroundColor) {
         self.window.backgroundColor = [UIColor whiteColor];
     }
-    self.tableNode.frame = self.bounds;
+    if (_formType == JTFormTypeTable) {
+        _tableNode.frame = self.bounds;
+    } else {
+        _collectionNode.frame = self.bounds;
+    }
+}
+
+#pragma mark - setter
+
+- (void)setDelegate:(id<JTFormDelegate>)delegate
+{
+    ASDisplayNodeAssertMainThread();
+    if (delegate == nil) {
+        _delegate = nil;
+//        _delegateFlags = {}; 为什么不能这么写。。。
+        _delegateFlags.impFormRowValueHasChangedOldValueNewValue = 0;
+        _delegateFlags.impFormCommitEditingStyleForRowAtIndexPath = 0;
+        _delegateFlags.impTailLoadWithContent = 0;
+    } else {
+        _delegate = delegate;
+        _delegateFlags.impFormRowValueHasChangedOldValueNewValue = [delegate respondsToSelector:@selector(form:rowValueHasChanged:oldValue:newValue:)];
+        _delegateFlags.impFormCommitEditingStyleForRowAtIndexPath = [delegate respondsToSelector:@selector(form:commitEditingStyle:forRowAtIndexPath:)];
+        _delegateFlags.impTailLoadWithContent = [delegate respondsToSelector:@selector(tailLoadWithContent:)];
+    }
+}
+
+#pragma mark - getter
+
+- (ASTableView *)tableView
+{
+    return self.tableNode.view;
+}
+
+- (ASCollectionView *)collectionView
+{
+    return self.collectionNode.view;
 }
 
 #pragma mark - ASCommonTableViewDelegate
@@ -170,7 +246,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self.tableView endEditing:YES];
     [self removeRowAtIndexPath:indexPath];
 
-    if ([self.delegate respondsToSelector:@selector(form:commitEditingStyle:forRowAtIndexPath:)]) {
+    if (_delegateFlags.impFormCommitEditingStyleForRowAtIndexPath) {
         [self.delegate form:self commitEditingStyle:JTFormCellEditingStyleDelete forRowAtIndexPath:indexPath];
     }
 }
@@ -187,34 +263,60 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)contentSizeCategoryChanged:(NSNotification *)notification
 {
-    [self updateAllRows];
+    if (_formType == JTFormTypeTable) {
+        [self updateAllRows];
+    } else {
+        [self.collectionNode reloadData];
+    }
 }
 
 #pragma mark - JTFormDescriptorDelegate
 
 - (void)formSectionsHaveBeenRemovedAtIndexes:(NSIndexSet *)indexSet
 {
-    [self.tableNode deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    ASDisplayNodeAssertMainThread();
+    if (_formType == JTFormTypeTable) {
+        [self.tableNode deleteSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    } else {
+        _resetHeaderAndFooterHeights(self.formDescriptor.collectionInfo, _formDescriptor);
+        [self.collectionNode deleteSections:indexSet];
+    }
 }
 
 - (void)formSectionsHaveBeenAddedAtIndexes:(NSIndexSet *)indexSet
 {
-    [self.tableNode insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    ASDisplayNodeAssertMainThread();
+    if (_formType == JTFormTypeTable) {
+        [self.tableNode insertSections:indexSet withRowAnimation:UITableViewRowAnimationFade];
+    } else {
+        _resetHeaderAndFooterHeights(self.formDescriptor.collectionInfo, _formDescriptor);
+        [self.collectionNode insertSections:indexSet];
+    }
 }
 
 - (void)formRowHasBeenAddedAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableNode insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    ASDisplayNodeAssertMainThread();
+    if (_formType == JTFormTypeTable) {
+        [self.tableNode insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    } else {
+        [self.collectionNode insertItemsAtIndexPaths:@[indexPath]];
+    }
 }
 
 - (void)formRowHasBeenRemovedAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableNode deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    ASDisplayNodeAssertMainThread();
+    if (_formType == JTFormTypeTable) {
+        [self.tableNode deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    } else {
+        [self.collectionNode deleteItemsAtIndexPaths:@[indexPath]];
+    }
 }
 
 - (void)formRowDescriptorValueHasChanged:(JTRowDescriptor *)formRow oldValue:(id)oldValue newValue:(id)newValue
 {
-    if (self.delegate) {
+    if (_delegateFlags.impFormRowValueHasChangedOldValueNewValue) {
         [self.delegate form:self rowValueHasChanged:formRow oldValue:oldValue newValue:newValue];
     }
 }
@@ -232,13 +334,27 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     return self.formDescriptor.formSections.count;
 }
 
-- (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
+//- (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
+//    JTBaseCell *cell = [rowDescriptor cellInForm];
+//    [rowDescriptor updateUI];
+//
+//    return cell;
+//}
+
+- (ASCellNodeBlock)tableNode:(ASTableNode *)tableNode nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
-    JTBaseCell *cell = [rowDescriptor cellInForm];
-    [rowDescriptor updateUI];
-    
-    return cell;
+    return ^{
+        JTBaseCell *cell = [rowDescriptor cellInForm];
+        if (!cell.nodeLoaded) {
+            [cell onDidLoad:^(__kindof ASDisplayNode * _Nonnull node) {
+                [rowDescriptor updateUI];
+            }];
+        }
+        return cell;
+    };
 }
 
 #pragma mark - ASTableDelegate
@@ -249,7 +365,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     if (rowDescriptor.disabled) return;
     
     JTBaseCell *cellNode = [rowDescriptor cellInForm];
-    if (!([cellNode cellCanBecomeFirstResponder] && [cellNode cellBecomeFirstResponder])) {}
+    if ([cellNode cellCanBecomeFirstResponder] && [cellNode cellBecomeFirstResponder]) {}
     if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
         [cellNode formCellDidSelected];
     }
@@ -267,13 +383,179 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)tableNode:(ASTableNode *)tableNode willBeginBatchFetchWithContext:(ASBatchContext *)context
 {
-    if (!self.delegate) return;
-    
-    if ([self.delegate respondsToSelector:@selector(tailLoadWithContent:)]) {
+    if (_delegateFlags.impTailLoadWithContent) {
         [context beginBatchFetching];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.delegate tailLoadWithContent:context];
         });
+    }
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode willBeginBatchFetchWithContext:(ASBatchContext *)context
+{
+    if (_delegateFlags.impTailLoadWithContent) {
+        [context beginBatchFetching];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate tailLoadWithContent:context];
+        });
+    }
+}
+
+#pragma mark - ASCollectionDataSource
+
+- (NSInteger)collectionNode:(ASCollectionNode *)collectionNode numberOfItemsInSection:(NSInteger)section
+{
+    JTSectionDescriptor *sectionDescriptor = self.formDescriptor.formSections[section];
+    return sectionDescriptor.formRows.count;
+}
+
+- (NSInteger)numberOfSectionsInCollectionNode:(ASCollectionNode *)collectionNode
+{
+    return [self.formDescriptor.formSections count];
+}
+
+- (ASCellNodeBlock)collectionNode:(ASCollectionNode *)collectionNode nodeBlockForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
+    return ^{
+        JTBaseCell *cell = [rowDescriptor cellInForm];
+        if (!cell.nodeLoaded) {
+            [cell onDidLoad:^(__kindof ASDisplayNode * _Nonnull node) {
+                [rowDescriptor updateUI];
+            }];
+        }
+        return cell;
+    };
+}
+
+//- (ASCellNode *)collectionNode:(ASCollectionNode *)collectionNode nodeForItemAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
+//    JTBaseCell *cell = [rowDescriptor cellInForm];
+//    [rowDescriptor updateUI];
+//    return cell;
+//}
+
+- (ASCellNode *)collectionNode:(ASCollectionNode *)collectionNode nodeForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL isheader = [kind isEqualToString:UICollectionElementKindSectionHeader];
+    JTSectionDescriptor *sectionDescriptor = self.formDescriptor.formSections[indexPath.section];
+
+    if (isheader && sectionDescriptor.headerView){
+        ASCellNode *node = [[ASCellNode alloc] initWithViewBlock:^UIView * _Nonnull{
+            return sectionDescriptor.headerView;
+        }];
+        return node;
+    } else if (!isheader && sectionDescriptor.footerView) {
+        ASCellNode *node = [[ASCellNode alloc] initWithViewBlock:^UIView * _Nonnull{
+            return sectionDescriptor.footerView;
+        }];
+        return node;
+    }
+    if ((isheader && !sectionDescriptor.headerAttributedString) || (!isheader && !sectionDescriptor.footerAttributedString)) {
+        return nil;
+    }
+    // 也可以调整 JTFormDescriptor 的属性 sectionInsets
+    UIEdgeInsets textInsets = UIEdgeInsetsZero;
+    if (self.formDescriptor.scrollDirection == JTFormScrollDirectionVertical) {
+        if (isheader) {
+            textInsets = UIEdgeInsetsMake(INFINITY, 15., 3., 15.);
+        } else {
+            textInsets = UIEdgeInsetsMake(3., 15., INFINITY, 15.);
+        }
+    } else {
+       if (isheader) {
+            textInsets = UIEdgeInsetsMake(3., 3., INFINITY, 3.);
+        } else {
+            textInsets = UIEdgeInsetsMake(3., 3., INFINITY, 3.);
+        }
+    }
+    ASTextCellNode *textCellNode = [[ASTextCellNode alloc] initWithAttributes:@{} insets:textInsets];
+    textCellNode.textNode.attributedText = isheader ? sectionDescriptor.headerAttributedString : sectionDescriptor.footerAttributedString;
+    textCellNode.backgroundColor = UIColor.yellowColor;
+    return textCellNode;
+}
+
+#pragma mark - ASCollectionDelegate
+
+// 实际上通过 ASCollectionLayout 的 layoutDelegate 属性来决定 sizerange 以及 directions
+// 这个方法不起作用
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode constrainedSizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return ASSizeRangeZero;
+}
+
+- (void)collectionNode:(ASCollectionNode *)collectionNode didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
+    if (rowDescriptor.disabled) return;
+    
+    JTBaseCell *cellNode = [rowDescriptor cellInForm];
+    if ([cellNode cellCanBecomeFirstResponder] && [cellNode cellBecomeFirstResponder]) {}
+    if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
+        [cellNode formCellDidSelected];
+    }
+}
+
+// 这个方法不起作用，实际上由 ASCollectionLayout 的 layoutDelegate 属性来控制
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode sizeRangeForHeaderInSection:(NSInteger)section
+{
+    CGFloat layoutWidth = self.formDescriptor.scrollDirection ==  JTFormScrollDirectionVertical ? self.bounds.size.width : self.bounds.size.height;
+    CGFloat layoutHeight = [(JTSectionDescriptor *)self.formDescriptor.formSections[section] headerHeight];
+
+    if (self.formDescriptor.scrollDirection == JTFormScrollDirectionHorizontal) {
+        return ASSizeRangeMake(CGSizeMake(layoutHeight, layoutWidth));
+    } else {
+        return ASSizeRangeMake(CGSizeMake(layoutWidth, layoutHeight));
+    }
+}
+
+// 这个方法不起作用，实际上由 ASCollectionLayout 的 layoutDelegate 属性来控制
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode sizeRangeForFooterInSection:(NSInteger)section
+{
+    CGFloat layoutWidth = self.formDescriptor.scrollDirection ==  JTFormScrollDirectionVertical ? self.bounds.size.width : self.bounds.size.height;
+    CGFloat layoutHeight = [(JTSectionDescriptor *)self.formDescriptor.formSections[section] footerHeight];
+
+    if (self.formDescriptor.scrollDirection == JTFormScrollDirectionHorizontal) {
+        return ASSizeRangeMake(CGSizeMake(layoutHeight, layoutWidth));
+    } else {
+        return ASSizeRangeMake(CGSizeMake(layoutWidth, layoutHeight));
+    }
+}
+
+#pragma mark - ASCollectionViewLayoutInspecting
+
+// 这个方法不起作用，实际上由 ASCollectionLayout 的 layoutDelegate 属性来控制
+- (ASScrollDirection)scrollableDirections
+{
+    return ASScrollDirectionVerticalDirections;
+}
+
+// 这个方法不起作用，实际上由 ASCollectionLayout 的 layoutDelegate 属性来控制
+- (ASSizeRange)collectionView:(ASCollectionView *)collectionView constrainedSizeForNodeAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self collectionNode:collectionView.collectionNode constrainedSizeForItemAtIndexPath:indexPath];
+}
+
+- (NSUInteger)collectionView:(ASCollectionView *)collectionView supplementaryNodesOfKind:(NSString *)kind inSection:(NSUInteger)section
+{
+    JTSectionDescriptor *sectionDescriptor = self.formDescriptor.formSections[section];
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        return (sectionDescriptor.headerAttributedString || sectionDescriptor.headerView) ? 1 : 0;
+    } else {
+        return (sectionDescriptor.footerAttributedString || sectionDescriptor.footerView) ? 1 : 0;
+    }
+}
+
+- (ASSizeRange)collectionView:(ASCollectionView *)collectionView constrainedSizeForSupplementaryNodeOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat layoutWidth = self.formDescriptor.scrollDirection ==  JTFormScrollDirectionVertical ? self.bounds.size.width : self.bounds.size.height;
+    CGFloat layoutHeight = [(JTSectionDescriptor *)self.formDescriptor.formSections[indexPath.section] footerHeight];
+
+    if (self.formDescriptor.scrollDirection == JTFormScrollDirectionHorizontal) {
+        return ASSizeRangeMake(CGSizeMake(layoutHeight, layoutWidth));
+    } else {
+        return ASSizeRangeMake(CGSizeMake(layoutWidth, layoutHeight));
     }
 }
 
@@ -726,9 +1008,38 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 #pragma mark - helper
 
-- (ASTableView *)tableView
+- (JTCollectionLayoutDelegate *)_layoutDelegateForCollectionNode:(ASControlNode *)collectionNode
 {
-    return self.tableNode.view;
+    NSMutableArray *headerHeights = [NSMutableArray array];
+    NSMutableArray *footerHeights = [NSMutableArray array];
+    for (NSInteger i = 0; i < _formDescriptor.formSections.count; i++) {
+        [headerHeights addObject:@(((JTSectionDescriptor *)_formDescriptor.formSections[i]).headerHeight)];
+        [footerHeights addObject:@(((JTSectionDescriptor *)_formDescriptor.formSections[i]).footerHeight)];
+    }
+    JTCollectionLayoutInfo *info = [[JTCollectionLayoutInfo alloc] initWithNumberOfColumn:self.formDescriptor.numberOfColumn
+                                                                            headerHeights:headerHeights
+                                                                            footerHeights:footerHeights
+                                                                              columnSpace:self.formDescriptor.interItemSpace
+                                                                                lineSpace:self.formDescriptor.lineSpace
+                                                                                 itemSize:self.formDescriptor.itmeSize
+                                                                            sectionInsets:self.formDescriptor.sectionInsets
+                                                                                     type:_formType
+                                                                          scrollDirection:self.formDescriptor.scrollDirection];
+    self.formDescriptor.collectionInfo = info;
+    return [[JTCollectionLayoutDelegate alloc] initWithInfo:info];
+}
+
+static inline void _resetHeaderAndFooterHeights(JTCollectionLayoutInfo *info, JTFormDescriptor *formDescriptor) {
+    if (!info || !formDescriptor) return;
+    
+    NSMutableArray *headerHeights = [NSMutableArray array];
+    NSMutableArray *footerHeights = [NSMutableArray array];
+    for (NSInteger i = 0; i < formDescriptor.formSections.count; i++) {
+        [headerHeights addObject:@(((JTSectionDescriptor *)formDescriptor.formSections[i]).headerHeight)];
+        [footerHeights addObject:@(((JTSectionDescriptor *)formDescriptor.formSections[i]).footerHeight)];
+    }
+    info.headerHeights = headerHeights;
+    info.footerHeights = footerHeights;
 }
 
 @end

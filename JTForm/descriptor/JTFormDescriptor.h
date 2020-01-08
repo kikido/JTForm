@@ -8,6 +8,7 @@
 //
 
 #import "JTBaseDescriptor.h"
+#import "JTFormDefines.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, readonly) NSMutableDictionary *allRowsByTag;
 
 /** 代理 */
-@property (nonatomic, weak) id<JTFormDescriptorDelegate> delegate;
+@property (nonatomic, weak) id<JTFormDescriptorDelegate> form;
 
 /**
  * 没有value的选择项是否显示文本。default is NO，即没有 value 时不显示 text
@@ -41,6 +42,43 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 + (nonnull instancetype)formDescriptor;
+
+//------------------------------
+/// @name collection view
+///-----------------------------
+
+/** 有几列 */
+@property (nonatomic, assign) NSUInteger numberOfColumn;
+
+/**
+ * 单个 item 的固定size
+ *
+ * @discuss 当 JTFromType (@see @c JTFromType) 为 JTFromTypeCollectionFixed 时生效，此时 item 的 size 大小为该固定值，
+ * 不再根据布局自动计算
+ */
+@property (nonatomic, assign) CGSize itmeSize;
+
+/**
+ * 每一行之间的间隔
+ *
+ * @discuss 当 JTFormScrollDirection (@see @c JTFormScrollDirection) 为 JTFormScrollDirectionHorizontal 时，
+ * ‘行’指的是 column 而不是 row，而当方向为 JTFormScrollDirectionVertical 时，‘行’指的是 row 而不是 column
+ */
+@property (nonatomic, assign) CGFloat lineSpace;
+
+/**
+ * 同一行 item 之间的间隔
+ *
+ * @discuss 当 JTFormScrollDirection (@see @c JTFormScrollDirection) 为 JTFormScrollDirectionHorizontal 时，
+ * 同一‘行’指的是同一 column 而不是同一 row，而当方向为 JTFormScrollDirectionVertical 时，‘行’指的是 row 而不是 column
+ */
+@property (nonatomic, assign) CGFloat interItemSpace;
+
+/** 每一个 section 的内边距 */
+@property (nonatomic, assign) UIEdgeInsets sectionInsets;
+
+/** 滑动方向 */
+@property (nonatomic, assign) JTFormScrollDirection scrollDirection;
 
 
 //------------------------------

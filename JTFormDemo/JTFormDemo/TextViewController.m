@@ -17,6 +17,7 @@
 {
     [super viewDidLoad];
     
+//    JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
     JTFormDescriptor *formDescriptor = [JTFormDescriptor formDescriptor];
     formDescriptor.addAsteriskToRequiredRowsTitle = YES;
     JTSectionDescriptor *section = nil;
@@ -36,10 +37,10 @@
     
     #pragma mark - formatter
     
-    section = [JTSectionDescriptor formSection];
-    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"formatter" font:nil color:nil firstWordColor:nil];
-    section.headerHeight = 30.;
-    [formDescriptor addSection:section];
+//    section = [JTSectionDescriptor formSection];
+//    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"formatter" font:nil color:nil firstWordColor:nil];
+//    section.headerHeight = 30.;
+//    [formDescriptor addSection:section];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"20" rowType:JTFormRowTypeNumber title:@"百分比"];
     NSNumberFormatter *numberFormatter = [NSNumberFormatter new];
@@ -66,11 +67,12 @@
     [section addRow:row];
     
     #pragma mark - common
-    
+        
     section = [JTSectionDescriptor formSection];
-    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"common" font:nil color:nil firstWordColor:nil];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"float text" font:nil color:nil firstWordColor:nil];
     section.headerHeight = 30.;
     [formDescriptor addSection:section];
+
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"JTFormRowTypeName"];
     row.placeHolder = @"请输入姓名...";
@@ -102,6 +104,12 @@
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeURL rowType:JTFormRowTypeURL title:@"JTFormRowTypeURL"];
     [section addRow:row];
     
+    section = [JTSectionDescriptor formSection];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"float text" font:nil color:nil firstWordColor:nil];
+    section.headerHeight = 30.;
+    [formDescriptor addSection:section];
+
+    
     row = [JTRowDescriptor rowDescriptorWithTag:@"0" rowType:JTFormRowTypeName title:@"标题很长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长"];
     [section addRow:row];
     
@@ -127,7 +135,7 @@
     [section addRow:row];
     
     
-    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
+    JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor formType:1];
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
     [self.view addSubview:form];
     self.form = form;
