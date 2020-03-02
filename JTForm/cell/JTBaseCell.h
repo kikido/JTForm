@@ -52,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * 不需要为控件设置 frame，不需要为控件设置内容。
  * 创建后只会调用一次该方法，除非使用方法 ‘-reloadCellWithNewRowType’
+ *
+ *  @note 在这个方法里面不要对 node 的 view 或者 layer 的属性进行设置，因为该方法不在主线程中被调用，如果设置这些属性会报错
  */
 - (void)config NS_REQUIRES_SUPER;
 

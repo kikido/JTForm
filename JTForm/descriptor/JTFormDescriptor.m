@@ -201,7 +201,6 @@
 
 - (void)hideFormSectionsAtIndexes:(NSIndexSet *)indexes
 {
-    // fixme 同上，需要优化
     if ([[(JTForm *)self.form tableView] isEditing]) {
         [[(JTForm *)self.form tableView] endEditing:YES];
     }

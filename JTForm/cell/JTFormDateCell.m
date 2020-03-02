@@ -32,8 +32,10 @@
     _tempNode.scrollEnabled       = false;
     _tempNode.style.preferredSize = CGSizeMake(0.01, 0.01);
     
-    _datePicker = [[UIDatePicker alloc] init];
-    [_datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self->_datePicker = [[UIDatePicker alloc] init];
+        [self->_datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
+    });
 }
 
 - (void)update
