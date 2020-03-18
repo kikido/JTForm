@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGSize itmeSize;
 
 /**
- * 每一行之间的间隔
+ * The spacing between lines
  *
  * @discuss 当 JTFormScrollDirection (@see @c JTFormScrollDirection) 为 JTFormScrollDirectionHorizontal 时，
  * ‘行’指的是 column 而不是 row，而当方向为 JTFormScrollDirectionVertical 时，‘行’指的是 row 而不是 column
@@ -67,10 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat lineSpace;
 
 /**
- * 同一行 item 之间的间隔
- *
- * @discuss 当 JTFormScrollDirection (@see @c JTFormScrollDirection) 为 JTFormScrollDirectionHorizontal 时，
- * 同一‘行’指的是同一 column 而不是同一 row，而当方向为 JTFormScrollDirectionVertical 时，‘行’指的是 row 而不是 column
+ * The spacing between the item
  */
 @property (nonatomic, assign) CGFloat interItemSpace;
 
