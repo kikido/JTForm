@@ -137,6 +137,7 @@
 		1D873EF523C57A7900C7CE6E /* CollectionViewController2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873EF423C57A7900C7CE6E /* CollectionViewController2.m */; };
 		1D873EF823C57A8300C7CE6E /* CollectionViewController3.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873EF723C57A8300C7CE6E /* CollectionViewController3.m */; };
 		1DBF846D22B0D1F800CC4FBA /* FormOneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DBF846C22B0D1F800CC4FBA /* FormOneController.m */; };
+		1DC7BBE924246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DC7BBE824246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m */; };
 		1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA28225B6DA000652FE6 /* AppDelegate.m */; };
 		1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA2B225B6DA000652FE6 /* ViewController.m */; };
 		1DDADA31225B6DA100652FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA30225B6DA100652FE6 /* Assets.xcassets */; };
@@ -404,6 +405,8 @@
 		1DBF846B22B0D1F800CC4FBA /* FormOneController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormOneController.h; sourceTree = "<group>"; };
 		1DBF846C22B0D1F800CC4FBA /* FormOneController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormOneController.m; sourceTree = "<group>"; };
 		1DBF846F22B0DE7200CC4FBA /* JTFormDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDelegate.h; sourceTree = "<group>"; };
+		1DC7BBE724246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JTRowDescriptor+JTPrivate.h"; sourceTree = "<group>"; };
+		1DC7BBE824246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JTRowDescriptor+JTPrivate.m"; sourceTree = "<group>"; };
 		1DDADA24225B6DA000652FE6 /* JTFormDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JTFormDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DDADA27225B6DA000652FE6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DDADA28225B6DA000652FE6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -582,6 +585,8 @@
 				1D04D6B4228AA99C004F6E07 /* JTFormCellLayout.h */,
 				1D04D6B8228AA99C004F6E07 /* JTHelper.h */,
 				1D873EF223C3068800C7CE6E /* JTFormDefines.h */,
+				1DC7BBE724246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.h */,
+				1DC7BBE824246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m */,
 			);
 			path = helper;
 			sourceTree = "<group>";
@@ -1169,6 +1174,7 @@
 				1D04D6DC228AA99C004F6E07 /* JTFormOptionsViewController.m in Sources */,
 				1D04D6CD228AA99C004F6E07 /* JTFromSwitchCell.m in Sources */,
 				1D401DA52320E87F00CC7B44 /* IQUIView+Hierarchy.m in Sources */,
+				1DC7BBE924246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m in Sources */,
 				1D7BF947228EB3B4009790D0 /* UIPasteboard+YYText.m in Sources */,
 				1D39F2C0228457CC0038A831 /* Utilities.m in Sources */,
 				1D39F28222817AD20038A831 /* DateViewController.m in Sources */,

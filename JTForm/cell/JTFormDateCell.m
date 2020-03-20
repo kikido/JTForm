@@ -42,27 +42,6 @@
 {
     [super update];
     
-    if (!self.rowDescriptor.valueFormatter) {
-        // 除了 JTFormRowTypeCountDownTimer，其它几种如果没有给定的 valueFormatter 则赋值一个
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate])
-        {
-            dateFormatter.dateFormat = @"yyyy-MM-dd";
-            self.rowDescriptor.valueFormatter = dateFormatter;
-        }
-        else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime])
-        {
-            dateFormatter.dateStyle = NSDateFormatterNoStyle;
-            dateFormatter.timeStyle = NSDateFormatterShortStyle;
-            self.rowDescriptor.valueFormatter = dateFormatter;
-        }
-        else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateTime])
-        {
-            dateFormatter.dateStyle = NSDateFormatterShortStyle;
-            dateFormatter.timeStyle = NSDateFormatterShortStyle;
-            self.rowDescriptor.valueFormatter = dateFormatter;
-        }
-    }
     _tempNode.textView.editable     = !self.rowDescriptor.disabled;
     self.contentNode.attributedText = [self _cellDisplayContent];
 }
@@ -136,14 +115,15 @@
 {
     BOOL noValue = false;
     NSString *displayContent = nil;
+    NSFormatter *formatter = [self _dateFormatterForRowType:self.rowDescriptor.rowType];
     
     if (self.rowDescriptor.value)
     {
-        if (self.rowDescriptor.valueFormatter)
+        if (formatter)
         {
-            NSAssert([self.rowDescriptor.valueFormatter isKindOfClass:[NSDateFormatter class]],
+            NSAssert([formatter isKindOfClass:[NSDateFormatter class]],
                      @"valueFormatter is not subclass of NSDateFormatter");
-            displayContent = [(NSDateFormatter *)self.rowDescriptor.valueFormatter stringFromDate:self.rowDescriptor.value];
+            displayContent = [(NSDateFormatter *)formatter stringFromDate:self.rowDescriptor.value];
         }
         else
         {
@@ -169,6 +149,27 @@
                                                             color:color];
 }
 
+- (NSFormatter *)_dateFormatterForRowType:(NSString *)rowType
+{
+    if (self.rowDescriptor.valueFormatter) {
+        return self.rowDescriptor.valueFormatter;
+    }
+    NSDateFormatter *dateFormatter;
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate]) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateFormat = @"yyyy-MM-dd";
+    } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime]) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateStyle = NSDateFormatterNoStyle;
+        dateFormatter.timeStyle = NSDateFormatterShortStyle;
+    } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateTime]) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateStyle = NSDateFormatterShortStyle;
+        dateFormatter.timeStyle = NSDateFormatterShortStyle;
+    }
+    return dateFormatter;
+}
+
 - (UIView *)jtFormCellInputView
 {
     if (self.rowDescriptor.value) {
@@ -191,7 +192,6 @@
     else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimer])
     {
         _datePicker.datePickerMode = UIDatePickerModeCountDownTimer;
-        _datePicker.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
     }
     else
     {

@@ -20,35 +20,69 @@
 - (void)update
 {
     [super update];
-    
-    if (!self.rowDescriptor.valueFormatter) {
-        NSDateFormatter *dateFormatter    = [[NSDateFormatter alloc] init];
-        dateFormatter.dateFormat          = @"yyyy-MM-dd";
-        self.rowDescriptor.valueFormatter = dateFormatter;
-    }    
+  
     self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
+
+
 - (NSAttributedString *)_cellDisplayContent
 {
+    BOOL noValue = false;
     NSString *displayContent = nil;
+    NSFormatter *formatter = [self _dateFormatterForRowType:self.rowDescriptor.rowType];
     
-    if (self.rowDescriptor.value) {
-        if (self.rowDescriptor.valueFormatter) {
-            NSAssert([self.rowDescriptor.valueFormatter isKindOfClass:[NSDateFormatter class]],
+    if (self.rowDescriptor.value)
+    {
+        if (formatter)
+        {
+            NSAssert([formatter isKindOfClass:[NSDateFormatter class]],
                      @"valueFormatter is not subclass of NSDateFormatter");
-            displayContent = [(NSDateFormatter *)self.rowDescriptor.valueFormatter stringFromDate:self.rowDescriptor.value];
-        } else {
-            displayContent = [self.rowDescriptor.value description];
+            displayContent = [(NSDateFormatter *)formatter stringFromDate:self.rowDescriptor.value];
+        }
+        else
+        {
+            if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimerInline]) {
+                NSCalendar *calendar = [NSCalendar currentCalendar];
+                NSDateComponents *time = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute fromDate:self.rowDescriptor.value];
+                displayContent = [NSString stringWithFormat:@"%ld%@ %ldmin", (long)[time hour], (long)[time hour] == 1 ? @"hour" : @"hours", (long)[time minute]];
+            } else {
+                displayContent = [self.rowDescriptor.value description];
+            }
         }
     }
-    UIFont *font =   displayContent ? [self cellContentFont] : [self cellPlaceHolerFont];
-    UIColor *color = displayContent ? [self cellContentColor] : [self cellPlaceHolerColor];
-    displayContent = displayContent ?: self.rowDescriptor.placeHolder;
+    else
+    {
+        noValue = YES;
+        displayContent = self.rowDescriptor.placeHolder;
+    }
+    UIFont *font = noValue ? [self cellPlaceHolerFont] : [self cellContentFont];
+    UIColor *color = noValue ? [self cellPlaceHolerColor] : [self cellContentColor];
     
     return [NSAttributedString jt_rightAttributedStringWithString:displayContent
                                                              font:font
                                                             color:color];
+}
+
+- (NSFormatter *)_dateFormatterForRowType:(NSString *)rowType
+{
+    if (self.rowDescriptor.valueFormatter) {
+        return self.rowDescriptor.valueFormatter;
+    }
+    NSDateFormatter *dateFormatter;
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateFormat = @"yyyy-MM-dd";
+    } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTimeInline]) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateStyle = NSDateFormatterNoStyle;
+        dateFormatter.timeStyle = NSDateFormatterShortStyle;
+    } else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateTimeInline]) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateStyle = NSDateFormatterShortStyle;
+        dateFormatter.timeStyle = NSDateFormatterShortStyle;
+    }
+    return dateFormatter;
 }
 
 #pragma mark - responder
@@ -162,6 +196,9 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
 {
     [[JTForm cellClassesForRowTypes] setObject:[_JTFormDateInlineCell class] forKey:_JTFormRowTypeDateInline];
     [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeDateInline];
+    [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeTimeInline];
+    [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeDateTimeInline];
+    [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeCountDownTimerInline];
 }
 
 - (void)config
@@ -191,6 +228,17 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
     if (connectCell.minimumDate)    _datePicker.minimumDate = connectCell.minimumDate;
     if (connectCell.maximumDate)    _datePicker.maximumDate = connectCell.maximumDate;
     if (connectCell.locale)         _datePicker.locale = connectCell.locale;
+    
+    if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
+        _datePicker.datePickerMode = UIDatePickerModeDate;
+    } else if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeTimeInline]) {
+        _datePicker.datePickerMode = UIDatePickerModeTime;
+    } else if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimerInline]) {
+        _datePicker.datePickerMode = UIDatePickerModeCountDownTimer;
+//        _datePicker.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    } else {
+        _datePicker.datePickerMode = UIDatePickerModeDateAndTime;
+    }
 }
 
 + (CGFloat)formCellHeightForRowDescriptor:(JTRowDescriptor *)row

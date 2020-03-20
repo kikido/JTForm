@@ -50,7 +50,12 @@ extern JTFormRowType const JTFormRowTypeTime;
 extern JTFormRowType const JTFormRowTypeDateTime;
 /** hh mm */
 extern JTFormRowType const JTFormRowTypeCountDownTimer;
+
 extern JTFormRowType const JTFormRowTypeDateInline;
+extern JTFormRowType const JTFormRowTypeTimeInline;
+extern JTFormRowType const JTFormRowTypeDateTimeInline;
+extern JTFormRowType const JTFormRowTypeCountDownTimerInline;
+
 
 //|------ other ------------------------------
 extern JTFormRowType const JTFormRowTypeSwitch;

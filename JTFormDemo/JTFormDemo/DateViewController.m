@@ -45,9 +45,6 @@
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
     row.value = now;
     [section addRow:row];
-
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
-    [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"00" rowType:JTFormRowTypeDate title:@"短"];
     row.placeHolder = @"请选择日期";
@@ -59,6 +56,27 @@
     row.image = [UIImage imageNamed:@"jt_money"];
     row.imageUrl = netImageUrl(30., 30.);
     [section addRow:row];
+    
+    #pragma mark - date inline
+    
+    section = [JTSectionDescriptor formSection];
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"date inline" font:nil color:nil firstWordColor:nil];
+    section.headerHeight = 30.;
+    [formDescriptor addSection:section];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
+    [section addRow:row];
+
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTimeInline rowType:JTFormRowTypeTimeInline title:@"JTFormRowTypeTimeInline"];
+    [section addRow:row];
+
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateTimeInline rowType:JTFormRowTypeDateTimeInline title:@"JTFormRowTypeDateTimeInline"];
+    [section addRow:row];
+
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCountDownTimerInline rowType:JTFormRowTypeCountDownTimerInline title:@"JTFormRowTypeCountDownTimerInline"];
+    [section addRow:row];
+
     
     #pragma mark - formatter
     
