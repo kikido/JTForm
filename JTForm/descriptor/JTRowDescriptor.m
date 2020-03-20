@@ -11,35 +11,38 @@
 #import "JTBaseCell.h"
 #import "JTForm.h"
 
-NSString *const JTFormRowTypeText             = @"JTFormRowTypeText";
-NSString *const JTFormRowTypeName             = @"JTFormRowTypeName";
-NSString *const JTFormRowTypeEmail            = @"JTFormRowTypeEmail";
-NSString *const JTFormRowTypeNumber           = @"JTFormRowTypeNumber";
-NSString *const JTFormRowTypeInteger          = @"JTFormRowTypeInteger";
-NSString *const JTFormRowTypeDecimal          = @"JTFormRowTypeDecimal";
-NSString *const JTFormRowTypePassword         = @"JTFormRowTypePassword";
-NSString *const JTFormRowTypePhone            = @"JTFormRowTypePhone";
-NSString *const JTFormRowTypeURL              = @"JTFormRowTypeURL";
-NSString *const JTFormRowTypeTextView         = @"JTFormRowTypeTextView";
-NSString *const JTFormRowTypeInfo             = @"JTFormRowTypeInfo";
-NSString *const JTFormRowTypePushSelect       = @"JTFormRowTypePushSelect";
-NSString *const JTFormRowTypeMultipleSelect   = @"JTFormRowTypeMultipleSelect";
-NSString *const JTFormRowTypeSheetSelect      = @"JTFormRowTypeSheetSelect";
-NSString *const JTFormRowTypeAlertSelect      = @"JTFormRowTypeAlertSelect";
-NSString *const JTFormRowTypePickerSelect     = @"JTFormRowTypePickerSelect";
-NSString *const JTFormRowTypePushButton       = @"JTFormRowTypePushButton";
-NSString *const JTFormRowTypeDate             = @"JTFormRowTypeDate";
-NSString *const JTFormRowTypeTime             = @"JTFormRowTypeTime";
-NSString *const JTFormRowTypeDateTime         = @"JTFormRowTypeDateTime";
-NSString *const JTFormRowTypeCountDownTimer   = @"JTFormRowTypeCountDownTimer";
-NSString *const JTFormRowTypeDateInline       = @"JTFormRowTypeDateInline";
-NSString *const JTFormRowTypeSwitch           = @"JTFormRowTypeSwitch";
-NSString *const JTFormRowTypeCheck            = @"JTFormRowTypeCheck";
-NSString *const JTFormRowTypeStepCounter      = @"JTFormRowTypeStepCounter";
-NSString *const JTFormRowTypeSegmentedControl = @"JTFormRowTypeSegmentedControl";
-NSString *const JTFormRowTypeSlider           = @"JTFormRowTypeSlider";
-NSString *const JTFormRowTypeButton           = @"JTFormRowTypeButton";
-NSString *const JTFormRowTypeFloatText        = @"JTFormRowTypeFloatText";
+NSString *const JTFormRowTypeText                 = @"JTFormRowTypeText";
+NSString *const JTFormRowTypeName                 = @"JTFormRowTypeName";
+NSString *const JTFormRowTypeEmail                = @"JTFormRowTypeEmail";
+NSString *const JTFormRowTypeNumber               = @"JTFormRowTypeNumber";
+NSString *const JTFormRowTypeInteger              = @"JTFormRowTypeInteger";
+NSString *const JTFormRowTypeDecimal              = @"JTFormRowTypeDecimal";
+NSString *const JTFormRowTypePassword             = @"JTFormRowTypePassword";
+NSString *const JTFormRowTypePhone                = @"JTFormRowTypePhone";
+NSString *const JTFormRowTypeURL                  = @"JTFormRowTypeURL";
+NSString *const JTFormRowTypeTextView             = @"JTFormRowTypeTextView";
+NSString *const JTFormRowTypeInfo                 = @"JTFormRowTypeInfo";
+NSString *const JTFormRowTypePushSelect           = @"JTFormRowTypePushSelect";
+NSString *const JTFormRowTypeMultipleSelect       = @"JTFormRowTypeMultipleSelect";
+NSString *const JTFormRowTypeSheetSelect          = @"JTFormRowTypeSheetSelect";
+NSString *const JTFormRowTypeAlertSelect          = @"JTFormRowTypeAlertSelect";
+NSString *const JTFormRowTypePickerSelect         = @"JTFormRowTypePickerSelect";
+NSString *const JTFormRowTypePushButton           = @"JTFormRowTypePushButton";
+NSString *const JTFormRowTypeDate                 = @"JTFormRowTypeDate";
+NSString *const JTFormRowTypeTime                 = @"JTFormRowTypeTime";
+NSString *const JTFormRowTypeDateTime             = @"JTFormRowTypeDateTime";
+NSString *const JTFormRowTypeCountDownTimer       = @"JTFormRowTypeCountDownTimer";
+NSString *const JTFormRowTypeDateInline           = @"JTFormRowTypeDateInline";
+NSString *const JTFormRowTypeTimeInline           = @"JTFormRowTypeTimeInline";
+NSString *const JTFormRowTypeDateTimeInline       = @"JTFormRowTypeDateTimeInline";
+NSString *const JTFormRowTypeCountDownTimerInline = @"JTFormRowTypeCountDownTimerInline";
+NSString *const JTFormRowTypeSwitch               = @"JTFormRowTypeSwitch";
+NSString *const JTFormRowTypeCheck                = @"JTFormRowTypeCheck";
+NSString *const JTFormRowTypeStepCounter          = @"JTFormRowTypeStepCounter";
+NSString *const JTFormRowTypeSegmentedControl     = @"JTFormRowTypeSegmentedControl";
+NSString *const JTFormRowTypeSlider               = @"JTFormRowTypeSlider";
+NSString *const JTFormRowTypeButton               = @"JTFormRowTypeButton";
+NSString *const JTFormRowTypeFloatText            = @"JTFormRowTypeFloatText";
 
 CGFloat const JTFormRowInitialHeight = -2.0;
 CGFloat const JTFormUnspecifiedCellHeight = -3.0;
@@ -339,6 +342,11 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 }
 
 #pragma mark - private
+
+- (void)jt_setValue:(id)value
+{
+    _value = value;
+}
 
 @end
 

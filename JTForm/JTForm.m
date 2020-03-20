@@ -23,6 +23,8 @@
 #import "JTFormNavigationAccessoryView.h"
 #import "JTCollectionLayoutDelegate.h"
 
+#import "JTRowDescriptor+JTPrivate.h"
+
 
 typedef NS_ENUM(NSInteger, JTFormErrorCode) {
     JTFormErrorCodeInvalid = -999,
@@ -589,6 +591,9 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
                                     JTFormRowTypeDateTime           : [JTFormDateCell class],
                                     JTFormRowTypeCountDownTimer     : [JTFormDateCell class],
                                     JTFormRowTypeDateInline         : [JTFormDateInlineCell class],
+                                    JTFormRowTypeTimeInline         : [JTFormDateInlineCell class],
+                                    JTFormRowTypeDateTimeInline     : [JTFormDateInlineCell class],
+                                    JTFormRowTypeCountDownTimerInline : [JTFormDateInlineCell class],
                                     JTFormRowTypeSwitch             : [JTFromSwitchCell class],
                                     JTFormRowTypeCheck              : [JTFormCheckCell class],
                                     JTFormRowTypeStepCounter        : [JTFormStepCounterCell class],
@@ -915,7 +920,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 - (void)setRowValue:(nullable id)value byTag:(NSString *)tag
 {
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
-    row.value = value;
+    [row jt_setValue:value];
     [row updateUI];
 }
 
