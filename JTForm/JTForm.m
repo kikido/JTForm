@@ -196,7 +196,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [footer addSubnode:contentNode];
     
     ASTextNode *textNode = [[ASTextNode alloc] init];
-    textNode.attributedText = sectionDescriptor.headerAttributedString;
+    textNode.attributedText = sectionDescriptor.footerAttributedString;
     [contentNode addSubnode:textNode];
     [contentNode setLayoutSpecBlock:^ASLayoutSpec * _Nonnull(__kindof ASDisplayNode * _Nonnull node, ASSizeRange constrainedSize) {
         textNode.style.width = ASDimensionMake(constrainedSize.min.width - 30.);

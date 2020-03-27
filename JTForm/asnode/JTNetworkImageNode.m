@@ -51,6 +51,7 @@
     UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:u.absoluteString];
     if (cacheImage) {
         _imageNode.image = cacheImage;
+        self.style.preferredSize = CGSizeMake(cacheImage.size.width/([UIScreen mainScreen].scale), cacheImage.size.height/([UIScreen mainScreen].scale));
     } else {
         _networkImageNode.URL = URL;
     }
