@@ -48,10 +48,10 @@
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounter"];
     row.value = @50;
-    [row.cellConfigAfterUpdate setObject:@YES forKey:@"stepControl.wraps"];
-    [row.cellConfigAfterUpdate setObject:@10 forKey:@"stepControl.stepValue"];
-    [row.cellConfigAfterUpdate setObject:@10 forKey:@"stepControl.minimumValue"];
-    [row.cellConfigAfterUpdate setObject:@100 forKey:@"stepControl.maximumValue"];
+    [row.configAfterUpdate setObject:@YES forKey:@"stepControl.wraps"];
+    [row.configAfterUpdate setObject:@10 forKey:@"stepControl.stepValue"];
+    [row.configAfterConfig setObject:@10 forKey:@"minimumValue"];
+    [row.configAfterConfig setObject:@100 forKey:@"maximumValue"];
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeStepCounter rowType:JTFormRowTypeStepCounter title:@"JTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounterJTFormRowTypeStepCounter"];
@@ -60,12 +60,12 @@
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSegmentedControl rowType:JTFormRowTypeSegmentedControl title:@"JTFormRowTypeSegmentedControl"];
-    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3] displayTexts:@[@"早上", @"中午", @"晚上"]];
+    row.selectorOptions = [JTOptionObject optionObjectsWithOptionValues:@[@1, @2, @3] optionTexts:@[@"早上", @"中午", @"晚上"]];
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSegmentedControl rowType:JTFormRowTypeSegmentedControl title:@"JTFormRowTypeSegmentedControl"];
-    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3] displayTexts:@[@"早上", @"中午", @"晚上"]];
-    row.value = [JTOptionObject formOptionsObjectWithValue:@1 displayText:@"早上"];
+    row.selectorOptions = [JTOptionObject optionObjectsWithOptionValues:@[@1, @2, @3] optionTexts:@[@"早上", @"中午", @"晚上"]];
+    row.value = [JTOptionObject optionsObjectWithOptionValue:@1 optionText:@"早上"];
     row.required = YES;
     row.imageUrl = netImageUrl(30, 30);
     [section addRow:row];
@@ -75,9 +75,9 @@
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSlider rowType:JTFormRowTypeSlider title:@"JTFormRowTypeSliderJTFormRowTypeSliderJTFormRowTypeSliderJTFormRowTypeSlider"];
     row.value = @(30.);
-    [row.cellConfigAtConfigure setObject:@(100.) forKey:@"maximumValue"];
-    [row.cellConfigAtConfigure setObject:@(10.) forKey:@"minimumValue"];
-    [row.cellConfigAfterUpdate setObject:@(4) forKey:@"steps"];
+    [row.configAfterConfig setObject:@(100.) forKey:@"maximumValue"];
+    [row.configAfterConfig setObject:@(10.) forKey:@"minimumValue"];
+    [row.configAfterUpdate setObject:@(4) forKey:@"steps"];
     row.required = YES;
     row.imageUrl = netImageUrl(30, 30);
     [section addRow:row];

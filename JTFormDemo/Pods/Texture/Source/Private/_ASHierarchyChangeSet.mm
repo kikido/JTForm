@@ -11,12 +11,9 @@
 #import <AsyncDisplayKit/ASInternalHelpers.h>
 #import <AsyncDisplayKit/ASCollections.h>
 #import <AsyncDisplayKit/NSIndexSet+ASHelpers.h>
-#import <AsyncDisplayKit/ASAssert.h>
 #import <AsyncDisplayKit/ASDisplayNode+Beta.h>
-#import <AsyncDisplayKit/ASObjectDescriptionHelpers.h>
 #import <unordered_map>
 #import <AsyncDisplayKit/ASDataController.h>
-#import <AsyncDisplayKit/ASBaseDefines.h>
 
 // If assertions are enabled and they haven't forced us to suppress the exception,
 // then throw, otherwise log.
@@ -193,6 +190,8 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
   NSAssert(!_completed, @"Attempt to mark already-completed changeset as completed.");
   _completed = YES;
   _newItemCounts = newItemCounts;
+    // 将更新合并拆分成 delete section， insert section， delete items， insert items。
+    // insert section 不会包含 insert items，delete 同理
   [self _sortAndCoalesceChangeArrays];
   [self _validateUpdate];
 }
@@ -461,6 +460,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
     _deletedSections = [_ASHierarchySectionChange allIndexesInSectionChanges:_originalDeleteSectionChanges];
     _insertedSections = [_ASHierarchySectionChange allIndexesInSectionChanges:_originalInsertSectionChanges];
     for (_ASHierarchySectionChange *originalDeleteSectionChange in _originalDeleteSectionChanges) {
+        // 合并 delete section change
       [_deleteSectionChanges addObject:[originalDeleteSectionChange changeByFinalizingType]];
     }
     for (_ASHierarchySectionChange *originalInsertSectionChange in _originalInsertSectionChanges) {
@@ -474,9 +474,11 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
         return newSec;
       }];
       
+        // 将 reload 数据拆分成 delete
       _ASHierarchySectionChange *deleteChange = [[_ASHierarchySectionChange alloc] initWithChangeType:_ASHierarchyChangeTypeDelete indexSet:change.indexSet animationOptions:change.animationOptions];
       [_deleteSectionChanges addObject:deleteChange];
-      
+
+        // 将 reload 数据拆分成 insert
       _ASHierarchySectionChange *insertChange = [[_ASHierarchySectionChange alloc] initWithChangeType:_ASHierarchyChangeTypeInsert indexSet:newSections animationOptions:change.animationOptions];
       [_insertSectionChanges addObject:insertChange];
     }
@@ -493,7 +495,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
     for (_ASHierarchyItemChange *originalInsertItemChange in _originalInsertItemChanges) {
       [_insertItemChanges addObject:[originalInsertItemChange changeByFinalizingType]];
     }
-    
+    // 验证操作类型
     [_ASHierarchyItemChange ensureItemChanges:_insertItemChanges ofSameType:_ASHierarchyChangeTypeInsert];
     [_ASHierarchyItemChange ensureItemChanges:_deleteItemChanges ofSameType:_ASHierarchyChangeTypeDelete];
     
@@ -528,7 +530,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
     }
     return;
   }
-  
+  // 验证 section 数目
   NSIndexSet *allReloadedSections = [_ASHierarchySectionChange allIndexesInSectionChanges:_reloadSectionChanges];
   
   NSInteger newSectionCount = _newItemCounts.size();
@@ -542,6 +544,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
     return;
   }
   
+    // 验证 delete section 是否超出最大 section index
   // Assert that no invalid deletes/reloads happened.
   NSInteger invalidSectionDelete = NSNotFound;
   if (oldSectionCount == 0) {
@@ -708,7 +711,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType)
 
 - (_ASHierarchySectionChange *)changeByFinalizingType
 {
-  _ASHierarchyChangeType newType;
+  _ASHierarchyChangeType newType; // _ASHierarchyChangeTypeReload 默认值
   switch (_changeType) {
     case _ASHierarchyChangeTypeOriginalInsert:
       newType = _ASHierarchyChangeTypeInsert;

@@ -48,6 +48,8 @@
         [self.navigationController pushViewController:vc animated:YES];
     };
     [section addRow:row];
+    ASCellNode *node = (ASCellNode *)[row cellForDescriptor];
+    node.accessibilityLabel = @"text";
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"1" rowType:JTFormRowTypePushButton title:@"select"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
@@ -82,7 +84,15 @@
         DeleteViewController *vc = [[DeleteViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     };
+    [section addRow:row]; //FormOneController
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:@"6" rowType:JTFormRowTypePushButton title:@"form"];
+    row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
+        FormOneController *vc = [[FormOneController alloc] init];
+        [self.navigationController pushViewController:vc animated:YES];
+    };
     [section addRow:row];
+    [row cellForDescriptor].accessibilityLabel = @"form one";
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"6" rowType:JTFormRowTypePushButton title:@"ig"];
     row.action.rowBlock = ^(JTRowDescriptor * _Nonnull sender) {
@@ -128,6 +138,10 @@
     
     JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
+//    [form.tableView setAccessibilityLabel:@"home"];
+    form.tableNode.accessibilityLabel = @"home";
+    form.tableView.accessibilityIdentifier = @"home";
+    form.tableView.accessibilityLabel = @"home";
     [self.view addSubview:form];
 }
 

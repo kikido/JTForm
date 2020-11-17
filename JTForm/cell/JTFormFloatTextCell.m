@@ -18,10 +18,9 @@
 - (void)config
 {
     [super config];
-        
+
     _textFieldNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         JVFloatLabeledTextField *textField = [[JVFloatLabeledTextField alloc] init];
-        textField.delegate = self;
         return textField;
     }];
 }
@@ -33,6 +32,8 @@
     BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
     
     JVFloatLabeledTextField *textField = (JVFloatLabeledTextField *)self.textFieldNode.view;
+    _textField = textField;
+    textField.delegate        = self;
     textField.enabled         = !self.rowDescriptor.disabled;
     textField.clearButtonMode = UITextFieldViewModeWhileEditing;
     textField.font            = [self cellContentFont];
@@ -44,10 +45,9 @@
     textField.floatingLabel.attributedText = 
     [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
                                                  font:kJTFormFloatTextCellTitltFont
-                                                color:[self cellPlaceHolerColor]
+                                                color:[self cellTitleColor]
                                        firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
-    textField.text = [self.rowDescriptor displayTextValue];
-    _textField = textField;
+    textField.text = [self.rowDescriptor unEditingText];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
@@ -60,26 +60,35 @@
 
 #pragma mark  - responder
 
-- (BOOL)cellCanBecomeFirstResponder
+- (BOOL)canBecomeFirstResponder
 {
-    return !self.rowDescriptor.disabled;
+    return [super canBecomeFirstResponder];
 }
 
-- (BOOL)cellBecomeFirstResponder
+- (BOOL)becomeFirstResponder
 {
-    return [_textField becomeFirstResponder];
+    if ([self canBecomeFirstResponder]) {
+        return [_textField becomeFirstResponder];
+    }
+    return false;
 }
 
 - (BOOL)isFirstResponder
 {
-    [super isFirstResponder];
     return [_textField isFirstResponder];
+}
+
+- (BOOL)canResignFirstResponder
+{
+    return [_textField canResignFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    [super resignFirstResponder];
-    return [_textField resignFirstResponder];
+    if ([self canResignFirstResponder]) {
+        return [_textField resignFirstResponder];
+    }
+    return false;
 }
 
 #pragma mark - UITextFieldDelegate
@@ -97,10 +106,24 @@
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     [[self findForm] textTypeRowDidBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    
+    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
+    _textField.floatingLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
+                                                 font:kJTFormFloatTextCellTitltFont
+                                                color:[self cellTitleColor]
+                                       firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     [[self findForm] textTypeRowDidEndEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    BOOL required = self.rowDescriptor.required && self.rowDescriptor.sectionDescriptor.formDescriptor.addAsteriskToRequiredRowsTitle;
+    _textField.floatingLabel.attributedText =
+    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@",required ? @"*" : @"", self.rowDescriptor.title]
+                                                 font:kJTFormFloatTextCellTitltFont
+                                                color:[self cellTitleColor]
+                                       firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
 }
+
 @end

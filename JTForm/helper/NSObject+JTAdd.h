@@ -11,11 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+FOUNDATION_EXPORT void JTLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
+
 @interface NSObject (JTAdd)
 
-- (id)cellValue;
+- (id)valueForForm;
 
-- (NSString *)cellText;
+- (NSString *)descriptionForForm;
 
 
 /**

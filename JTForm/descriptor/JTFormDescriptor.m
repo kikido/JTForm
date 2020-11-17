@@ -17,7 +17,9 @@
 @interface JTFormDescriptor ()
 @property (nonatomic, strong, readwrite) NSMutableArray *formSections;
 @property (nonatomic, strong, readwrite) NSMutableArray *allSections;
-@property (nonatomic, weak) JTCollectionLayoutInfo *collectionInfo;
+@property (nonatomic, weak  ) JTCollectionLayoutInfo *collectionInfo;
+@property (nonatomic, strong) NSLock *allLock;
+@property (nonatomic, strong) NSLock *formLock;
 @end
 
 @implementation JTFormDescriptor
@@ -32,6 +34,8 @@
         _allRowsByTag                   = @{}.mutableCopy;
         _addAsteriskToRequiredRowsTitle = false;
         _noValueShowText                = false;
+        _allLock                        = [[NSLock alloc] init];
+        _formLock                       = [[NSLock alloc] init];
         
         // collection
         _numberOfColumn  = 0;
@@ -96,13 +100,11 @@
     if (!self.form) return;
     
     if ([keyPath isEqualToString:@"formSections"]) {
-        if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeInsertion)])
-        {
+        if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeInsertion)]) { // insert
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
             [self.form formSectionsHaveBeenAddedAtIndexes:indexSet];
         }
-        else if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeRemoval)])
-        {
+        else if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeRemoval)]) { // remove
             NSIndexSet *indexSet = [change objectForKey:NSKeyValueChangeIndexesKey];
             [self.form formSectionsHaveBeenRemovedAtIndexes:indexSet];
         }
@@ -116,32 +118,51 @@
 
 #pragma mark - add section
 
-- (void)addSection:(JTSectionDescriptor *)section atIndex:(NSUInteger)index
-{
-    if (!section || index > _allSections.count) return;
-    
-    BOOL result = [self _insertFormSection:section inAllSectionsAtIndex:index];
-    if (result) [self evaluateFormSectionIsHidden:section];
-}
-
 - (void)addSection:(JTSectionDescriptor *)section
 {
-    [self addSection:section atIndex:_allSections.count];
+    [self addSections:@[section] atIndex:_allSections.count];
 }
 
-- (void)addSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections
 {
-    if (![_allSections containsObject:section]) {
-        NSUInteger afterIndex = [self.allSections indexOfObject:afterSection];
-        [self addSection:section atIndex:afterIndex==NSNotFound ? _allSections.count : afterIndex + 1];
+    [self addSections:sections atIndex:_allSections.count];
+}
+
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections beforeSection:(JTSectionDescriptor *)beforeSection
+{
+    NSUInteger index = [self indexOfSection:beforeSection];
+    if (index != NSNotFound) {
+        [self addSections:sections atIndex:index];
     }
 }
 
-- (void)addSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections afterSection:(JTSectionDescriptor *)afterSection
 {
-    if (![_allSections containsObject:section]) {
-        NSUInteger beforeIndex = [self.allSections indexOfObject:beforeSection];
-        [self addSection:section atIndex:beforeIndex==NSNotFound ? _allSections.count : beforeIndex];
+    NSUInteger index = [self indexOfSection:afterSection];
+    if (index != NSNotFound) {
+        [self addSections:sections atIndex:index + 1];
+    }
+}
+
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections atIndex:(NSUInteger)index
+{
+    if (!sections || sections.count == 0) {
+        return;
+    }
+    [self _insertSectionsIntoAllSections:sections atIndex:index];
+
+    __block NSUInteger indexOfStart = NSNotFound;
+    [sections enumerateObjectsUsingBlock:^(JTSectionDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.hidden == false) {
+            indexOfStart = [self indexOfSectionAtFormSectionsBeforeInsert:obj];
+            *stop = true;
+        }
+    }];
+    NSArray<JTSectionDescriptor *> *insertSections = [sections objectsAtIndexes:[sections indexesOfObjectsPassingTest:^BOOL(JTSectionDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        return !obj.hidden;
+    }]];
+    if (insertSections.count > 0) {
+        [self _insertSectionsIntoFormSections:insertSections atIndex:indexOfStart];
     }
 }
 
@@ -149,28 +170,41 @@
 
 - (void)removeSection:(JTSectionDescriptor *)section
 {
-    [self hideFormSection:section];
-    [self _removeSectionsInAllSections:@[section]];
+    [self removeSections:@[section]];
+}
+
+- (void)removeSections:(NSArray<JTSectionDescriptor *> *)sections
+{
+    [self _removeSectionsFromAllSections:sections];
+    __block BOOL existed = false;
+    [sections enumerateObjectsUsingBlock:^(JTSectionDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj.formRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull row, NSUInteger idx, BOOL * _Nonnull rStop) {
+            if ([row isCellExist] && [row.cellForDescriptor jt_isFirstResponder] ) {
+                [row.cellForDescriptor resignFirstResponder];
+                // FIXME: 是否存在第一响应者
+                *rStop = true;
+                existed = true;
+            }
+        }];
+        if (existed) *stop = true;
+    }];
+    [self _removeSectionsFromFormSections:sections];
 }
 
 - (void)removeSectionAtIndex:(NSUInteger)index
 {
-    [self removeSectionsAtIndexes:[NSIndexSet indexSetWithIndex:index]];
-}
-
-- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes
-{
-    [self hideFormSectionsAtIndexes:indexes];
-    NSArray *sections = [self.allSections objectsAtIndexes:indexes];
-    [self _removeSectionsInAllSections:sections];
+    JTSectionDescriptor *section = [self sectionAtIndex:index];
+    [self removeSection:section];
 }
 
 #pragma mark - hidden or show section
 
 - (void)evaluateFormSectionIsHidden:(JTSectionDescriptor *)section
 {
+    if (!section) return;
+    
     if (section.hidden) {
-        [self hideFormSection:section];
+        [self hideFormSections:@[section]];
     } else {
         [self showFormSection:section];
     }
@@ -178,96 +212,149 @@
 
 - (void)showFormSection:(JTSectionDescriptor *)section
 {
-    if ([self.formSections containsObject:section]) return;
-    if (![self.allSections containsObject:section]) return;
-
-    NSUInteger indexInForm = NSNotFound;
-    NSUInteger indexInAll = [self.allSections indexOfObject:section];
-    if (indexInAll != NSNotFound) {
-        while (indexInForm == NSNotFound && indexInAll > 0) {
-            JTSectionDescriptor *previousSection = [self.allSections objectAtIndex:--indexInAll];
-            indexInForm = [self.formSections indexOfObject:previousSection];
-        }
-        [self _insertFormSection:section inFormSectionsAtIndex:indexInForm == NSNotFound ? 0 : ++indexInForm];
+    [self.formLock lock];
+    NSUInteger indexAtForm = [self.formSections indexOfObject:section];
+    [self.formLock unlock];
+    
+    if (indexAtForm == NSNotFound) {
+        indexAtForm = [self indexOfSectionAtFormSectionsBeforeInsert:section];
+        [self _insertSectionsIntoFormSections:@[section] atIndex:indexAtForm];
     }
 }
 
-- (void)hideFormSection:(JTSectionDescriptor *)section
+- (void)hideFormSections:(NSArray<JTSectionDescriptor *> *)sections
 {
-    [[(JTForm *)self.form tableView] endEditing:YES];
-
-    [self _removeFormSectionInFormSections:section];
-}
-
-- (void)hideFormSectionsAtIndexes:(NSIndexSet *)indexes
-{
-    if ([[(JTForm *)self.form tableView] isEditing]) {
-        [[(JTForm *)self.form tableView] endEditing:YES];
-    }
-    NSArray *sections = [self.allSections objectsAtIndexes:indexes];
     for (JTSectionDescriptor *section in sections) {
-        [self _removeFormSectionInFormSections:section];
+        __block BOOL existed = false;
+        [section.formRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj.cellForDescriptor jt_isFirstResponder]) {
+                [[obj cellForDescriptor] resignFirstResponder];
+                *stop = true;
+                existed = true;
+            }
+        }];
+        if (existed) break;
     }
+    [self _removeSectionsFromFormSections:sections];
 }
 
 #pragma mark - section
 
 - (JTSectionDescriptor *)sectionAtIndex:(NSUInteger)index
 {
-    if (index < 0 || index >= self.formSections.count) return nil;
-    return self.formSections[index];
+    [self.allLock lock];
+    JTSectionDescriptor *section = self.allSections[index];
+    [self.allLock unlock];
+    
+    return section;
+}
+
+- (NSArray<JTSectionDescriptor *> *)sectionsAtIndexes:(NSIndexSet *)indexSet
+{
+    [self.allLock lock];
+    NSArray *array = [self.allSections objectsAtIndexes:indexSet];
+    [self.allLock unlock];
+    
+    return array;
+}
+
+- (NSUInteger)indexOfSection:(JTSectionDescriptor *)sectionDescriptor
+{
+    [self.allLock lock];
+    NSUInteger index = [self.allSections indexOfObject:sectionDescriptor];
+    [self.allLock unlock];
+    
+    return index;
 }
 
 #pragma mark - all sections
 
-- (BOOL)_insertFormSection:(JTSectionDescriptor *)section inAllSectionsAtIndex:(NSUInteger)index
+- (void)_insertSectionsIntoAllSections:(NSArray<JTSectionDescriptor *> *)sections atIndex:(NSUInteger)index
 {
-    if (index > _allSections.count) index = _allSections.count;
-    if (index < 0)                  index = 0;
-    
-    if (![self.allSections containsObject:section]) {
-        section.formDescriptor = self;
-        [self.allSections insertObject:section atIndex:index];
-        
-        // 在这里为什么使用 allRows 而不是 formRows 属性呢？
-        // 因为单元行在某些情况下可能会被隐藏掉，那么为了获取到该行的值，就必须使用 allRows 属性。
-        [section.allRows enumerateObjectsUsingBlock:^(JTRowDescriptor *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [self addRowToTagCollection:obj];
+    [sections enumerateObjectsUsingBlock:^(JTSectionDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSAssert(![self.allSections containsObject:obj], @"section:%@ already in form, index:%tu", obj, idx);
+        obj.formDescriptor = self;
+        [obj.allRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull row, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self addRowToTagCollection:row];
         }];
-        return true;
-    }
-    return false;
+    }];
+    [self.allLock lock];
+    [self.allSections insertObjects:sections atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, sections.count)]];
+    [self.allLock unlock];
 }
 
-- (void)_removeSectionsInAllSections:(NSArray<JTSectionDescriptor *> *)sections
+- (void)_removeSectionsFromAllSections:(NSArray<JTSectionDescriptor *> *)sections
 {
-    for (JTSectionDescriptor *section in sections) {
-        if ([_allSections containsObject:section]) {
-            [section.allRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                [self removeRowFromTagCollection:obj];
-            }];
-            section.formDescriptor = nil;
-            [_allSections removeObject:section];
-        }
-    }
+    [sections enumerateObjectsUsingBlock:^(JTSectionDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj.formDescriptor = nil;
+        [obj.allRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull row, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self removeRowFromTagCollection:row];
+        }];
+    }];
+    [self.allLock lock];
+    [self.allSections removeObjectsInArray:sections];
+    [self.allLock unlock];
 }
 
 #pragma mark - form sections
 
-- (void)_insertFormSection:(JTSectionDescriptor *)section inFormSectionsAtIndex:(NSUInteger)index
+- (NSMutableArray<JTSectionDescriptor *> *)formSectionsArray
 {
-    if (section.hidden) return;
-    if (index > _formSections.count) index = self.formSections.count;
-    if (index < 0)                   index = 0;
-    
-    if (![self.formSections containsObject:section]) {
-        [[self mutableArrayValueForKey:@"formSections"] insertObject:section atIndex:index];
-    }
+    return [self mutableArrayValueForKey:@"formSections"];
 }
 
-- (void)_removeFormSectionInFormSections:(JTSectionDescriptor *)section
+- (void)_insertSectionsIntoFormSections:(NSArray<JTSectionDescriptor *> *)sections atIndex:(NSUInteger)index
 {
-    [[self mutableArrayValueForKey:@"formSections"] removeObject:section];
+    [self.formLock lock];
+    [[self formSectionsArray] insertObjects:sections atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, sections.count)]];
+    [self.formLock unlock];
+}
+
+- (void)_removeSectionFromFormSections:(JTSectionDescriptor *)section
+{
+    [self.formLock lock];
+    [[self formSectionsArray] removeObject:section];
+    [self.formLock unlock];
+}
+
+- (void)_removeSectionsFromFormSections:(NSArray<JTSectionDescriptor *> *)sections
+{
+    [self.formLock lock];
+    // FIXME: measure this step, 因为前面加锁了
+    NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
+    [sections enumerateObjectsUsingBlock:^(JTSectionDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSUInteger index = [self.formSections indexOfObject:obj];
+        if (index != NSNotFound) {
+            [indexSet addIndex:index];
+        }
+    }];
+    [[self formSectionsArray] removeObjectsAtIndexes:indexSet];
+    [self.formLock unlock];
+}
+
+/** 在插入前，查找在 form rows 中插入的位置*/
+- (NSUInteger)indexOfSectionAtFormSectionsBeforeInsert:(JTSectionDescriptor *)section
+{
+    [self.allLock lock];
+    NSInteger indexAtAll  = [self.allSections indexOfObject:section];
+    [self.allLock unlock];
+    
+    [self.formLock lock];
+    NSUInteger indexAtForm = [self.formSections indexOfObject:section];
+    [self.formLock unlock];
+    
+    if (indexAtForm == NSNotFound && indexAtAll != NSNotFound) {
+        while (indexAtForm == NSNotFound && indexAtAll > 0) {
+            [self.allLock lock];
+            JTSectionDescriptor *previousSection = [self.allSections objectAtIndex:--indexAtAll];
+            [self.allLock unlock];
+            
+            [self.formLock lock];
+            indexAtForm = [self.formSections indexOfObject:previousSection];
+            [self.formLock unlock];
+        }
+    }
+    return indexAtForm == NSNotFound ? 0 : ++indexAtForm;
 }
 
 #pragma mark - tag collection
@@ -334,9 +421,9 @@
 {
     JTSectionDescriptor *section = rowDescriptor.sectionDescriptor;
     if (section) {
-        NSUInteger sectionIndex = [self.formSections indexOfObject:section];
+        NSUInteger sectionIndex = [self indexOfSection:section];
         if (sectionIndex != NSNotFound) {
-            NSUInteger rowIndex = [section.formRows indexOfObject:rowDescriptor];
+            NSUInteger rowIndex = [section indexOfRow:rowDescriptor];
             if (rowIndex != NSNotFound) {
                 return [NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex];
             }
@@ -347,12 +434,9 @@
 
 - (JTRowDescriptor *)rowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.formSections.count > indexPath.section &&
-        [self.formSections[indexPath.section] formRows].count > indexPath.row)
-    {
-        return [self.formSections[indexPath.section] formRows][indexPath.row];
-    }
-    return nil;
+    JTSectionDescriptor *section = [self sectionAtIndex:indexPath.section];
+    JTRowDescriptor *row = [section rowAtIndex:indexPath.row];
+    return row;
 }
 
 #pragma mark - disabled
@@ -362,14 +446,17 @@
     if (disabled != _disabled) {
         _disabled = disabled;
         if (!self.form) return;
-        
-        [[(JTForm *)self.form tableView] endEditing:YES];
-        
-        for (JTSectionDescriptor *section in self.formSections) {
-            for (JTRowDescriptor *row in section.formRows) {
-                [row updateUI];
-            }
-        }
+                
+        __block BOOL existed = false;
+        [self.formSections enumerateObjectsUsingBlock:^(JTSectionDescriptor * _Nonnull section, NSUInteger idx, BOOL * _Nonnull stop) {
+            [section.formRows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull row, NSUInteger idx, BOOL * _Nonnull stop) {
+                if (!existed && [row.cellForDescriptor jt_isFirstResponder]) {
+                    existed = true;
+                    [[row cellForDescriptor] resignFirstResponder];
+                }
+                [row updateCell];
+            }];
+        }];
     }
 }
 

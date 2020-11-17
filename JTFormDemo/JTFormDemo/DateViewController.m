@@ -81,42 +81,45 @@
     #pragma mark - formatter
     
     section = [JTSectionDescriptor formSection];
-    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"formatter" font:nil color:nil firstWordColor:nil];
-    section.headerHeight = 30.;
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"formatter\n\niOS14 之后，若想使用可以自定义 formatter 的选择行，建议使用 inline 行，或者您可以修改代码，将 JTFormRowTypeDate 对应的单元行替换成 JTFormDateCell" font:nil color:nil firstWordColor:nil];
+    section.headerHeight = 120.;
     [formDescriptor addSection:section];
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter;
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
+    row.value = now;
+    dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd";
+    row.valueFormatter = dateFormatter;
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTimeInline title:@"JTFormRowTypeTimeInline"];
+    row.value = now;
+    dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh小时 mm分";
+    row.valueFormatter = dateFormatter;
+    [section addRow:row];
+    
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTimeInline title:@"JTFormRowTypeDateTimeInline"];
+    row.value = now;
+    dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd hh:mm:ss";
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDate rowType:JTFormRowTypeDate title:@"JTFormRowTypeDate"];
-    row.value = now;
     row.valueFormatter = dateFormatter;
     [section addRow:row];
     
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTime rowType:JTFormRowTypeTime title:@"JTFormRowTypeTime"];
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimerInline title:@"JTFormRowTypeCountDownTimerInline"];
     row.value = now;
+    dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"hh:mm";
     row.valueFormatter = dateFormatter;
     [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateTime rowType:JTFormRowTypeDateTime title:@"JTFormRowTypeDateTime"];
-    row.value = now;
-    row.valueFormatter = dateFormatter;
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeCountDownTimer rowType:JTFormRowTypeCountDownTimer title:@"JTFormRowTypeCountDownTimer"];
-    row.value = now;
-    row.valueFormatter = dateFormatter;
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDateInline rowType:JTFormRowTypeDateInline title:@"JTFormRowTypeDateInline"];
-    row.value = now;
-    row.valueFormatter = dateFormatter;
-    [section addRow:row];
-    
+        
     JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = self.view.bounds;
     [self.view addSubview:form];
     self.form = form;
+    
     // Do any additional setup after loading the view.
 }
 

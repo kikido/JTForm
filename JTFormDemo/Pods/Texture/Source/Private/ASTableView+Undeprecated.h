@@ -156,10 +156,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Begins a series of method calls that insert, delete, select, or reload rows and sections of the table view, with animation enabled and no completion block.
+ *  开始一些列的插入，删除，选择，冲加载行或者节，动画表示，没有完成回调
  *
  *  @discussion You call this method to bracket a series of method calls that ends with endUpdates and that consists of operations
  *  to insert, delete, select, and reload rows and sections of the table view. When you call endUpdates, ASTableView begins animating
  *  the operations simultaneously. It's important to remember that the ASTableView will be processing the updates asynchronously after this call is completed.
+ *  你调用这个方法将一系列以 endUpdates 结尾的方法归纳在一起，这些方法包括插入，删除，选择，重载行和节组成。当你调用 endUpdates，ASTableView 同时会动画化这些操作，请记住，当这个方法调用完成后 ASTableView
+ *  会异步处理这些更新
  *
  *  @warning This method must be called from the main thread.
  */

@@ -17,11 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 extern CGFloat const JTFormDefaultSectionHeaderHeight;
 extern CGFloat const JTFormDefaultSectionFooterHeight;
 
-typedef NS_OPTIONS(NSUInteger, JTFormSectionOptions) {
+typedef NS_OPTIONS(NSUInteger, JTSectionOptions) {
     /** 不可编辑 */
-    JTFormSectionOptionNone        = 0,
+    JTSectionOptionNone        = 0,
     /** 可删除 */
-    JTFormSectionOptionCanDelete   = 1 << 1
+    JTSectionOptionCanDelete   = 1 << 1
 };
 
 /** 节描述，为单元节(section)的数据源 */
@@ -47,7 +47,7 @@ typedef NS_OPTIONS(NSUInteger, JTFormSectionOptions) {
  * @discuss 类似于 UITableView 中左滑显示的删除或者添加操作，
  * 目前仅支持删除操作。设置后，可左滑进行删除单元行操作
  */
-@property (nonatomic, assign) JTFormSectionOptions sectionOptions;
+@property (nonatomic, assign) JTSectionOptions sectionOptions;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 
@@ -133,28 +133,31 @@ typedef NS_OPTIONS(NSUInteger, JTFormSectionOptions) {
 - (void)addRows:(NSArray<JTRowDescriptor *> *)rows;
 
 /**
- * 在某单元行后面添加新的单元行
+ * 在节上的某个位置上添加单元行
  *
- * @param row 行描述
- * @param afterRow 行描述，对应的单元行需要已经在 form 中了，否则新的单元行将添加到 form 最后面
+ * @note 当单元行在表中隐藏时，我们认为该单元行的 index 并没有改变。
+ * 举个例子，rowA rowB 的 index 分别为 1 和 2，当 rowA 在表单中被隐藏时，rowB 的 index 仍旧为 2
+ *
+ * @param rows 行描述数组
+ * @param index 节中的索引位置
  */
-- (void)addRow:(JTRowDescriptor *)row afterRow:(JTRowDescriptor *)afterRow;
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows atIndex:(NSUInteger)index;
 
 /**
  * 在某单元行前面添加新的单元行
  *
- * @param row 行描述
- * @param beforeRow 行描述，对应的单元行需要已经在 form 中了，否则新的单元行将添加到 form 最前面
+ * @param rows 行描述数组
+ * @param beforeRow 行描述，对应的行描述需要已经被添加到节描述中，否则直接返回
  */
-- (void)addRow:(JTRowDescriptor *)row beforeRow:(JTRowDescriptor *)beforeRow;
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows beforeRow:(JTRowDescriptor *)beforeRow;
 
 /**
- * 在节上的某个位置上添加单元行
+ * 在某单元行后面添加新的单元行
  *
- * @param row 行描述
- * @param index 节中的索引位置
+ * @param rows 行描述数组
+ * @param afterRow 行描述，对应的行描述需要已经被添加到节描述中，否则直接返回
  */
-- (void)addRow:(JTRowDescriptor *)row atIndex:(NSUInteger)index;
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows afterRow:(JTRowDescriptor *)afterRow;
 
 /**
  * 移除单元行
@@ -164,19 +167,25 @@ typedef NS_OPTIONS(NSUInteger, JTFormSectionOptions) {
 - (void)removeRow:(JTRowDescriptor *)row;
 
 /**
- * 移除单元行
+ * 移除一些单元行
+ *
+ * @param rows 行描述数组
+ */
+- (void)removeRows:(NSArray<JTRowDescriptor *> *)rows;
+
+/**
+ * 根据 tag 移除单元行
  *
  * @param tag 对应单元行的 tag
  */
-- (void)removeRowByTag:(NSString *)tag;
+- (void)removeRowByTag:(id<NSCopying>)tag;
 
 /**
- * 在节上根据索引位置移除单元行
+ * 根据在节上根据索引位置移除单元行
  *
  * @param index 在节中的索引位置
  */
 - (void)removeRowAtIndex:(NSUInteger)index;
-
 
 /**
  * 替换该节中所有的单元行
@@ -184,6 +193,24 @@ typedef NS_OPTIONS(NSUInteger, JTFormSectionOptions) {
  * @param rows 用来替换旧单元行的行描述。如果为 nil，则仅仅是将旧单元行删除
  */
 - (void)replaceAllRows:(nullable NSArray<JTRowDescriptor *> *)rows;
+
+/**
+ * 行在节中的索引位置
+ *
+ * @discuss 如果单元行不在表单中，返回 NSNotFound
+ *
+ * @param row 行
+ */
+- (NSUInteger)indexOfRow:(JTRowDescriptor *)row;
+
+/**
+* 节中的指定索引位置的行
+*
+* @discuss 如果单元行不在节中，返回 nil
+*
+* @param index 索引位置
+*/
+- (JTRowDescriptor *)rowAtIndex:(NSUInteger)index;
 
 /**
  * 对单元行执行隐藏或者显示操作

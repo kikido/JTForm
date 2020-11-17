@@ -61,7 +61,7 @@
     _floatingLabelFont = [UIFont boldSystemFontOfSize:12.0f];
     _floatingLabel.font = _floatingLabelFont;
     _floatingLabelTextColor = [UIColor grayColor];
-    _floatingLabel.textColor = _floatingLabelTextColor;
+//    _floatingLabel.textColor = _floatingLabelTextColor;
     _animateEvenIfNotFirstResponder = 0;
     _floatingLabelShowAnimationDuration = kFloatingLabelShowAnimationDuration;
     _floatingLabelHideAnimationDuration = kFloatingLabelHideAnimationDuration;
@@ -244,15 +244,15 @@
     
     [self setLabelOriginForTextAlignment];
     
-    if (self.floatingLabelFont) {
-        _floatingLabel.font = self.floatingLabelFont;
-    }
+//    if (self.floatingLabelFont) {
+//        _floatingLabel.font = self.floatingLabelFont;
+//    }
     
     [_floatingLabel sizeToFit];
     
     BOOL firstResponder = self.isFirstResponder;
-    _floatingLabel.textColor = (firstResponder && self.text && self.text.length > 0 ?
-                                self.labelActiveColor : self.floatingLabelTextColor);
+//    _floatingLabel.textColor = (firstResponder && self.text && self.text.length > 0 ?
+//                                self.labelActiveColor : self.floatingLabelTextColor);
     if (!self.text || 0 == [self.text length]) {
         [self hideFloatingLabel:firstResponder];
     }

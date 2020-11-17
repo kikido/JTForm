@@ -8,6 +8,8 @@
 //
 
 #import "JTBaseDescriptor.h"
+#import "JTBaseCell.h"
+
 #import "JTFormValidateObject.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,10 +30,11 @@ extern JTFormRowType const JTFormRowTypeDecimal;
 extern JTFormRowType const JTFormRowTypePassword;
 extern JTFormRowType const JTFormRowTypePhone;
 extern JTFormRowType const JTFormRowTypeURL;
+extern JTFormRowType const JTFormRowTypeInfo;
 
 //|------ textview ------------------------------
 extern JTFormRowType const JTFormRowTypeTextView;
-extern JTFormRowType const JTFormRowTypeInfo;
+extern JTFormRowType const JTFormRowTypeLongInfo;
 
 //|------ select ------------------------------
 extern JTFormRowType const JTFormRowTypePushSelect;
@@ -63,7 +66,6 @@ extern JTFormRowType const JTFormRowTypeCheck;
 extern JTFormRowType const JTFormRowTypeStepCounter;
 extern JTFormRowType const JTFormRowTypeSegmentedControl;
 extern JTFormRowType const JTFormRowTypeSlider;
-extern JTFormRowType const JTFormRowTypeButton;
 
 //|------ custom ------------------------------
 extern JTFormRowType const JTFormRowTypeFloatText;
@@ -87,7 +89,8 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 /**
  当单元行的 value 变化时执行的 block
  
- @note: 在block内修改该单元行的 value 会造成死循环；还需要注意循环引用的问题
+ @note: 1. 需要使用实例方法 `-manualSetRowValue` 设置好 value 之后才会触发该 block
+       2. 请不要在 block 内调用 `-manualSetRowValue`，会造成死循环
  */
 @property (nullable, nonatomic, copy) void(^valueChangeBlock)(_Nullable id oldValue, _Nonnull id newValue, JTRowDescriptor * _Nonnull sender);
 
@@ -129,14 +132,19 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
  * @param title 单元行标题
  * @return 行描述
  */
-- (instancetype)initWithTag:(nullable NSString *)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTag:(nullable id<NSCopying>)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title NS_DESIGNATED_INITIALIZER;
 
-+ (instancetype)rowDescriptorWithTag:(nullable NSString *)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title;
++ (instancetype)rowDescriptorWithTag:(nullable id<NSCopying>)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title;
 
 /**
  * 行描述对应的单元行
  */
-- (JTBaseCell *)cellInForm;
+- (JTBaseCell *)cellForDescriptor;
+
+/**
+* 手动设置 value，会触发 KVO
+*/
+- (void)manualSetValue:(nullable id)value;
 
 @end
 
@@ -174,7 +182,7 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 /**
  * 更换单元行样式并重新加载
  *
- * @note 如果仅需要更新 UI，请使用方法 ‘-updateUI’
+ * @note 如果仅需要更新 UI，请使用方法 ‘-updateCell’
  *
  * @param rowType 单元行样式
  */
@@ -188,23 +196,23 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
 @property (nonatomic, assign) CGFloat height;
 
 /** 配置cell，在 update 方法后使用 */
-@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigAfterUpdate;
-/** 配置cell，在 update 方法后且disabled属性为Yes时使用 */
-@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigWhenDisabled;
+@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *configAfterUpdate;
 /** 配置cell，当 config 之后，update方法之前调用。仅调用一次 */
-@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellConfigAtConfigure;
+@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *configAfterConfig;
+/** 配置cell，在 update 方法后且disabled属性为Yes时使用 */
+@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *configWhenDisabled;
 /** 预留，用户可以使用该属性用来操作一些数据 */
-@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *cellDataDictionary;
+@property (nonnull, nonatomic, strong, readonly) NSMutableDictionary *configReserve;
 
 /** 表示行描述对应的单元行是否已经创建 */
 @property (nonatomic, assign, readonly, getter=isCellExist) BOOL cellExist;
 
 /**
- * 更新单元行的 UI
+ * 更新单元行 UI
  *
- * @note 当行描述对应的单元行尚未创建时，或者单元行从表单中移除后，调用该方法不执行任何操作
+ * @note 当行描述对应的单元行未创建，或者单元行不在表单中显示，该方法不执行任何操作
  */
-- (void)updateUI;
+- (void)updateCell;
 
 @end
 
@@ -228,37 +236,38 @@ extern CGFloat const JTFormUnspecifiedCellHeight;
  * @note 该类需要继承于 NSValueTransformer
  * 该类用于将一个类型的值转换为另一种类型的值，在 JTForm 中用于选择项样式的单元行
  */
-@property (nullable, nonatomic, assign) Class       valueTransformer;
+@property (nullable, nonatomic, assign) Class valueTransformer;
 
 /**
- * 占位符
+ * 占位文本
  *
  * @discuss 不仅用于 textfield/textview， 还适用于其它样式的单元行
  */
-@property (nullable, nonatomic, copy  ) NSString    *placeHolder;
+@property (nullable, nonatomic, copy  ) NSString *placeHolder;
 
 /**
  * 文本样式的单元行所能输入的最大字符数
  *
- * @note 请输入 NSUInteger 类型的数字
+ * 适用于 textfield/textview 样式的单元行。
  *
- * 适用于 textfield/textview 样式的单元行
+ * @note 这里 emoji 表情只当做一个字符，而实际上它的 length 是 2 或者 4，如果需要按照 length 判断，请自行修改
+ * `-textTypeRowShouldChangeTextInRange:replacementText:rowDescriptor:textField:editableTextNode` 方法中的实现
  */
-@property (nullable, nonatomic, strong) NSNumber    *maxNumberOfCharacters;
+@property (nullable, nonatomic, strong) NSNumber *maxNumberOfCharacters;
 
 /**
- 在未编辑状态时显示的内容
+ 未编辑状态时显示的文本
 
  @return 需要在详情 label 显示的文本
  */
-- (nullable NSString *)displayTextValue;
+- (nullable NSString *)unEditingText;
 
 /**
- 在编辑状态时显示的内容
+ 编辑状态时显示的文本
 
  @return 需要在详情 label 显示的文本
  */
-- (nullable NSString *)editTextValue;
+- (nullable NSString *)editingText;
 
 @end
 

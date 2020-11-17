@@ -14,15 +14,22 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        _configMode = [[JTFormConfigMode alloc] init];
         _hidden = false;
         _disabled = false;
     }
     return self;
 }
 
+- (JTFormConfigModel *)configModel
+{
+    if (!_configModel) {
+        _configModel = [[JTFormConfigModel alloc] init];
+    }
+    return _configModel;;
+}
+
 @end
 
 
-@implementation JTFormConfigMode
+@implementation JTFormConfigModel
 @end

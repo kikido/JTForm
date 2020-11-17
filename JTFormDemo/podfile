@@ -8,7 +8,11 @@ target 'JTFormDemo' do
 
   # Pods for JTFormDemo
 
-pod 'Texture', '~> 2.8'
+pod 'Texture', '~> 3.0.0'
 pod 'SDWebImage', '~> 4.4.6'
 
+end
+
+target 'JTFormTests' do
+  pod 'KIF', :configurations => ['Debug']
 end

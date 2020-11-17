@@ -184,11 +184,11 @@ NSString *const JTFormRowTypeWBCell = @"JTFormRowTypeWBCell";
     _topNode.backgroundColor = kWBCellBackgroundColor;
     
     _avatarView = [[JTNetworkImageNode alloc] init];
-    [_avatarView setImageModificationBlock:^UIImage *(UIImage *image) {
+    [_avatarView setImageModificationBlock:^UIImage * _Nullable(UIImage * _Nonnull image, ASPrimitiveTraitCollection traitCollection) {
         return [image makeCircularImageWithSize:CGSizeMake(USER_IMAGE_HEIGHT, USER_IMAGE_HEIGHT)];
     }];
     _avatarBadgeView = [[JTNetworkImageNode alloc] init];
-    [_avatarBadgeView setImageModificationBlock:^UIImage *(UIImage *image) {
+    [_avatarBadgeView setImageModificationBlock:^UIImage * _Nullable(UIImage * _Nonnull image, ASPrimitiveTraitCollection traitCollection) {
         return [image makeCircularImageWithSize:CGSizeMake(14., 14.)];
     }];
     

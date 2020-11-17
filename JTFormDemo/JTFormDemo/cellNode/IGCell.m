@@ -42,7 +42,7 @@ NSString *const JTFormRowTypeIGCell = @"JTFormRowTypeIGCell";
 {
     [super config];
     _userAvatarImageNode     = [[JTNetworkImageNode alloc] init];
-    [_userAvatarImageNode setImageModificationBlock:^UIImage *(UIImage *image) {
+    [_userAvatarImageNode setImageModificationBlock:^UIImage * _Nullable(UIImage * _Nonnull image, ASPrimitiveTraitCollection traitCollection) {
         return [image makeCircularImageWithSize:CGSizeMake(USER_IMAGE_HEIGHT, USER_IMAGE_HEIGHT)];
     }];
     

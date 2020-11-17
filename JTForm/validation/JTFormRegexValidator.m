@@ -28,9 +28,7 @@
 
 - (JTFormValidateObject *)isValid:(JTRowDescriptor *)rowDescriptor
 {
-    BOOL isValid = [[NSPredicate predicateWithFormat:@"SELF MATCHES %@", self.regex] evaluateWithObject:[rowDescriptor.value cellText]];
-    if (isValid) return nil;
-    
-    return [JTFormValidateObject formValidateObjectWithErrorMsg:self.errorMsg valid:isValid];;
+    BOOL isValid = [[NSPredicate predicateWithFormat:@"SELF MATCHES %@", self.regex] evaluateWithObject:[rowDescriptor.value descriptionForForm]];
+    return [JTFormValidateObject formValidateObjectWithErrorMsg:self.errorMsg valid:isValid];
 }
 @end

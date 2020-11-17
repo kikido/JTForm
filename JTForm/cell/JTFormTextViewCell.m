@@ -30,29 +30,27 @@
 {
     [super update];
     
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInfo])
-    {
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeLongInfo]) {
         self.contentNode.attributedText =
-        [NSAttributedString jt_rightAttributedStringWithString:[self.rowDescriptor displayTextValue]
+        [NSAttributedString jt_rightAttributedStringWithString:[self.rowDescriptor unEditingText]
                                                           font:[self cellDisabledContentFont]
                                                          color:[self cellDisabledContentColor]];
     }
-    else
-    {
-        NSMutableParagraphStyle *paragraphStyle = NSMutableParagraphStyle.new;
-        paragraphStyle.alignment                = NSTextAlignmentRight;
-
+    else {
         _textViewNode.textView.editable = !self.rowDescriptor.disabled;
+        _textViewNode.attributedPlaceholderText = [NSAttributedString jt_rightAttributedStringWithString:self.rowDescriptor.placeHolder
+                                                                                                    font:[self cellPlaceHolerFont]
+                                                                                                   color:[self cellPlaceHolerColor]];
+        _textViewNode.attributedText = [NSAttributedString jt_rightAttributedStringWithString:[self.rowDescriptor unEditingText]
+                                                                                         font:[self cellContentFont]
+                                                                                        color:[self cellContentColor]];
+        NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+        paragraph.alignment = NSTextAlignmentRight;
         _textViewNode.typingAttributes = @{
-                                           NSFontAttributeName : [self cellContentFont],
-                                           NSForegroundColorAttributeName : [self cellContentColor],
-                                           NSParagraphStyleAttributeName : paragraphStyle
-                                           };
-        _textViewNode.textView.text = [self.rowDescriptor displayTextValue];
-        _textViewNode.attributedPlaceholderText = [NSAttributedString jt_attributedStringWithString:self.rowDescriptor.placeHolder
-                                                                                               font:[self cellPlaceHolerFont]
-                                                                                              color:[self cellPlaceHolerColor]
-                                                                                     firstWordColor:nil];
+            NSForegroundColorAttributeName: [self cellContentColor],
+            NSFontAttributeName: [self cellContentFont],
+            NSParagraphStyleAttributeName:paragraph
+        };
         _textView = _textViewNode.textView;
     }
 }
@@ -64,12 +62,15 @@
                                                                     justifyContent:ASStackLayoutJustifyContentStart
                                                                         alignItems:ASStackLayoutAlignItemsStart
                                                                           children:self.imageNode.hasContent ? @[self.imageNode, self.titleNode] : @[self.titleNode]];
-    
+    self.titleNode.style.flexShrink = 1.;
+    self.titleNode.style.flexGrow = 1.;
+    leftStack.style.maxWidth = ASDimensionMakeWithFraction(kJTFormTextViewCellMaxTitleWidthFraction);
+
     ASStackLayoutSpec *rightStack = nil;
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTextView]) {
         _textViewNode.style.alignSelf = ASStackLayoutAlignSelfStretch;
         _textViewNode.style.flexGrow = 2.;
-        self.contentNode.style.flexShrink = 1.;
+        _textViewNode.style.flexShrink = 1.;
         
         ASLayoutSpec *tempSpec = [ASLayoutSpec new];
         tempSpec.style.minHeight = ASDimensionMake(kJTFormMinTextViewHeight);
@@ -82,48 +83,51 @@
                                                             children:@[_textViewNode, tempSpec]];
         rightStack.style.alignSelf = ASStackLayoutAlignSelfStretch;
         rightStack.style.flexGrow = 1.;
+        rightStack.style.flexShrink = 1.;
     } else {
         self.contentNode.style.minHeight = ASDimensionMake(30.);
         self.contentNode.style.flexGrow = 1.;
         self.contentNode.style.flexShrink = 1.;
     }
-    
-    self.titleNode.style.flexShrink = 1.;
-    self.titleNode.style.flexGrow = 1.;
-
-    leftStack.style.maxWidth = ASDimensionMakeWithFraction(kJTFormTextViewCellMaxTitleWidthFraction);
-    
     ASStackLayoutSpec *contentStack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
                                                                               spacing:15.
-                                                                       justifyContent:ASStackLayoutJustifyContentSpaceBetween
+                                                                       justifyContent:ASStackLayoutJustifyContentStart
                                                                            alignItems: ASStackLayoutAlignItemsStart
                                                                              children:@[leftStack, rightStack ? rightStack : self.contentNode]];
-
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 15., 12., 15.) child:contentStack];
 }
 
 #pragma mark  - responder
 
-- (BOOL)cellCanBecomeFirstResponder
+- (BOOL)canBecomeFirstResponder
 {
-    return (!self.rowDescriptor.disabled && ![self.rowDescriptor.rowType isEqualToString:JTFormRowTypeInfo]);
+    return (!self.rowDescriptor.disabled && ![self.rowDescriptor.rowType isEqualToString:JTFormRowTypeLongInfo]);
 }
 
-- (BOOL)cellBecomeFirstResponder
+- (BOOL)becomeFirstResponder
 {
-    return [_textViewNode becomeFirstResponder];
+    if ([self canBecomeFirstResponder]) {
+        return [_textViewNode becomeFirstResponder];
+    }
+    return false;
 }
 
 - (BOOL)isFirstResponder
 {
-    [super isFirstResponder];
     return [_textViewNode isFirstResponder];
+}
+
+- (BOOL)canResignFirstResponder
+{
+    return [_textViewNode canResignFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    [super resignFirstResponder];
-    return [_textViewNode resignFirstResponder];
+    if ([self canResignFirstResponder]) {
+        return [_textViewNode resignFirstResponder];
+    }
+    return false;
 }
 
 - (void)cellHighLight

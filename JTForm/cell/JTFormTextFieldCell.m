@@ -21,7 +21,6 @@
         
     _textFieldNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UITextField *textField = [[UITextField alloc] init];
-        textField.delegate = self;
         return textField;
     }];
 }
@@ -30,53 +29,50 @@
 {
     [super update];
     
+    bool isInfo = [self.rowDescriptor.rowType isEqual:JTFormRowTypeInfo];
     UITextField *textField = (UITextField *)self.textFieldNode.view;
+    textField.delegate = self;
     textField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    textField.enabled = !self.rowDescriptor.disabled;
-    textField.font = [self cellContentFont];
-    textField.textColor = [self cellContentColor];
+    textField.enabled = !self.rowDescriptor.disabled || isInfo;
+    textField.font = isInfo ? [self cellDisabledContentFont] : [self cellContentFont];
+    textField.textColor = isInfo ? [self cellDisabledContentColor] : [self cellContentColor];
     textField.textAlignment = NSTextAlignmentRight;
-    textField.text = [self.rowDescriptor displayTextValue];
-    textField.attributedPlaceholder =
-    [NSAttributedString jt_attributedStringWithString:self.rowDescriptor.placeHolder
-                                                 font:[self cellPlaceHolerFont]
-                                                color:[self cellPlaceHolerColor]
-                                       firstWordColor:nil];
+    textField.text = [self.rowDescriptor unEditingText];
+    if (!isInfo) {
+        textField.attributedPlaceholder =
+        [NSAttributedString jt_attributedStringWithString:self.rowDescriptor.placeHolder
+                                                     font:[self cellPlaceHolerFont]
+                                                    color:[self cellPlaceHolerColor]
+                                           firstWordColor:nil];
+    }
     _textField = textField;
+    textField.autocorrectionType = UITextAutocorrectionTypeNo;
     
     NSString *rowType = self.rowDescriptor.rowType;
-    if ([rowType isEqualToString:JTFormRowTypeText])
-    {
+    if ([rowType isEqualToString:JTFormRowTypeText]) {
         textField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
-        textField.autocorrectionType = UITextAutocorrectionTypeDefault;
+//        textField.autocorrectionType = UITextAutocorrectionTypeNo;
     }
-    else if ([rowType isEqualToString:JTFormRowTypeName])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypeName]) {
         textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
     }
-    else if ([rowType isEqualToString:JTFormRowTypeEmail])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypeEmail]) {
         textField.keyboardType = UIKeyboardTypeEmailAddress;
     }
-    else if ([rowType isEqualToString:JTFormRowTypeNumber])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypeNumber]) {
         textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
     }
-    else if ([rowType isEqualToString:JTFormRowTypeInteger] || [rowType isEqualToString:JTFormRowTypePhone])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypeInteger] || [rowType isEqualToString:JTFormRowTypePhone]) {
         textField.keyboardType = UIKeyboardTypeNumberPad;
     }
-    else if ([rowType isEqualToString:JTFormRowTypeDecimal])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypeDecimal]) {
         textField.keyboardType = UIKeyboardTypeDecimalPad;
     }
-    else if ([rowType isEqualToString:JTFormRowTypePassword])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypePassword]) {
         textField.keyboardType = UIKeyboardTypeASCIICapable;
         textField.secureTextEntry = YES;
     }
-    else if ([rowType isEqualToString:JTFormRowTypeURL])
-    {
+    else if ([rowType isEqualToString:JTFormRowTypeURL]) {
         textField.keyboardType = UIKeyboardTypeURL;
     }
 }
@@ -107,33 +103,42 @@
 
 #pragma mark  - responder
 
-- (BOOL)cellCanBecomeFirstResponder
+- (BOOL)canBecomeFirstResponder
 {
-    return !self.rowDescriptor.disabled;
+    return [super canBecomeFirstResponder] && ![self.rowDescriptor.rowType isEqual:JTFormRowTypeInfo];
 }
 
-- (BOOL)cellBecomeFirstResponder
+- (BOOL)becomeFirstResponder
 {
-    return [_textField becomeFirstResponder];
+    if ([self canBecomeFirstResponder]) {
+        return [_textField becomeFirstResponder];
+    }
+    return false;
 }
 
 - (BOOL)isFirstResponder
 {
-    [super isFirstResponder];
     return [_textField isFirstResponder];
+}
+
+- (BOOL)canResignFirstResponder
+{
+    return [_textField canResignFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    [super resignFirstResponder];
-    return [_textField resignFirstResponder];
+    if ([self canResignFirstResponder]) {
+        return [_textField resignFirstResponder];
+    }
+    return false;
 }
 
 #pragma mark - UITextFieldDelegate
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return [[self findForm] textTypeRowShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
+    return ![self.rowDescriptor.rowType isEqual:JTFormRowTypeInfo] && [[self findForm] textTypeRowShouldBeginEditing:self.rowDescriptor textField:textField editableTextNode:nil];
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string

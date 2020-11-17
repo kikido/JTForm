@@ -9,8 +9,8 @@
 
 #import "JTNetworkImageNode.h"
 #import "JTBaseCell.h"
-#import <SDWebImage/SDImageCache.h>
 #import <objc/message.h>
+#import "JTFormAgent.h"
 
 @interface JTNetworkImageNode () <ASNetworkImageNodeDelegate>
 @property (nonatomic, strong) ASNetworkImageNode *networkImageNode;
@@ -47,8 +47,7 @@
 {
     if (!URL) return;
     
-    NSURL *u = URL;
-    UIImage *cacheImage = [[SDImageCache sharedImageCache] imageFromDiskCacheForKey:u.absoluteString];
+    UIImage *cacheImage =  [[JTFormAgent sharedAgent].imageCache imageFromCacheForKey:URL.absoluteString];
     if (cacheImage) {
         _imageNode.image = cacheImage;
         self.style.preferredSize = CGSizeMake(cacheImage.size.width/([UIScreen mainScreen].scale), cacheImage.size.height/([UIScreen mainScreen].scale));
@@ -90,17 +89,10 @@
 
 #pragma mark - ASNetworkImageNodeDelegate
 
-- (void)imageNode:(ASNetworkImageNode *)imageNode didLoadImage:(UIImage *)image
+- (void)imageNode:(ASNetworkImageNode *)imageNode didLoadImage:(UIImage *)image info:(ASNetworkImageLoadInfo *)info
 {
-    // 不同版本的 sdwebimage 做不同的处理
-    SDImageCache *imageCache = [SDImageCache sharedImageCache];
-    if ([imageCache respondsToSelector:@selector(storeImage:forKey:toDisk:completion:)])
-    {
-        ((void (*)(id, SEL, UIImage *, NSString *, BOOL, SDWebImageNoParamsBlock))(void *) objc_msgSend)((id)imageCache, @selector(storeImage:forKey:toDisk:completion:), image, imageNode.URL.absoluteString, YES, nil);
-    }
-    else if ([imageCache respondsToSelector:@selector(storeImage:forKey:toDisk:)])
-    {
-        ((void (*)(id, SEL, UIImage *, NSString *, BOOL))(void *) objc_msgSend)((id)imageCache, @selector(storeImage:forKey:toDisk:), image, imageNode.URL.absoluteString, YES);
+    if (info.sourceType == ASNetworkImageSourceDownload) {
+        [[JTFormAgent sharedAgent].imageCache storeImage:image forKey:imageNode.URL.absoluteString];
     }
     static CGFloat scale;
     static dispatch_once_t onceToken;

@@ -26,7 +26,7 @@
     button01.tag = 10;
     [button01 setTitle:@"其它" forState:UIControlStateNormal];
     [button01 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [button01 addTarget:self action:@selector(buttonAction:) forControlEvents:UIControlEventTouchUpInside];
+    [button01 addTarget:self action:@selector(otherAction) forControlEvents:UIControlEventTouchUpInside];
     [button01 sizeToFit];
     UIBarButtonItem *item01 = [[UIBarButtonItem alloc] initWithCustomView:button01];
     
@@ -116,6 +116,13 @@
     }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)otherAction
+{
+//    self.form.collectionNode.view;
+//    self.form.formDescriptor
+//    JTForm
 }
 
 @end

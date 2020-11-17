@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1100"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7020FA468B15664DBD673D04AD8E5C33"
+               BlueprintIdentifier = "57310B016450E63387C9D64F4933E995"
+               BuildableName = "libPINOperation.a"
                BlueprintName = "PINOperation"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libPINOperation.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

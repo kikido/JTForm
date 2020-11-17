@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class ASTableNode;
 @class ASTableView;
 
+extern NSString *const JTRowDescriptorErrorKey;
+
 @interface JTForm : UIView
 /**
  * JTForm 包含的 ASTableNode 实例
@@ -180,51 +182,58 @@ NS_ASSUME_NONNULL_BEGIN
 ///-----------------------------
 
 /**
- * 在某单元行后面添加新的单元行
- *
- * @param formRow 行描述
- * @param afterRow 行描述，对应的单元行需要已经在 form 中了，否则新的单元行将添加到 form 最后面
- */
-- (void)addRow:(JTRowDescriptor *)formRow afterRow:(JTRowDescriptor *)afterRow;
-
-/**
- * 在某单元行前面添加新的单元行
- *
- * @param formRow 行描述
- * @param beforeRow 行描述，对应的单元行需要已经在 form 中了，否则新的单元行将添加到 form 最前面
- */
--(void)addRow:(JTRowDescriptor *)formRow beforeRow:(JTRowDescriptor *)beforeRow;
-
-/**
- * 在某单元行后面添加新的单元行
- *
- * @param formRow 行描述
- * @param afterRowTag 根据该 tag 找到相应的单元行，如果该单元行不存在则将添加到 form 最后面
- */
-- (void)addRow:(JTRowDescriptor *)formRow afterRowWithTag:(id<NSCopying>)afterRowTag;
-
-/**
- * 在某单元行前面添加新的单元行
- *
- * @param formRow 行描述
- * @param beforeRowTag 根据该 tag 找到相应的单元行，如果该单元行不存在则将添加到 form 最前面
- */
-- (void)addRow:(JTRowDescriptor *)formRow beforeRowWithTag:(id<NSCopying>)beforeRowTag;
-
-/**
- * 在表单指定位置添加单元行
- *
- * @param formRow 行描述
- * @param indexPath 表单中的索引位置，如果超出范围则不会添加
- */
-- (void)addRow:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath;
-
-/**
  * 在表单最后面添加单元行
  *
- * @param formRow 行描述
+ * @param row 行描述
  */
-- (void)addRow:(JTRowDescriptor *)formRow;
+- (void)addRow:(JTRowDescriptor *)row;
+
+/**
+ * 在表单最后面添加一些单元行
+ *
+ * @param rows 行描述
+ */
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows;
+
+/**
+ * 在指定位置插入单元行
+ *
+ * @param rows 行描述数组
+ * @param indexPath 索引位置
+ */
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows atIndexPath:(NSIndexPath *)indexPath;
+
+/**
+ * 在某单元行前面添加新的单元行
+ *
+ * @param rows 行描述
+ * @param beforeRow 行描述，对应的单元行需要已经在 form 中了，否则新的单元行将添加到 form 最前面
+ */
+-(void)addRows:(NSArray<JTRowDescriptor *> *)rows beforeRow:(JTRowDescriptor *)beforeRow;
+
+/**
+ * 在某单元行后面添加新的单元行
+ *
+ * @param rows 行描述
+ * @param afterRow 行描述，对应的单元行需要已经在 form 中了，否则新的单元行将添加到 form 最后面
+ */
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows afterRow:(JTRowDescriptor *)afterRow;
+
+/**
+ * 在某单元行前面添加新的单元行
+ *
+ * @param rows 行描述
+ * @param beforeRowTag 根据该 tag 找到相应的单元行，如果该单元行不存在则将添加到 form 最前面
+ */
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows beforeRowWithTag:(id<NSCopying>)beforeRowTag;
+
+/**
+ * 在某单元行后面添加新的单元行
+ *
+ * @param rows 行描述
+ * @param afterRowTag 根据该 tag 找到相应的单元行，如果该单元行不存在则将添加到 form 最后面
+ */
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows afterRowWithTag:(id<NSCopying>)afterRowTag;
 
 /**
  * 移除单元行
@@ -232,6 +241,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param row 行描述
  */
 -(void)removeRow:(JTRowDescriptor *)row;
+
+/**
+ * 移除一些单元行
+ *
+ * @param rows 行描述数组
+ */
+-(void)removeRows:(NSArray<JTRowDescriptor *> *)rows;
 
 /**
  * 在表单指定位置移除单元行
@@ -311,12 +327,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 设置单元行的 value
  *
- * @note 调用该方法会自动更新单元行的 UI
+ * @note 调用该方法会自动更新单元行的 UI，次方法会触发 KVO
  *
  * @param value 单元行的值
  * @param tag 单元行对应的tag
  */
-- (void)setRowValue:(nullable id)value byTag:(id<NSCopying>)tag;
+- (void)manualSetRowValue:(nullable id)value byTag:(id<NSCopying>)tag;
 
 /**
  * 刷新单元行的 UI
@@ -342,7 +358,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 重新加载单元行
  *
- * @note 使用该方法将重新创建y单元行里面的视图控件
+ * @note 使用该方法将重新创建单元行里面的视图控件
  *
  * @param rowDescriptors 行描述
  */
@@ -368,28 +384,35 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addSection:(JTSectionDescriptor *)section;
 
 /**
- * 在表单上指定位置添加节
+ * 在表单上添加一些节
  *
- * @param section 节描述
- * @param index 在表单中的索引位置
+ * @param sections 节描述数组
  */
-- (void)addSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index;
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections;
 
 /**
- * 在指定节后面添加新的节
+ * 在表单上指定位置添加节
  *
- * @param section 新添加节的节描述
- * @param afterSection 表单中已存在的节
+ * @param sections 节描述
+ * @param index 在表单中的索引位置
  */
-- (void)addSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection;
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections atIndex:(NSInteger)index;
 
 /**
  * 在指定节前面添加新的节
  *
- * @param section 新添加节的节描述
+ * @param sections 新添加节的节描述
  * @param beforeSection 表单中已存在的节
  */
-- (void)addSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections beforeSection:(JTSectionDescriptor *)beforeSection;
+
+/**
+ * 在指定节后面添加新的节
+ *
+ * @param sections 新添加节的节描述
+ * @param afterSection 表单中已存在的节
+ */
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections afterSection:(JTSectionDescriptor *)afterSection;
 
 /**
  * 在表单中移除节
@@ -397,6 +420,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param section 需要移除节的节描述
  */
 - (void)removeSection:(JTSectionDescriptor *)section;
+
+/**
+ * 在表单中移除一些节
+ *
+ * @param sections 节描述数组
+ */
+- (void)removeSections:(NSArray<JTSectionDescriptor *> *)sections;
 
 /**
  * 移除表单中某个位置的节
@@ -408,9 +438,9 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 移除某些索引位置上的节
  *
- * @param indexes 节的索引集合
+ * @param indexSet 节的索引集合
  */
-- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes;
+- (void)removeSectionsAtIndexes:(NSIndexSet *)indexSet;
 
 /**
  * 查找节在表单中的索引位置
@@ -418,7 +448,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param sectionDescriptor 节描述
  * @return 节在表单中的索引位置。如果没有出现在表单中，则返回 NSNotFound
  */
-- (NSUInteger)indexForSection:(JTSectionDescriptor *)sectionDescriptor;
+- (NSUInteger)indexOfSection:(JTSectionDescriptor *)sectionDescriptor;
 
 /**
  * 根据给定索引查找相应的节

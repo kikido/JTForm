@@ -15,9 +15,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class ASViewController;
+@class ASDKViewController;
 
-@interface JTFormOptionsViewController : ASViewController <JTFormSelectViewControllerDelegate>
+@interface JTFormOptionsViewController : ASDKViewController <JTFormSelectViewControllerDelegate>
 
 @end
 

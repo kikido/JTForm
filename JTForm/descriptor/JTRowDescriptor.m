@@ -8,12 +8,13 @@
 //
 
 #import "JTRowDescriptor.h"
-#import "JTBaseCell.h"
 #import "JTForm.h"
 
 NSString *const JTFormRowTypeText                 = @"JTFormRowTypeText";
 NSString *const JTFormRowTypeName                 = @"JTFormRowTypeName";
+/** A type optimized for multiple email address entry (shows space @ . prominently). */
 NSString *const JTFormRowTypeEmail                = @"JTFormRowTypeEmail";
+/** Numbers and assorted punctuation 数字和符号 */
 NSString *const JTFormRowTypeNumber               = @"JTFormRowTypeNumber";
 NSString *const JTFormRowTypeInteger              = @"JTFormRowTypeInteger";
 NSString *const JTFormRowTypeDecimal              = @"JTFormRowTypeDecimal";
@@ -22,6 +23,7 @@ NSString *const JTFormRowTypePhone                = @"JTFormRowTypePhone";
 NSString *const JTFormRowTypeURL                  = @"JTFormRowTypeURL";
 NSString *const JTFormRowTypeTextView             = @"JTFormRowTypeTextView";
 NSString *const JTFormRowTypeInfo                 = @"JTFormRowTypeInfo";
+NSString *const JTFormRowTypeLongInfo             = @"JTFormRowTypeLongInfo";
 NSString *const JTFormRowTypePushSelect           = @"JTFormRowTypePushSelect";
 NSString *const JTFormRowTypeMultipleSelect       = @"JTFormRowTypeMultipleSelect";
 NSString *const JTFormRowTypeSheetSelect          = @"JTFormRowTypeSheetSelect";
@@ -41,7 +43,6 @@ NSString *const JTFormRowTypeCheck                = @"JTFormRowTypeCheck";
 NSString *const JTFormRowTypeStepCounter          = @"JTFormRowTypeStepCounter";
 NSString *const JTFormRowTypeSegmentedControl     = @"JTFormRowTypeSegmentedControl";
 NSString *const JTFormRowTypeSlider               = @"JTFormRowTypeSlider";
-NSString *const JTFormRowTypeButton               = @"JTFormRowTypeButton";
 NSString *const JTFormRowTypeFloatText            = @"JTFormRowTypeFloatText";
 
 CGFloat const JTFormRowInitialHeight = -2.0;
@@ -59,12 +60,12 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 @synthesize hidden = _hidden;
 @synthesize disabled = _disabled;
 
-+ (instancetype)rowDescriptorWithTag:(nullable NSString *)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title
++ (instancetype)rowDescriptorWithTag:(nullable id<NSCopying>)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title
 {
     return [[JTRowDescriptor alloc] initWithTag:tag rowType:rowType title:title];
 }
 
-- (instancetype)initWithTag:(nullable NSString *)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title
+- (instancetype)initWithTag:(nullable id<NSCopying>)tag rowType:(nonnull JTFormRowType)rowType title:(nullable NSString *)title
 {
     if (self = [super init]) {
         _title   = title;
@@ -72,11 +73,11 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         _tag     = tag;
         _height  = JTFormRowInitialHeight;
         
-        _cellConfigAfterUpdate  = @{}.mutableCopy;
-        _cellConfigWhenDisabled = @{}.mutableCopy;
-        _cellConfigAtConfigure  = @{}.mutableCopy;
-        _cellDataDictionary     = @{}.mutableCopy;
-        
+        _configAfterUpdate  = @{}.mutableCopy;
+        _configAfterConfig  = @{}.mutableCopy;
+        _configWhenDisabled = @{}.mutableCopy;
+        _configReserve      = @{}.mutableCopy;
+       
         [self addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     }
     return self;
@@ -89,18 +90,18 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 #pragma mark - cell
 
-- (void)updateUI
+- (void)updateCell
 {
     if (!self.isCellExist || !self.sectionDescriptor.formDescriptor.form) {
         return;
     }
-    JTBaseCell *cell = [self cellInForm];
+    JTBaseCell *cell = [self cellForDescriptor];
     [cell update];
-    [self.cellConfigAfterUpdate enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+    [self.configAfterUpdate enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         [cell setValue:(obj == [NSNull null] ? nil : obj) forKeyPath:key];
     }];
     if (cell.rowDescriptor.disabled) {
-        [self.cellConfigWhenDisabled enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        [self.configWhenDisabled enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
             [cell setValue:(obj == [NSNull null] ? nil : obj) forKeyPath:key];
         }];
     }
@@ -108,20 +109,19 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (void)reloadCellWithNewRowType:(nonnull JTFormRowType)rowType
 {
-    if (!rowType) return;
-    if (![JTForm cellClassesForRowTypes][rowType]) return;
+    NSAssert([JTForm cellClassesForRowTypes][rowType] != nil, @"rowtype:%@ did not existed in JTForm cellClassesForRowTypes", rowType);
     
     _rowType = rowType;
     _cell = nil;
-    _cell = [self cellInForm];
+    _cell = [self cellForDescriptor];
     [((JTForm *)self.sectionDescriptor.formDescriptor.form) reloadRows:@[self]];
 }
 
-- (JTBaseCell *)cellInForm
+- (JTBaseCell *)cellForDescriptor
 {
     if (!_cell) {
         id cellClass = [JTForm cellClassesForRowTypes][self.rowType];
-        NSAssert(cellClass, @"not defined cell class for cell type named %@", self.rowType ?: @"null");
+        NSAssert(cellClass, @"no defined cell class for cell type named %@", self.rowType ?: @"null");
         
         if ([cellClass isKindOfClass:[NSString class]]) {
             NSString *cellClassString = cellClass;
@@ -131,20 +131,13 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         }
         NSAssert([_cell isKindOfClass:[JTBaseCell class]], @"cell must extend from JTBaseCell");
         _cell.rowDescriptor = self;
-        
-        [self configureCellAtCreationTime];
         _cellExist = true;
+        
+        [self.configAfterConfig enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            [self.cell setValue:(obj == [NSNull null]) ? nil : obj forKeyPath:key];
+        }];
     }
     return _cell;
-}
-
-- (void)configureCellAtCreationTime
-{
-    __weak typeof(self) weakSelf = self;
-    [self.cellConfigAtConfigure enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        __strong typeof(self) strongSelf = weakSelf;
-        [strongSelf.cell setValue:(obj == [NSNull null]) ? nil : obj forKeyPath:key];
-    }];
 }
 
 - (CGFloat)height
@@ -166,9 +159,9 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 - (BOOL)disabled
 {
-    if (self.sectionDescriptor.formDescriptor.disabled) return YES;
-    if (self.sectionDescriptor.disabled)                return YES;
-    
+    if (self.sectionDescriptor.disabled || self.sectionDescriptor.formDescriptor.disabled) {
+        return YES;
+    }
     return _disabled;
 }
 
@@ -177,13 +170,12 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     if (_disabled != disabled) {
         _disabled = disabled;
         if (disabled && self.isCellExist) {
-            JTBaseCell *cell = [self cellInForm];
-            // FIXME: JTFormRowTypeAlertSelect 设置 disabled 和 hidden 属性并不会让弹出的 UIAlertController 消失
-            if ([cell isFirstResponder]) {
+            JTBaseCell *cell = [self cellForDescriptor];
+            if ([cell jt_isFirstResponder]) {
                 [cell resignFirstResponder];
             }
+            [self updateCell];
         }
-        [self updateUI];
     }
 }
 
@@ -199,54 +191,58 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 #pragma mark - text
 
-- (nullable NSString *)displayTextValue
+- (nullable NSString *)unEditingText
 {
     if (self.value) {
         if (self.valueFormatter) {
             return [self.valueFormatter stringForObjectValue:self.value];
-        } else {
-            return [self.value cellText];
         }
-    } else {
+        else {
+            return [self.value descriptionForForm];
+        }
+    }
+    else {
         return nil;
     }
 }
 
-- (nullable NSString *)editTextValue
-{
-    if (!self.value) return nil;
-    
-    return [self.value cellText];
+- (nullable NSString *)editingText
+{   
+    return [self.value descriptionForForm];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"[rowDescriptor] <%@: %p> rowtype:%@, tag:%@, value:%@",[self class], self, _rowType, _tag, _value];
+    return [NSString stringWithFormat:@"[rowDescriptor]<%@: %p> rowtype:%@, tag:%@, value:%@",[self class], self, _rowType, _tag, _value];
 }
 
 #pragma mark - Validation
 
 - (void)addValidator:(nonnull id<JTFormValidateProtocol>)validator
 {
-    if (validator == nil || ![validator conformsToProtocol:@protocol(JTFormValidateProtocol)]) {
-        return;
+    if (!validator) return;
+    if (![validator conformsToProtocol:@protocol(JTFormValidateProtocol)]) {
+        @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                       reason:[NSString stringWithFormat:@"validator %@ should conform protocol JTFormValidateProtocol", [validator class]]
+                                     userInfo:nil];
     }
     if (!_validators) {
-        _validators = @[].mutableCopy;
+        _validators = [NSMutableArray array];
     }
-    if(![self.validators containsObject:validator]) {
-        [self.validators addObject:validator];
+    if(![_validators containsObject:validator]) {
+        [_validators addObject:validator];
     }
 }
 
 - (void)removeValidator:(nonnull id<JTFormValidateProtocol>)validator;
 {
-    [self.validators removeObject:validator];
+    [_validators removeObject:validator];
 }
 
 - (void)removeAllValidators
 {
-    [self.validators removeAllObjects];
+    [_validators removeAllObjects];
+    _validators = nil;
 }
 
 - (nullable JTFormValidateObject *)doValidate
@@ -273,8 +269,8 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
     [self.validators enumerateObjectsUsingBlock:^(id<JTFormValidateProtocol>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         __strong typeof(weakSelf) strongSelf = weakSelf;
         JTFormValidateObject *vObject = [obj isValid:strongSelf];
+        validateObject = vObject;
         if (vObject && !vObject.valid) {
-            validateObject = vObject;
             *stop = YES;
         }
     }];
@@ -301,7 +297,7 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         return YES;
     }
     if ([objectValue isKindOfClass:[JTOptionObject class]]) {
-        return  [self _sourceRowValueIsEmpty:[objectValue formValue]];
+        return  [self _sourceRowValueIsEmpty:[objectValue optionValue]];
     }
     return NO;
 }
@@ -318,6 +314,22 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
 
 #pragma mark - kvo
 
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key
+{
+    if ([key isEqualToString:@"value"]) {
+        return false;
+    }
+    return [super automaticallyNotifiesObserversForKey:key];
+}
+
+- (void)manualSetValue:(nullable id)value
+{
+    [self willChangeValueForKey:@"value"];
+    _value = value;
+    [self didChangeValueForKey:@"value"];
+}
+
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (!self.sectionDescriptor.formDescriptor.form) return;
@@ -326,7 +338,6 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
         if ([[change objectForKey:NSKeyValueChangeKindKey] isEqualToNumber:@(NSKeyValueChangeSetting)]) {
             id newValue = [change objectForKey:NSKeyValueChangeNewKey];
             id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
-            
             if (self.valueChangeBlock) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.valueChangeBlock(oldValue, newValue, self);
@@ -339,13 +350,6 @@ CGFloat const JTFormUnspecifiedCellHeight = -3.0;
             }
         }
     }
-}
-
-#pragma mark - private
-
-- (void)jt_setValue:(id)value
-{
-    _value = value;
 }
 
 @end

@@ -62,76 +62,54 @@
     formDescriptor.addAsteriskToRequiredRowsTitle = YES;
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
+
+    NSArray *tags = @[@"JTFormRowTypeFloatText", @"JTFormRowTypeText", @"JTFormRowTypeName", @"JTFormRowTypeEmail", @"JTFormRowTypeNumber", @"JTFormRowTypeInteger", @"JTFormRowTypeDecimal", @"JTFormRowTypePassword", @"JTFormRowTypePhone", @"JTFormRowTypeURL", @"JTFormRowTypeInfo",
+                      @"JTFormRowTypeTextView", @"JTFormRowTypeLongInfo",
+                      @"JTFormRowTypePushSelect", @"JTFormRowTypeMultipleSelect", @"JTFormRowTypeSheetSelect", @"JTFormRowTypeAlertSelect", @"JTFormRowTypePickerSelect", @"JTFormRowTypePushButton",
+                      @"JTFormRowTypeDate", @"JTFormRowTypeTime", @"JTFormRowTypeDateTime", @"JTFormRowTypeCountDownTimer", @"JTFormRowTypeDateInline", @"JTFormRowTypeTimeInline", @"JTFormRowTypeDateTimeInline", @"JTFormRowTypeCountDownTimerInline",
+                      @"JTFormRowTypeSwitch", @"JTFormRowTypeCheck", @"JTFormRowTypeStepCounter", @"JTFormRowTypeSegmentedControl", @"JTFormRowTypeSlider"];
     
+    section = [JTSectionDescriptor formSection];
+    section.headerHeight = 40.;
+    section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"header view" font:nil color:nil];
+    section.footerHeight = 40.;
+    section.footerAttributedString = [NSAttributedString jt_attributedStringWithString:@"footer view" font:nil color:nil];
+    [formDescriptor addSection:section];
+    
+    NSArray *dateTags = @[@"JTFormRowTypeDate", @"JTFormRowTypeTime", @"JTFormRowTypeDateTime"];
+    NSArray *inlineDateTags = @[@"JTFormRowTypeDate", @"JTFormRowTypeTime", @"JTFormRowTypeDateTime"];
+    NSArray *options = [JTOptionObject optionObjectsWithOptionValues:@[@1, @2, @3, @4, @5] optionTexts:@[@"西瓜", @"桃子", @"香蕉", @"橘子", @"柿子"]];
+    
+    for (NSInteger i = 0; i < tags.count; i++) {
+        NSString *tag = tags[i];
+        row = [JTRowDescriptor rowDescriptorWithTag:tags[i] rowType:tags[i] title:tags[i]];
+        row.cellForDescriptor.accessibilityLabel = tags[i];
+        row.selectorOptions = options;
+        [section addRow:row];
         
-    section = [JTSectionDescriptor formSection];
-    [formDescriptor addSection:section];
-    
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:@"01" rowType:JTFormRowTypeText title:@"Name"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:@"收入" rowType:JTFormRowTypeInteger title:@"收入"];
-    row.value = @"100";
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:@"吃饭时间" rowType:JTFormRowTypePickerSelect title:@"吃饭时间"];
-    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3] displayTexts:@[@"早饭", @"午饭", @"晚饭"]];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    [section addRow:row];
-
-    row = [JTRowDescriptor rowDescriptorWithTag:@"交通方式" rowType:JTFormRowTypeAlertSelect title:@"交通方式"];
-    row.selectorOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3] displayTexts:@[@"自行车", @"高铁", @"汽车"]];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:@"出生日期" rowType:JTFormRowTypeDateInline title:@"出生日期"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:@"欠款" rowType:JTFormRowTypeDecimal title:@"欠款"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterCurrencyStyle];
-    row.valueFormatter = formatter;
-    [section addRow:row];
-    
-    row = [JTRowDescriptor rowDescriptorWithTag:@"JTFormRowTypeSwitch" rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitch"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    row.value = @YES;
-    [section addRow:row];
-
-    section = [JTSectionDescriptor formSection];
-    section.footerHeight = 12.;
-    [formDescriptor addSection:section];
-
-    row = [JTRowDescriptor rowDescriptorWithTag:@"欠款1" rowType:JTFormRowTypeDecimal title:@"欠款1"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    row.imageUrl = netImageUrl(30, 30);
-    [section addRow:row];
-
-    row = [JTRowDescriptor rowDescriptorWithTag:@"结婚日期" rowType:JTFormRowTypeDateInline title:@"结婚日期"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    [section addRow:row];
-
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeSwitch rowType:JTFormRowTypeSwitch title:@"JTFormRowTypeSwitchJTFormRowTypeSwitchJTFormRowTypeSwitch"];
-    row.placeHolder = [NSString stringWithFormat:@"请输入%@...", row.title];
-    row.imageUrl = netImageUrl(30, 30);
-    row.required = YES;
-    [section addRow:row];
-    
+        if (@available(iOS 14.0, *)) {
+            for (NSString *dateTag in dateTags) {
+                if ([dateTag isEqualToString:tag]) {
+                    row.configAfterUpdate[@"datePickerNode.accessibilityLabel"] = [NSString stringWithFormat:@"%@-datepicker", tag];
+                }
+            }
+        } else {
+            for (NSString *dateTag in dateTags) {
+                if ([dateTag isEqualToString:tag]) {
+                    row.configAfterUpdate[@"datePicker.accessibilityLabel"] = [NSString stringWithFormat:@"%@-datepicker", tag];
+                    row.configAfterUpdate[@"datePicker.locale"] = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+                }
+            }
+        }
+    }
+   
     
     JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = CGRectMake(0, 0, kJTScreenWidth, kJTScreenHeight-64.);
+    form.accessibilityLabel = @"form";
     [self.view addSubview:form];
     self.form = form;
-            
-//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, kJTScreenHeight- 64. -90., kJTScreenWidth, 90.)];
-//    view.backgroundColor = [UIColor blackColor];
-//    [self.view addSubview:view];
-    // Do any additional setup after loading the view.
+    form.tableNode.displaysAsynchronously = false;
 }
 
 /*

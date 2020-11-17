@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JTFormStepCounterCell : JTBaseCell
 @property (nonatomic, strong) UIStepper *stepControl;
+
+@property (nonatomic, strong) NSDecimalNumber *maximumValue;
+@property (nonatomic, strong) NSDecimalNumber *minimumValue;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class JTFormConfigMode;
+@class JTFormConfigModel;
 
 @interface JTBaseDescriptor : NSObject
 
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * 优先级 row > section > form > 默认值，默认值可在 JTFormCellLayout.h 文件中修改
  */
-@property (nonatomic, strong, nullable) JTFormConfigMode *configMode;
+@property (nonatomic, strong, nullable) JTFormConfigModel *configModel;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 
@@ -65,9 +65,11 @@ NS_ASSUME_NONNULL_BEGIN
  1. 标题颜色和字体
  2. 详情颜色和字体
  */
-@interface JTFormConfigMode : NSObject
+@interface JTFormConfigModel : NSObject
 /** 标题颜色 */
 @property (nonatomic, strong, nullable) UIColor *titleColor;
+/** 高亮时标题颜色 */
+@property (nonatomic, strong, nullable) UIColor *highLightTitleColor;
 /** 内容颜色 */
 @property (nonatomic, strong, nullable) UIColor *contentColor;
 /** 占位符颜色 */
@@ -81,6 +83,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 标题字体 */
 @property (nonatomic, strong, nullable) UIFont *titleFont;
+/** 高亮时字体标题 */
+@property (nonatomic, strong, nullable) UIFont *highLightTitleFont;
 /** 内容字体 */
 @property (nonatomic, strong, nullable) UIFont *contentFont;
 /** 占位符字体 */

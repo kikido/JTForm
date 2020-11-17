@@ -15,17 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JTFormDescriptorDelegate <NSObject>
 
-/** 在表单中移除了指定索引位置的节描述 */
+/** 在表单中移除了指定索引位置的节 */
 - (void)formSectionsHaveBeenRemovedAtIndexes:(NSIndexSet *)indexSet;
 
-/** 在表单中添加了指定索引位置的节描述 */
+/** 在表单中添加了指定索引位置的节 */
 - (void)formSectionsHaveBeenAddedAtIndexes:(NSIndexSet *)indexSet;
 
-/** 在表单中添加了指定索引位置的行描述 */
-- (void)formRowHasBeenAddedAtIndexPath:(NSIndexPath *)indexPath;
+/** 在表单中添加了指定索引位置的行 */
+- (void)formRowHasBeenAddedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 
-/** 在表单中移除了指定索引位置的行描述 */
-- (void)formRowHasBeenRemovedAtIndexPath:(NSIndexPath *)indexPath;
+/** 在表单中移除了指定索引位置的行 */
+- (void)formRowHasBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths;
 
 - (void)formRowDescriptorValueHasChanged:(JTRowDescriptor *)formRow oldValue:(id)oldValue newValue:(id)newValue;
 

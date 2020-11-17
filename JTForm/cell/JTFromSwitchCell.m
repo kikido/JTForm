@@ -22,7 +22,6 @@
     _accessoryNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UISwitch *switchControl       = [[UISwitch alloc] init];
         switchControl.backgroundColor = [UIColor clearColor];
-        [switchControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return switchControl;
     }];
 }
@@ -32,6 +31,7 @@
     [super update];
     
     UISwitch *switchControl = (UISwitch *)self.accessoryNode.view;
+    [switchControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
     switchControl.on        = [self.rowDescriptor.value boolValue];
     switchControl.enabled   = !self.rowDescriptor.disabled;
     self.switchControl      = switchControl;
@@ -39,7 +39,7 @@
 
 - (void)valueChanged:(UISwitch *)sender
 {
-    self.rowDescriptor.value = @(sender.on);
+    [self.rowDescriptor manualSetValue:@(sender.on)];
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize

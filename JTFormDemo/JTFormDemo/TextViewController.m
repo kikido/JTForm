@@ -7,6 +7,7 @@
 //
 
 #import "TextViewController.h"
+#import <Texture/AsyncDisplayKit/AsyncDisplayKit.h>
 
 @interface TextViewController()
 @end
@@ -22,6 +23,7 @@
     formDescriptor.addAsteriskToRequiredRowsTitle = YES;
     JTSectionDescriptor *section = nil;
     JTRowDescriptor *row = nil;
+    ASCellNode *node;
     
     #pragma mark - float text
     
@@ -78,32 +80,42 @@
     row.placeHolder = @"请输入姓名...";
     row.required = YES;
     [section addRow:row];
+//    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeName";
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeEmail rowType:JTFormRowTypeEmail title:@"JTFormRowTypeEmail"];
     row.required = YES;
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeEmail";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeNumber rowType:JTFormRowTypeNumber title:@"JTFormRowTypeNumber"];
     [section addRow:row];
-    
+    node = (ASCellNode *)[row cellForDescriptor];
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeNumber";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeInteger rowType:JTFormRowTypeInteger title:@"JTFormRowTypeInteger"];
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeInteger";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeDecimal rowType:JTFormRowTypeDecimal title:@"JTFormRowTypeDecimal"];
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeDecimal";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePhone rowType:JTFormRowTypePhone title:@"JTFormRowTypePhone"];
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypePhone";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePassword rowType:JTFormRowTypePassword title:@"JTFormRowTypePassword"];
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypePassword";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeName rowType:JTFormRowTypeName title:@"JTFormRowTypeName"];
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeName";
+
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeURL rowType:JTFormRowTypeURL title:@"JTFormRowTypeURL"];
     [section addRow:row];
-    
+    [row cellForDescriptor].accessibilityLabel = @"JTFormRowTypeURL"; 
+
     section = [JTSectionDescriptor formSection];
     section.headerAttributedString = [NSAttributedString jt_attributedStringWithString:@"float text" font:nil color:nil firstWordColor:nil];
     section.headerHeight = 30.;
@@ -119,19 +131,20 @@
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTextView rowType:JTFormRowTypeTextView title:@"JTFormRowTypeTextView"];
     row.image = [UIImage imageNamed:@"jt_money"];
-    row.value = @"niadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnniadadadadnvniadadadadn";
+    row.value = nil;
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeTextView rowType:JTFormRowTypeTextView title:@"JTFormRowTypeTextView"];
-    row.value = @"djdjd";
+    row.placeHolder = @"请输入...";
+    row.value = @"dmdd";
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"2" rowType:JTFormRowTypeName title:@"短"];
     row.value = @"内容很长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长";
     [section addRow:row];
     
-    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeInfo rowType:JTFormRowTypeInfo title:@"JTFormRowTypeInfo"];
-    row.value = @"知识测试一下";
+    row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypeLongInfo rowType:JTFormRowTypeLongInfo title:@"JTFormRowTypeLongInfo"];
+    row.value = @"内容很长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长";
     [section addRow:row];
     
     

@@ -33,6 +33,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+#ifdef DEBUG
+    _tableNode.accessibilityIdentifier = @"tableview";
+    _tableNode.accessibilityLabel = @"tableview";
+    _tableNode.view.accessibilityIdentifier = @"tableview";
+#endif
+    
     _selectedItems = [self.rowDescriptor.rowType isEqualToString:JTFormRowTypePushSelect] ?
                      (self.rowDescriptor.value ? @[self.rowDescriptor.value].mutableCopy : [NSMutableArray array]) :
                      (self.rowDescriptor.value ? [self.rowDescriptor.value mutableCopy] : [NSMutableArray array]);
@@ -60,8 +66,8 @@
             }
         }
         [_selectedItems removeObjectsAtIndexes:unExistSet];
-        self.rowDescriptor.value = [_selectedItems copy];
-    }    
+        [self.rowDescriptor manualSetValue:[_selectedItems copy]];
+    }
     [self.form updateRow:self.rowDescriptor];
 }
 
@@ -84,7 +90,7 @@
     cellNode.backgroundColor = UIColor.whiteColor;
     cellNode.accessoryType   = [self selectedItemsContainOption:option index:nil] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     cellNode.separatorInset  = UIEdgeInsetsMake(0, 15, 0, 0);
-    cellNode.textNode.attributedText = [NSAttributedString jt_attributedStringWithString:[option cellText]
+    cellNode.textNode.attributedText = [NSAttributedString jt_attributedStringWithString:[option descriptionForForm]
                                                                                     font:[UIFont systemFontOfSize:16.]
                                                                                    color:UIColorHex(333333)
                                                                           firstWordColor:nil];
@@ -98,8 +104,7 @@
     UITableViewCell *cell = [tableNode cellForRowAtIndexPath:indexPath];
     JTOptionObject *optionObject = self.rowDescriptor.selectorOptions[indexPath.row];
     
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeMultipleSelect])
-    {
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeMultipleSelect]) {
         NSUInteger index;
         if ([self selectedItemsContainOption:optionObject index:&index]) {
             // 之前已被选中，再次点击后取消选中
@@ -111,15 +116,12 @@
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         }
     }
-    else
-    {
-        if ([self.rowDescriptor.value jt_isEqual:optionObject])
-        {
-            self.rowDescriptor.value = nil;
+    else {
+        if ([self.rowDescriptor.value jt_isEqual:optionObject]) {
+            [self.rowDescriptor manualSetValue:nil];
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
-        else
-        {
+        else {
             if (self.rowDescriptor.value) {
                 NSInteger index = NSNotFound;
                 for (JTOptionObject *selectObject in self.rowDescriptor.selectorOptions) {
@@ -134,7 +136,7 @@
                     oldCellNode.accessoryType = UITableViewCellAccessoryNone;
                 }
             }
-            self.rowDescriptor.value = optionObject;
+            [self.rowDescriptor manualSetValue:optionObject];
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         }
         // 有值的话返回

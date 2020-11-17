@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init __unavailable;
 @end
 
-AS_SUBCLASSING_RESTRICTED
+AS_SUBCLASSING_RESTRICTED // 这个宏表示该类无法被继承
 @interface ASTextKitComponents : NSObject
 
 /**

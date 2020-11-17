@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1395FCC6DA0953C829424896 /* libPods-JTFormDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E6F33520D01E4D99A8AEDA9 /* libPods-JTFormDemo.a */; };
 		1D04D6C5228AA99C004F6E07 /* JTOptionObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D04D673228AA99C004F6E07 /* JTOptionObject.m */; };
 		1D04D6C6228AA99C004F6E07 /* JTForm.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1D04D675228AA99C004F6E07 /* JTForm.bundle */; };
 		1D04D6C7228AA99C004F6E07 /* JTFormSliderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D04D67F228AA99C004F6E07 /* JTFormSliderCell.m */; };
@@ -137,17 +136,35 @@
 		1D873EF523C57A7900C7CE6E /* CollectionViewController2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873EF423C57A7900C7CE6E /* CollectionViewController2.m */; };
 		1D873EF823C57A8300C7CE6E /* CollectionViewController3.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D873EF723C57A8300C7CE6E /* CollectionViewController3.m */; };
 		1DBF846D22B0D1F800CC4FBA /* FormOneController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DBF846C22B0D1F800CC4FBA /* FormOneController.m */; };
+		1DC168C12550F6B500623CDD /* JTFormUITest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DC168C02550F6B500623CDD /* JTFormUITest.m */; };
 		1DC7BBE924246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DC7BBE824246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m */; };
 		1DDADA29225B6DA000652FE6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA28225B6DA000652FE6 /* AppDelegate.m */; };
 		1DDADA2C225B6DA000652FE6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA2B225B6DA000652FE6 /* ViewController.m */; };
 		1DDADA31225B6DA100652FE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1DDADA30225B6DA100652FE6 /* Assets.xcassets */; };
 		1DDADA37225B6DA100652FE6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DDADA36225B6DA100652FE6 /* main.m */; };
 		1DDADA4F225B776C00652FE6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DDADA4E225B776C00652FE6 /* UIKit.framework */; };
+		1DE49BB02546BF6F0042DBEB /* JTFormTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DE49BAF2546BF6F0042DBEB /* JTFormTests.m */; };
+		1DE49C1B2547FEC50042DBEB /* JTForm.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1D04D675228AA99C004F6E07 /* JTForm.bundle */; };
+		1DE82157251C6E5500CC1184 /* JTFormCompactDateCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DE82156251C6E5500CC1184 /* JTFormCompactDateCell.m */; };
+		1DE8215B251D905B00CC1184 /* UIView+JTAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DE8215A251D905B00CC1184 /* UIView+JTAdd.m */; };
+		1DEBA9CA2510ABE500942F4F /* JTFormAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEBA9C92510ABE500942F4F /* JTFormAgent.m */; };
 		1DF4C2E52271D90A00FAEC41 /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF4C2E42271D90A00FAEC41 /* YYFPSLabel.m */; };
+		A223F26845A0BD23A4F7E1C8 /* libPods-JTFormTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 674D709EA718927B69D2B76D /* libPods-JTFormTests.a */; };
+		C0FC5A990E8B6AC69ACED016 /* libPods-JTFormDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEBA1A0BAEF92EC43E2E791D /* libPods-JTFormDemo.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1DE49BB22546BF6F0042DBEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1DDADA1C225B6DA000652FE6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1DDADA23225B6DA000652FE6;
+			remoteInfo = JTFormDemo;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		1329AD7DFD385D8D2047D783 /* Pods-JTForm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm/Pods-JTForm.debug.xcconfig"; sourceTree = "<group>"; };
+		0C660EDEE3FED86C8AB86660 /* Pods-JTFormTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTFormTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JTFormTests/Pods-JTFormTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1D04D673228AA99C004F6E07 /* JTOptionObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTOptionObject.m; sourceTree = "<group>"; };
 		1D04D674228AA99C004F6E07 /* JTOptionObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTOptionObject.h; sourceTree = "<group>"; };
 		1D04D675228AA99C004F6E07 /* JTForm.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = JTForm.bundle; sourceTree = "<group>"; };
@@ -405,6 +422,7 @@
 		1DBF846B22B0D1F800CC4FBA /* FormOneController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormOneController.h; sourceTree = "<group>"; };
 		1DBF846C22B0D1F800CC4FBA /* FormOneController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FormOneController.m; sourceTree = "<group>"; };
 		1DBF846F22B0DE7200CC4FBA /* JTFormDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormDelegate.h; sourceTree = "<group>"; };
+		1DC168C02550F6B500623CDD /* JTFormUITest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormUITest.m; sourceTree = "<group>"; };
 		1DC7BBE724246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JTRowDescriptor+JTPrivate.h"; sourceTree = "<group>"; };
 		1DC7BBE824246FC8004A5AA7 /* JTRowDescriptor+JTPrivate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JTRowDescriptor+JTPrivate.m"; sourceTree = "<group>"; };
 		1DDADA24225B6DA000652FE6 /* JTFormDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JTFormDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -416,12 +434,24 @@
 		1DDADA35225B6DA100652FE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1DDADA36225B6DA100652FE6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1DDADA4E225B776C00652FE6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1DE49BAD2546BF6F0042DBEB /* JTFormTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JTFormTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DE49BAF2546BF6F0042DBEB /* JTFormTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormTests.m; sourceTree = "<group>"; };
+		1DE49BB12546BF6F0042DBEB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1DE82155251C6E5500CC1184 /* JTFormCompactDateCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormCompactDateCell.h; sourceTree = "<group>"; };
+		1DE82156251C6E5500CC1184 /* JTFormCompactDateCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormCompactDateCell.m; sourceTree = "<group>"; };
+		1DE82159251D905B00CC1184 /* UIView+JTAdd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+JTAdd.h"; sourceTree = "<group>"; };
+		1DE8215A251D905B00CC1184 /* UIView+JTAdd.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+JTAdd.m"; sourceTree = "<group>"; };
+		1DEBA9C82510ABE500942F4F /* JTFormAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTFormAgent.h; sourceTree = "<group>"; };
+		1DEBA9C92510ABE500942F4F /* JTFormAgent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTFormAgent.m; sourceTree = "<group>"; };
 		1DF4C2E32271D90A00FAEC41 /* YYFPSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYFPSLabel.h; sourceTree = "<group>"; };
 		1DF4C2E42271D90A00FAEC41 /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
-		45E58FF64785B22E88E7DA1A /* Pods-JTFormDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTFormDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JTFormDemo/Pods-JTFormDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		5E6F33520D01E4D99A8AEDA9 /* libPods-JTFormDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JTFormDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		73046C3A4ECEA74080E7F2C3 /* Pods-JTFormDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTFormDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTFormDemo/Pods-JTFormDemo.release.xcconfig"; sourceTree = "<group>"; };
-		9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm/Pods-JTForm.release.xcconfig"; sourceTree = "<group>"; };
+		282986B41A4515D34050FDC6 /* Pods-JTFormTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTFormTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTFormTests/Pods-JTFormTests.release.xcconfig"; sourceTree = "<group>"; };
+		37F3E11E184594C219780A22 /* Pods-JTFormDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTFormDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JTFormDemo/Pods-JTFormDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		3C23DB6EC9529EE18F9B73B7 /* Pods-JTFormDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTFormDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTFormDemo/Pods-JTFormDemo.release.xcconfig"; sourceTree = "<group>"; };
+		674D709EA718927B69D2B76D /* libPods-JTFormTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JTFormTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C09CF175809B614477D0263 /* Pods-JTForm Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm Tests/Pods-JTForm Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		DEBA1A0BAEF92EC43E2E791D /* libPods-JTFormDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JTFormDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F74B802B2E5B2E224C80023B /* Pods-JTForm Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JTForm Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-JTForm Tests/Pods-JTForm Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -430,7 +460,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				1DDADA4F225B776C00652FE6 /* UIKit.framework in Frameworks */,
-				1395FCC6DA0953C829424896 /* libPods-JTFormDemo.a in Frameworks */,
+				C0FC5A990E8B6AC69ACED016 /* libPods-JTFormDemo.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DE49BAA2546BF6F0042DBEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A223F26845A0BD23A4F7E1C8 /* libPods-JTFormTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +486,8 @@
 				1D2E728423AA0FBD001EA1C7 /* JTCollectionLayoutInfo.m */,
 				1D2E728623AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.h */,
 				1D2E728723AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m */,
+				1DEBA9C82510ABE500942F4F /* JTFormAgent.h */,
+				1DEBA9C92510ABE500942F4F /* JTFormAgent.m */,
 				1D04D677228AA99C004F6E07 /* delegate */,
 				1D04D67E228AA99C004F6E07 /* cell */,
 				1D04D697228AA99C004F6E07 /* asnode */,
@@ -489,28 +529,30 @@
 			children = (
 				1D04D692228AA99C004F6E07 /* JTBaseCell.h */,
 				1D04D686228AA99C004F6E07 /* JTBaseCell.m */,
-				1D04D68F228AA99C004F6E07 /* JTFormTextFieldCell.h */,
-				1D04D683228AA99C004F6E07 /* JTFormTextFieldCell.m */,
-				1D04D68D228AA99C004F6E07 /* JTFormTextViewCell.h */,
-				1D04D684228AA99C004F6E07 /* JTFormTextViewCell.m */,
-				1D04D690228AA99C004F6E07 /* JTFormSelectCell.h */,
-				1D04D682228AA99C004F6E07 /* JTFormSelectCell.m */,
+				1D04D681228AA99C004F6E07 /* JTFormCheckCell.h */,
+				1D04D691228AA99C004F6E07 /* JTFormCheckCell.m */,
+				1DE82155251C6E5500CC1184 /* JTFormCompactDateCell.h */,
+				1DE82156251C6E5500CC1184 /* JTFormCompactDateCell.m */,
 				1D04D693228AA99C004F6E07 /* JTFormDateCell.h */,
 				1D04D68A228AA99C004F6E07 /* JTFormDateCell.m */,
 				1D04D687228AA99C004F6E07 /* JTFormDateInlineCell.h */,
 				1D04D696228AA99C004F6E07 /* JTFormDateInlineCell.m */,
-				1D04D68C228AA99C004F6E07 /* JTFormSliderCell.h */,
-				1D04D67F228AA99C004F6E07 /* JTFormSliderCell.m */,
-				1D04D68B228AA99C004F6E07 /* JTFormSegmentCell.h */,
-				1D04D680228AA99C004F6E07 /* JTFormSegmentCell.m */,
-				1D04D681228AA99C004F6E07 /* JTFormCheckCell.h */,
-				1D04D691228AA99C004F6E07 /* JTFormCheckCell.m */,
 				1D04D685228AA99C004F6E07 /* JTFormFloatTextCell.h */,
 				1D04D68E228AA99C004F6E07 /* JTFormFloatTextCell.m */,
-				1D04D694228AA99C004F6E07 /* JTFromSwitchCell.h */,
-				1D04D688228AA99C004F6E07 /* JTFromSwitchCell.m */,
+				1D04D68B228AA99C004F6E07 /* JTFormSegmentCell.h */,
+				1D04D680228AA99C004F6E07 /* JTFormSegmentCell.m */,
+				1D04D690228AA99C004F6E07 /* JTFormSelectCell.h */,
+				1D04D682228AA99C004F6E07 /* JTFormSelectCell.m */,
+				1D04D68C228AA99C004F6E07 /* JTFormSliderCell.h */,
+				1D04D67F228AA99C004F6E07 /* JTFormSliderCell.m */,
 				1D04D695228AA99C004F6E07 /* JTFormStepCounterCell.h */,
 				1D04D689228AA99C004F6E07 /* JTFormStepCounterCell.m */,
+				1D04D68F228AA99C004F6E07 /* JTFormTextFieldCell.h */,
+				1D04D683228AA99C004F6E07 /* JTFormTextFieldCell.m */,
+				1D04D68D228AA99C004F6E07 /* JTFormTextViewCell.h */,
+				1D04D684228AA99C004F6E07 /* JTFormTextViewCell.m */,
+				1D04D694228AA99C004F6E07 /* JTFromSwitchCell.h */,
+				1D04D688228AA99C004F6E07 /* JTFromSwitchCell.m */,
 			);
 			path = cell;
 			sourceTree = "<group>";
@@ -580,6 +622,8 @@
 				1D04D6B3228AA99C004F6E07 /* NSString+JTAdd.m */,
 				1D04D6B5228AA99C004F6E07 /* UIColor+JTAdd.h */,
 				1D04D6BD228AA99C004F6E07 /* UIColor+JTAdd.m */,
+				1DE82159251D905B00CC1184 /* UIView+JTAdd.h */,
+				1DE8215A251D905B00CC1184 /* UIView+JTAdd.m */,
 				1D04D6B6228AA99C004F6E07 /* NSAttributedString+JTAdd.m */,
 				1D04D6BE228AA99C004F6E07 /* NSAttributedString+JTAdd.h */,
 				1D04D6B4228AA99C004F6E07 /* JTFormCellLayout.h */,
@@ -930,6 +974,7 @@
 			isa = PBXGroup;
 			children = (
 				1DDADA26225B6DA000652FE6 /* JTFormDemo */,
+				1DE49BAE2546BF6F0042DBEB /* JTFormTests */,
 				1DDADA25225B6DA000652FE6 /* Products */,
 				92BE525C210FF88DE5260305 /* Pods */,
 				E9F6AD9409BD784587981FF4 /* Frameworks */,
@@ -940,6 +985,7 @@
 			isa = PBXGroup;
 			children = (
 				1DDADA24225B6DA000652FE6 /* JTFormDemo.app */,
+				1DE49BAD2546BF6F0042DBEB /* JTFormTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1004,13 +1050,25 @@
 			path = JTFormDemo;
 			sourceTree = "<group>";
 		};
+		1DE49BAE2546BF6F0042DBEB /* JTFormTests */ = {
+			isa = PBXGroup;
+			children = (
+				1DE49BAF2546BF6F0042DBEB /* JTFormTests.m */,
+				1DC168C02550F6B500623CDD /* JTFormUITest.m */,
+				1DE49BB12546BF6F0042DBEB /* Info.plist */,
+			);
+			path = JTFormTests;
+			sourceTree = "<group>";
+		};
 		92BE525C210FF88DE5260305 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1329AD7DFD385D8D2047D783 /* Pods-JTForm.debug.xcconfig */,
-				9278EFB922E4B0E8BAE9F998 /* Pods-JTForm.release.xcconfig */,
-				45E58FF64785B22E88E7DA1A /* Pods-JTFormDemo.debug.xcconfig */,
-				73046C3A4ECEA74080E7F2C3 /* Pods-JTFormDemo.release.xcconfig */,
+				37F3E11E184594C219780A22 /* Pods-JTFormDemo.debug.xcconfig */,
+				3C23DB6EC9529EE18F9B73B7 /* Pods-JTFormDemo.release.xcconfig */,
+				7C09CF175809B614477D0263 /* Pods-JTForm Tests.debug.xcconfig */,
+				F74B802B2E5B2E224C80023B /* Pods-JTForm Tests.release.xcconfig */,
+				0C660EDEE3FED86C8AB86660 /* Pods-JTFormTests.debug.xcconfig */,
+				282986B41A4515D34050FDC6 /* Pods-JTFormTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1019,7 +1077,8 @@
 			isa = PBXGroup;
 			children = (
 				1DDADA4E225B776C00652FE6 /* UIKit.framework */,
-				5E6F33520D01E4D99A8AEDA9 /* libPods-JTFormDemo.a */,
+				DEBA1A0BAEF92EC43E2E791D /* libPods-JTFormDemo.a */,
+				674D709EA718927B69D2B76D /* libPods-JTFormTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1045,6 +1104,25 @@
 			productReference = 1DDADA24225B6DA000652FE6 /* JTFormDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		1DE49BAC2546BF6F0042DBEB /* JTFormTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DE49BB42546BF6F0042DBEB /* Build configuration list for PBXNativeTarget "JTFormTests" */;
+			buildPhases = (
+				A3271ECDAD5FDA7ED035E258 /* [CP] Check Pods Manifest.lock */,
+				1DE49BA92546BF6F0042DBEB /* Sources */,
+				1DE49BAA2546BF6F0042DBEB /* Frameworks */,
+				1DE49BAB2546BF6F0042DBEB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1DE49BB32546BF6F0042DBEB /* PBXTargetDependency */,
+			);
+			name = JTFormTests;
+			productName = JTFormTests;
+			productReference = 1DE49BAD2546BF6F0042DBEB /* JTFormTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1056,6 +1134,10 @@
 				TargetAttributes = {
 					1DDADA23225B6DA000652FE6 = {
 						CreatedOnToolsVersion = 10.1;
+					};
+					1DE49BAC2546BF6F0042DBEB = {
+						CreatedOnToolsVersion = 12.0;
+						TestTargetID = 1DDADA23225B6DA000652FE6;
 					};
 				};
 			};
@@ -1073,6 +1155,7 @@
 			projectRoot = "";
 			targets = (
 				1DDADA23225B6DA000652FE6 /* JTFormDemo */,
+				1DE49BAC2546BF6F0042DBEB /* JTFormTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1099,9 +1182,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1DE49BAB2546BF6F0042DBEB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DE49C1B2547FEC50042DBEB /* JTForm.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		A3271ECDAD5FDA7ED035E258 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-JTFormTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		FB8F01B748A368A983B6229C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1193,6 +1306,7 @@
 				1D7BF94B228EB3B4009790D0 /* YYTextWeakProxy.m in Sources */,
 				1D04D6D9228AA99C004F6E07 /* JTBaseDescriptor.m in Sources */,
 				1D39F2F922850D9B0038A831 /* MJRefreshConfig.m in Sources */,
+				1DE82157251C6E5500CC1184 /* JTFormCompactDateCell.m in Sources */,
 				1D04D6CE228AA99C004F6E07 /* JTFormStepCounterCell.m in Sources */,
 				1D39F30722850D9B0038A831 /* MJRefreshFooter.m in Sources */,
 				1D39F2F822850D9B0038A831 /* MJRefreshConst.m in Sources */,
@@ -1208,6 +1322,7 @@
 				1D04D6CC228AA99C004F6E07 /* JTBaseCell.m in Sources */,
 				1D39F2FE22850D9B0038A831 /* MJRefreshBackGifFooter.m in Sources */,
 				1D401DA12320E87F00CC7B44 /* IQKeyboardManager.m in Sources */,
+				1DEBA9CA2510ABE500942F4F /* JTFormAgent.m in Sources */,
 				1D2E728823AA1F4C001EA1C7 /* JTCollectionLayoutDelegate.m in Sources */,
 				1D873EF523C57A7900C7CE6E /* CollectionViewController2.m in Sources */,
 				1D7BF936228EB3B4009790D0 /* YYTextContainerView.m in Sources */,
@@ -1225,6 +1340,7 @@
 				1D7BF937228EB3B4009790D0 /* YYTextEffectWindow.m in Sources */,
 				1D7BF943228EB3B4009790D0 /* YYTextRubyAnnotation.m in Sources */,
 				1D7BF93B228EB3B4009790D0 /* YYTextSelectionView.m in Sources */,
+				1DE8215B251D905B00CC1184 /* UIView+JTAdd.m in Sources */,
 				1D39F2FC22850D9B0038A831 /* NSBundle+MJRefresh.m in Sources */,
 				1D401D9C2320E87F00CC7B44 /* IQTitleBarButtonItem.m in Sources */,
 				1D401D9E2320E87F00CC7B44 /* IQUIView+IQKeyboardToolbar.m in Sources */,
@@ -1251,7 +1367,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1DE49BA92546BF6F0042DBEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DE49BB02546BF6F0042DBEB /* JTFormTests.m in Sources */,
+				1DC168C12550F6B500623CDD /* JTFormUITest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1DE49BB32546BF6F0042DBEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1DDADA23225B6DA000652FE6 /* JTFormDemo */;
+			targetProxy = 1DE49BB22546BF6F0042DBEB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DDADA38225B6DA100652FE6 /* Debug */ = {
@@ -1368,9 +1501,10 @@
 		};
 		1DDADA3B225B6DA100652FE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 45E58FF64785B22E88E7DA1A /* Pods-JTFormDemo.debug.xcconfig */;
+			baseConfigurationReference = 37F3E11E184594C219780A22 /* Pods-JTFormDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BUNDLE_LOADER = "";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1378,6 +1512,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = WX88XVVE62;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/JTFormDemo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1392,15 +1527,17 @@
 		};
 		1DDADA3C225B6DA100652FE6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73046C3A4ECEA74080E7F2C3 /* Pods-JTFormDemo.release.xcconfig */;
+			baseConfigurationReference = 3C23DB6EC9529EE18F9B73B7 /* Pods-JTFormDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BUNDLE_LOADER = "";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WX88XVVE62;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/JTFormDemo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1410,6 +1547,62 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dqh.JTForm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1DE49BB52546BF6F0042DBEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0C660EDEE3FED86C8AB86660 /* Pods-JTFormTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WX88XVVE62;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${SRCROOT}/Pods/Headers/Public\"",
+					"\"${SRCROOT}/Pods/Headers/Public/Texture\"",
+					"\"${SRCROOT}/Pods/Headers/Public/KIF\"",
+				);
+				INFOPLIST_FILE = JTFormTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = duqianhang.JTFormTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JTFormDemo.app/JTFormDemo";
+			};
+			name = Debug;
+		};
+		1DE49BB62546BF6F0042DBEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 282986B41A4515D34050FDC6 /* Pods-JTFormTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WX88XVVE62;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${SRCROOT}/Pods/Headers/Public\"",
+					"\"${SRCROOT}/Pods/Headers/Public/Texture\"",
+					"\"${SRCROOT}/Pods/Headers/Public/KIF\"",
+				);
+				INFOPLIST_FILE = JTFormTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = duqianhang.JTFormTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JTFormDemo.app/JTFormDemo";
 			};
 			name = Release;
 		};
@@ -1430,6 +1623,15 @@
 			buildConfigurations = (
 				1DDADA3B225B6DA100652FE6 /* Debug */,
 				1DDADA3C225B6DA100652FE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DE49BB42546BF6F0042DBEB /* Build configuration list for PBXNativeTarget "JTFormTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DE49BB52546BF6F0042DBEB /* Debug */,
+				1DE49BB62546BF6F0042DBEB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

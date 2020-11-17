@@ -29,7 +29,7 @@
     section = [JTSectionDescriptor formSection];
     [formDescriptor addSection:section];
     
-    NSArray *selectOptions = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2, @3, @4] displayTexts:@[@"早饭", @"午饭", @"晚饭", @"名字很长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长"]];
+    NSArray *selectOptions = [JTOptionObject optionObjectsWithOptionValues:@[@1, @2, @3, @4] optionTexts:@[@"早饭", @"午饭", @"晚饭", @"名字很长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长"]];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePushSelect rowType:JTFormRowTypePushSelect title:@"JTFormRowTypePushSelect"];
     row.selectorOptions = selectOptions;
@@ -54,12 +54,12 @@
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePickerSelect rowType:JTFormRowTypePickerSelect title:@"JTFormRowTypePickerSelect"];
     row.selectorOptions = selectOptions;
-    row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
+    row.value = [JTOptionObject optionsObjectWithOptionValue:@2 optionText:@"午饭"];
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"0" rowType:JTFormRowTypePickerSelect title:@"短"];
     row.selectorOptions = selectOptions;
-    row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
+    row.value = [JTOptionObject optionsObjectWithOptionValue:@2 optionText:@"午饭"];
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:JTFormRowTypePushButton rowType:JTFormRowTypePushButton title:@"JTFormRowTypePushButton"];
@@ -79,19 +79,24 @@
     row = [JTRowDescriptor rowDescriptorWithTag:@"10" rowType:JTFormRowTypeMultipleSelect title:@"JTFormRowTypeMultipleSelect"];
     row.selectorOptions = selectOptions;
     row.valueTransformer = [JTTransform class];
-    row.value = [JTOptionObject formOptionsObjectsWithValues:@[@1, @2] displayTexts:@[@"早饭", @"午饭"]];
+    row.value = [JTOptionObject optionObjectsWithOptionValues:@[@1, @2] optionTexts:@[@"早饭", @"午饭"]];
     [section addRow:row];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"11" rowType:JTFormRowTypePickerSelect title:@"短"];
     row.selectorOptions = selectOptions;
     row.valueTransformer = [JTTransform class];
-    row.value = [JTOptionObject formOptionsObjectWithValue:@2 displayText:@"午饭"];
+    row.value = [JTOptionObject optionsObjectWithOptionValue:@2 optionText:@"午饭"];
     [section addRow:row];
     
     JTForm *form = [[JTForm alloc] initWithDescriptor:formDescriptor];
     form.frame = self.view.bounds;
     [self.view addSubview:form];
     self.form = form;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5. * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        JTRowDescriptor *r = [JTRowDescriptor rowDescriptorWithTag:@"01" rowType:JTFormRowTypeDate title:@"测试 1"];
+        [self.form addRow:r];
+    });
     // Do any additional setup after loading the view.
 }
 

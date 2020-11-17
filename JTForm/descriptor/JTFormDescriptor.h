@@ -104,28 +104,35 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addSection:(JTSectionDescriptor *)section;
 
 /**
- * 在表单上指定位置添加节
+ * 在表单上添加一些节
  *
- * @param section 节描述
- * @param index 在表单中的索引位置
+ * @param sections 节描述数组
  */
-- (void)addSection:(JTSectionDescriptor *)section atIndex:(NSUInteger)index;
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections;
 
 /**
- * 在指定节后面添加新的节
+ * 在表单上指定位置添加节
  *
- * @param section 新添加节的节描述
- * @param afterSection 表单中已存在的节
+ * @param sections 节描述数组
+ * @param index 在表单中的索引位置
  */
-- (void)addSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection;
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections atIndex:(NSUInteger)index;
 
 /**
  * 在指定节前面添加新的节
  *
- * @param section 新添加节的节描述
+ * @param sections 节描述数组
  * @param beforeSection 表单中已存在的节
  */
-- (void)addSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection;
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections beforeSection:(JTSectionDescriptor *)beforeSection;
+
+/**
+ * 在指定节后面添加新的节
+ *
+ * @param sections 节描述数组
+ * @param afterSection 表单中已存在的节
+ */
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections afterSection:(JTSectionDescriptor *)afterSection;
 
 /**
  * 在表单中移除节
@@ -135,18 +142,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeSection:(JTSectionDescriptor *)section;
 
 /**
+ * 在表单中移除一些节
+ *
+ * @param sections 需要移除节的节描述
+ */
+- (void)removeSections:(NSArray<JTSectionDescriptor *> *)sections;
+
+/**
  * 移除表单中某个位置的节
  *
  * @param index 需要移除节的索引位置
  */
 - (void)removeSectionAtIndex:(NSUInteger)index;
-
-/**
- * 移除某些索引位置上的节
- *
- * @param indexes 节的索引集合
- */
-- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes;
 
 /**
  * 对节执行隐藏或者显示操作
@@ -162,6 +169,22 @@ NS_ASSUME_NONNULL_BEGIN
  * @return 节描述。如果不在表单范围内则返回 nil
  */
 - (JTSectionDescriptor *)sectionAtIndex:(NSUInteger)index;
+
+/**
+ * 查找给定索引位置的节描述数组
+ *
+ * @param indexSet 索引集合
+ * @return 节描述。如果不在表单范围内则返回 nil
+ */
+- (NSArray<JTSectionDescriptor *> *)sectionsAtIndexes:(NSIndexSet *)indexSet;
+
+/**
+ * 查找节描述的位置
+ *
+ * @param sectionDescriptor 节描述
+ * @return 节描述的位置
+ */
+- (NSUInteger)indexOfSection:(JTSectionDescriptor *)sectionDescriptor;
 
 
 //------------------------------

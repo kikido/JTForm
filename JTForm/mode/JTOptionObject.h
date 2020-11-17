@@ -22,13 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface JTOptionObject : NSObject
 /** 选择项的展示文本 */
-@property (nonatomic, copy  ) NSString *formDisplayText;
+@property (nonatomic, copy  ) NSString *optionText;
 /** 选择项的值 */
-@property (nonatomic, strong) id       formValue;
+@property (nonatomic, strong) id       optionValue;
 
-+(JTOptionObject *)formOptionsObjectWithValue:(nullable id)value displayText:(nonnull NSString *)displayText;
++ (JTOptionObject *)optionsObjectWithOptionValue:(nullable id)optionValue optionText:(nonnull NSString *)optionText;
 
-+ (NSArray<JTOptionObject *> *)formOptionsObjectsWithValues:(nonnull NSArray *)values displayTexts:(nonnull NSArray *)displayTexts;
++ (NSArray<JTOptionObject *> *)optionObjectsWithOptionValues:(nonnull NSArray *)optionValues optionTexts:(nonnull NSArray<NSString *> *)optionTexts;
 
 - (BOOL)isEqualToOptionObject:(JTOptionObject *)optionObject;
 

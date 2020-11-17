@@ -22,7 +22,6 @@
     _stepNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UIStepper *stepControl      = [[UIStepper alloc] init];
         stepControl.backgroundColor = [UIColor clearColor];
-        [stepControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return stepControl;
     }];
 }
@@ -32,8 +31,12 @@
     [super update];
     
     UIStepper *stepControl = (UIStepper *)self.stepNode.view;
-    stepControl.enabled    = !self.rowDescriptor.disabled;
-    stepControl.value      = [self.rowDescriptor.value doubleValue];    
+    [stepControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
+    stepControl.enabled = !self.rowDescriptor.disabled;
+    
+    if (self.maximumValue) stepControl.maximumValue = [self.maximumValue doubleValue];
+    if (self.minimumValue) stepControl.minimumValue = [self.minimumValue doubleValue];
+    stepControl.value = [self.rowDescriptor.value doubleValue];
     self.stepControl = stepControl;
     
     self.contentNode.attributedText =
@@ -44,7 +47,7 @@
 
 - (void)valueChanged:(UIStepper *)sender
 {
-    self.rowDescriptor.value = @(sender.value);
+    [self.rowDescriptor manualSetValue:[NSDecimalNumber numberWithDouble:sender.value]];
     self.contentNode.attributedText =
     [NSAttributedString jt_rightAttributedStringWithString:self.rowDescriptor.value ? [NSString stringWithFormat:@"%@", self.rowDescriptor.value] : nil
                                                       font:[self cellContentFont]

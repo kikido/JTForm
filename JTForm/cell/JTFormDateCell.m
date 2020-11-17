@@ -8,7 +8,6 @@
 //
 
 #import "JTFormDateCell.h"
-#import "JTFormDateInlineCell.h"
 
 @interface JTFormDateCell () <ASEditableTextNodeDelegate>
 /**
@@ -31,11 +30,6 @@
     _tempNode.delegate            = self;
     _tempNode.scrollEnabled       = false;
     _tempNode.style.preferredSize = CGSizeMake(0.01, 0.01);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self->_datePicker = [[UIDatePicker alloc] init];
-        [self->_datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
-    });
 }
 
 - (void)update
@@ -43,41 +37,45 @@
     [super update];
     
     _tempNode.textView.editable     = !self.rowDescriptor.disabled;
+    _tempNode.textView.inputView    = [self jtFormCellInputView];
     self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
 #pragma mark - responder
 
-- (BOOL)cellCanBecomeFirstResponder
+- (BOOL)canBecomeFirstResponder
 {
     return !self.rowDescriptor.disabled;
 }
 
-- (BOOL)cellBecomeFirstResponder
+- (BOOL)becomeFirstResponder
 {
+    if (![self canBecomeFirstResponder]) {
+        return false;
+    }
     if (!self.rowDescriptor.value) {
-        self.rowDescriptor.value = [NSDate date];
+        [self.rowDescriptor manualSetValue:[NSDate date]];
         self.contentNode.attributedText = [self _cellDisplayContent];
     }
     return [_tempNode becomeFirstResponder];
 }
 
-- (BOOL)canBecomeFirstResponder
-{
-    [super canBecomeFirstResponder];
-    return !self.rowDescriptor.disabled;
-}
-
 - (BOOL)isFirstResponder
 {
-    [super isFirstResponder];
     return [_tempNode isFirstResponder];
+}
+
+- (BOOL)canResignFirstResponder
+{
+    return [_tempNode canResignFirstResponder];
 }
 
 - (BOOL)resignFirstResponder
 {
-    [super resignFirstResponder];
-    return [_tempNode resignFirstResponder];
+    if ([self canResignFirstResponder]) {
+        return [_tempNode resignFirstResponder];
+    }
+    return false;
 }
 
 #pragma mark - layout
@@ -117,16 +115,13 @@
     NSString *displayContent = nil;
     NSFormatter *formatter = [self _dateFormatterForRowType:self.rowDescriptor.rowType];
     
-    if (self.rowDescriptor.value)
-    {
-        if (formatter)
-        {
+    if (self.rowDescriptor.value) {
+        if (formatter) {
             NSAssert([formatter isKindOfClass:[NSDateFormatter class]],
                      @"valueFormatter is not subclass of NSDateFormatter");
             displayContent = [(NSDateFormatter *)formatter stringFromDate:self.rowDescriptor.value];
         }
-        else
-        {
+        else {
             if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimer]) {
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *time = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute fromDate:self.rowDescriptor.value];
@@ -136,8 +131,7 @@
             }
         }
     }
-    else
-    {
+    else {
         noValue = YES;
         displayContent = self.rowDescriptor.placeHolder;
     }
@@ -172,29 +166,33 @@
 
 - (UIView *)jtFormCellInputView
 {
-    if (self.rowDescriptor.value) {
-        [self.datePicker setDate:self.rowDescriptor.value animated:[self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimer]];
+    if (!_datePicker) {
+        _datePicker = [[UIDatePicker alloc] init];
+        if (@available(iOS 14.0, *)) {
+            _datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
+        }
+        [_datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
     }
+
     [self setConfigToDatePicker];
-    return self.datePicker;
+    if (self.rowDescriptor.value) {
+        [_datePicker setDate:self.rowDescriptor.value animated:NO];
+    }
+    return _datePicker;
 }
 
 - (void)setConfigToDatePicker
 {
-    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate])
-    {
+    if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDate]) {
         _datePicker.datePickerMode = UIDatePickerModeDate;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime])
-    {
+    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeTime]) {
         _datePicker.datePickerMode = UIDatePickerModeTime;
     }
-    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimer])
-    {
+    else if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimer]) {
         _datePicker.datePickerMode = UIDatePickerModeCountDownTimer;
     }
-    else
-    {
+    else {
         _datePicker.datePickerMode = UIDatePickerModeDateAndTime;
     }
     
@@ -208,7 +206,7 @@
 
 - (void)datePickerValueChanged:(UIDatePicker *)sender
 {
-    self.rowDescriptor.value = sender.date;
+    [self.rowDescriptor manualSetValue:sender.date];
     self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
@@ -216,13 +214,17 @@
 
 - (BOOL)editableTextNodeShouldBeginEditing:(ASEditableTextNode *)editableTextNode
 {
+    return [self canBecomeFirstResponder];
+}
+
+- (void)editableTextNodeDidBeginEditing:(ASEditableTextNode *)editableTextNode
+{
     [self.findForm beginEditing:self.rowDescriptor];
-    editableTextNode.textView.inputView = [self jtFormCellInputView];
-    return true;
 }
 
 - (void)editableTextNodeDidFinishEditing:(ASEditableTextNode *)editableTextNode
 {
     [self.findForm endEditing:self.rowDescriptor];
 }
+
 @end

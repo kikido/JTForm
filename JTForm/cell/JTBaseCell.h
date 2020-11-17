@@ -47,6 +47,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) JTNetworkImageNode *imageNode;
 
+/** 是否有关联行 */
+@property (nonatomic, assign) BOOL hasInlineCell;
+
+- (BOOL)jt_isFirstResponder;
+
 /**
  * 初始化控件
  *
@@ -79,19 +84,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (JTFormDescriptor *)findFormDescriptor;
 
 //------------------------------
-/// @name responder
-///-----------------------------
-
-- (BOOL)cellCanBecomeFirstResponder;
-
-- (BOOL)cellBecomeFirstResponder;
-
-//------------------------------
 /// @name UI
 ///-----------------------------
 
-- (UIColor *)cellTitleColor;
+- (NSAttributedString *)titleDisplayAttributeString;
 
+- (UIColor *)cellTitleColor;
 - (UIColor *)cellContentColor;
 
 /**
@@ -104,22 +102,17 @@ NS_ASSUME_NONNULL_BEGIN
  * @return 颜色
  */
 - (UIColor *)cellDisabledContentColor;
-
 - (UIColor *)cellPlaceHolerColor;
-
-- (UIFont *)cellTitleFont;
-
-- (UIFont *)cellContentFont;
-
-- (UIFont *)cellPlaceHolerFont;
-
-- (UIFont *)cellDisabledContentFont;
-
 - (UIColor *)cellBackgroundColor;
 
-- (void)cellHighLight NS_REQUIRES_SUPER;
+- (UIFont *)cellTitleFont;
+- (UIFont *)cellContentFont;
+- (UIFont *)cellPlaceHolerFont;
+- (UIFont *)cellDisabledContentFont;
 
-- (void)cellUnHighLight NS_REQUIRES_SUPER;
+
+- (void)cellHighLight;
+- (void)cellUnHighLight;
 
 @end
 

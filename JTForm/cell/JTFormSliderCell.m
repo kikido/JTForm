@@ -21,7 +21,6 @@
     
     _sliderNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UISlider *slider = [[UISlider alloc] init];
-        [slider addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return slider;
     }];
 }
@@ -31,16 +30,19 @@
     [super update];
     
     UISlider *slider = (UISlider *)self.sliderNode.view;
-    slider.enabled   = !self.rowDescriptor.disabled;
-    slider.value     = [self.rowDescriptor.value floatValue];
+    [slider addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
+    slider.enabled = !self.rowDescriptor.disabled;
     
     if (self.maximumValue) slider.maximumValue = [self.maximumValue floatValue];
     if (self.minimumValue) slider.minimumValue = [self.minimumValue floatValue];
+    slider.value = [self.rowDescriptor.value floatValue];
     if (self.steps) {
         NSUInteger steps = [self.steps unsignedIntegerValue];
         slider.value = roundf((slider.value - slider.minimumValue)/(slider.maximumValue - slider.minimumValue)*steps)*(slider.maximumValue-slider.minimumValue)/steps + slider.minimumValue;
     }
     _slider = slider;
+    
+    self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
 + (CGFloat)formCellHeightForRowDescriptor:(JTRowDescriptor *)row
@@ -87,12 +89,16 @@
         NSUInteger steps = [self.steps unsignedIntegerValue];
         sender.value = roundf((sender.value - sender.minimumValue)/(sender.maximumValue - sender.minimumValue)*steps)*(sender.maximumValue-sender.minimumValue)/steps + sender.minimumValue;
     }
+    self.contentNode.attributedText = [self _cellDisplayContent];
+    [self.rowDescriptor manualSetValue:[NSDecimalNumber numberWithFloat:sender.value]];
+}
+
+- (NSAttributedString *)_cellDisplayContent
+{
     UIFont *font = [self cellContentFont];
     UIColor *color = [self cellContentColor];
-    NSString *displayContent = sender.maximumValue > 1 ? [NSString stringWithFormat:@"%.f",sender.value] : [NSString stringWithFormat:@"%.2f",sender.value];
-    self.contentNode.attributedText = [NSAttributedString jt_rightAttributedStringWithString:displayContent
-                                                                                        font:font
-                                                                                       color:color];
-    self.rowDescriptor.value = [NSDecimalNumber numberWithFloat:sender.value];
+    NSString *displayContent = self.slider.maximumValue > 1 ? [NSString stringWithFormat:@"%.f", self.slider.value] : [NSString stringWithFormat:@"%.2f",  self.slider.value];
+    return [NSAttributedString jt_rightAttributedStringWithString:displayContent font:font color:color];
 }
+
 @end

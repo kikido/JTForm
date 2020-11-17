@@ -11,36 +11,39 @@
 #import <objc/message.h>
 #import <objc/runtime.h>
 
-@implementation JTBaseCell
+@implementation JTBaseCell {
+    BOOL _jt_firstResponser;
+}
 
-static inline Ivar JTFormRowIvar() {
+static inline JTFormConfigModel * JTFormGetConfigModelFromRow(JTRowDescriptor *row) {
     static Ivar ivar = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        const char *name = [@"_configMode" UTF8String];
+        const char *name = [@"_configModel" UTF8String];
         ivar = class_getInstanceVariable([JTRowDescriptor class], name);
     });
-    return ivar;
+    return object_getIvar(row, ivar);
 }
 
-static inline Ivar JTFormSectionIvar() {
+
+static inline JTFormConfigModel * JTFormGetConfigModelFromSection(JTSectionDescriptor *section) {
     static Ivar ivar = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        const char *name = [@"_configMode" UTF8String];
+        const char *name = [@"_configModel" UTF8String];
         ivar = class_getInstanceVariable([JTSectionDescriptor class], name);
     });
-    return ivar;
+    return object_getIvar(section, ivar);
 }
 
-static inline Ivar JTFormIvar() {
+static inline JTFormConfigModel * JTFormGetConfigModelFromForm(JTFormDescriptor *form) {
     static Ivar ivar = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        const char *name = [@"_configMode" UTF8String];
+        const char *name = [@"_configModel" UTF8String];
         ivar = class_getInstanceVariable([JTFormDescriptor class], name);
     });
-    return ivar;
+    return object_getIvar(form, ivar);
 }
 
 - (instancetype)init
@@ -70,61 +73,57 @@ static inline Ivar JTFormIvar() {
     if (self.rowDescriptor.imageUrl) {
         self.imageNode.URL = self.rowDescriptor.imageUrl;
     }
-    // 为必录的单元行设置红色的 *
-    BOOL required = self.rowDescriptor.required && [self findFormDescriptor].addAsteriskToRequiredRowsTitle;
-    self.titleNode.attributedText =
-    [NSAttributedString jt_attributedStringWithString:[NSString stringWithFormat:@"%@%@", required ? @"*" : @"", self.rowDescriptor.title ? self.rowDescriptor.title : @""]
-                                                 font:[self cellTitleFont]
-                                                color:[self cellTitleColor]
-                                       firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
+    self.titleNode.attributedText = [self titleDisplayAttributeString];
 }
 
 #pragma mark - responder
 
-- (BOOL)cellCanBecomeFirstResponder
-{
-    return false;
-}
-
-- (BOOL)cellBecomeFirstResponder
-{
-    return false;
-}
-
 - (BOOL)canBecomeFirstResponder
 {
-    [super canBecomeFirstResponder];
+    if (self.rowDescriptor.disabled) {
+        return false;
+    }
     return false;
 }
 
 - (BOOL)becomeFirstResponder
 {
-    [super becomeFirstResponder];
-    return false;
+    if (![self canBecomeFirstResponder]) {
+        return false;
+    }
+    _jt_firstResponser = true;
+    return true;
 }
 
 - (BOOL)isFirstResponder
 {
-    return [super isFirstResponder];
+    return _jt_firstResponser;
 }
 
 - (BOOL)canResignFirstResponder
 {
-    [super canResignFirstResponder];
     return true;
 }
 
 - (BOOL)resignFirstResponder
 {
-    [super resignFirstResponder];
+    if (![self canResignFirstResponder]) {
+        return false;
+    }
+    _jt_firstResponser = false;
     return true;
+}
+
+- (BOOL)jt_isFirstResponder
+{
+    return ([self isFirstResponder] || self.hasInlineCell);
 }
 
 #pragma mark - layout
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method layoutSpecThatFits：" userInfo:nil];
+    @throw [NSException exceptionWithName:NSGenericException reason:@"subclass must override this method `layoutSpecThatFits:`" userInfo:nil];
 }
 
 #pragma mark - helper
@@ -139,14 +138,30 @@ static inline Ivar JTFormIvar() {
     return self.rowDescriptor.sectionDescriptor.formDescriptor;
 }
 
-#pragma mark - config
+- (NSAttributedString *)titleDisplayAttributeString
+{
+    // 为必录的单元行设置红色的 *
+    BOOL required = self.rowDescriptor.required && [self findFormDescriptor].addAsteriskToRequiredRowsTitle;
+    NSString *title = [NSString stringWithFormat:@"%@%@", required ? @"*" : @"", self.rowDescriptor.title ? self.rowDescriptor.title : @""];
+    NSAttributedString *attString =
+    [NSAttributedString jt_attributedStringWithString:title
+                                                 font:[self cellTitleFont]
+                                                color:[self cellTitleColor]
+                                       firstWordColor:required ? kJTFormRequiredCellFirstWordColor : nil];
+    return attString;
+}
 
+#pragma mark - config
+// normal, highlight, disabled
 - (UIColor *)cellTitleColor
 {
     if (self.rowDescriptor.disabled) {
         return [self _formCellDisabledTitleColor];
+    } else if ([self jt_isFirstResponder]) {
+        return [self _formCellHigthLightTitleColor];
+    } else {
+        return [self _formCellTitleColor];
     }
-    return [self _formCellTitleColor];
 }
 
 - (UIColor *)cellContentColor
@@ -166,8 +181,11 @@ static inline Ivar JTFormIvar() {
 {
     if (self.rowDescriptor.disabled) {
         return [self _formCellDisabledTitleFont];
+    } else if ([self jt_isFirstResponder]) {
+        return [self _formCellHighLightTitleFont];
+    } else {
+        return [self _formCellTitleFont];
     }
-    return [self _formCellTitleFont];
 }
 
 - (UIFont *)cellContentFont
@@ -183,214 +201,198 @@ static inline Ivar JTFormIvar() {
     return [self _formCellPlaceHlderFont];
 }
 
+#pragma mark - config color
+//------------------------------
+/// @note 优先级 row > section > form
+///-----------------------------
 
 - (UIColor *)cellBackgroundColor
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.backgroundColor)  return rowMode.backgroundColor;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.backgroundColor)  return model.backgroundColor;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.backgroundColor)  return sectionMode.backgroundColor;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.backgroundColor)  return model.backgroundColor;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.backgroundColor)  return formMode.backgroundColor;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.backgroundColor)  return model.backgroundColor;
     
-    return [UIColor whiteColor];
+    return kJTFormCellDefaultBackgroundColor;
 }
-
-#pragma mark -
 
 - (UIColor *)_formCellTitleColor
 {
-    // 优先级 row > section > form
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.titleColor)  return rowMode.titleColor;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.titleColor)  return model.titleColor;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.titleColor)  return sectionMode.titleColor;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.titleColor)  return model.titleColor;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.titleColor)  return formMode.titleColor;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.titleColor)  return model.titleColor;
     
-    return UIColorHex(333333);
+    return kJTFormCellDefaultTitleColor;
+}
+
+- (UIColor *)_formCellHigthLightTitleColor
+{
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.highLightTitleColor)  return model.highLightTitleColor;
+    
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.highLightTitleColor)  return model.highLightTitleColor;
+    
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.highLightTitleColor)  return model.highLightTitleColor;
+    
+    return kJTFormCellHighLightColor;
 }
 
 - (UIColor *)_formCellContentColor
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.contentColor)  return rowMode.contentColor;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.contentColor)  return model.contentColor;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.contentColor)  return sectionMode.contentColor;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.contentColor)  return model.contentColor;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.contentColor)  return formMode.contentColor;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.contentColor)  return model.contentColor;
     
-    return UIColorHex(333333);
+    return kJTFormCellDefaultContentColor;
 }
 
 - (UIColor *)_formCellPlaceHolderColor
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHolderColor)  return rowMode.placeHolderColor;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.placeHolderColor)  return model.placeHolderColor;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHolderColor)  return sectionMode.placeHolderColor;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.placeHolderColor)  return model.placeHolderColor;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHolderColor)  return formMode.placeHolderColor;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.placeHolderColor)  return model.placeHolderColor;
     
-    return UIColorHex(dbdbdb);
+    return kJTFormCellDefaultPlaceHolderColor;
 }
 
 - (UIColor *)_formCellDisabledTitleColor
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.disabledTitleColor)  return rowMode.disabledTitleColor;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.disabledTitleColor)  return model.disabledTitleColor;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.disabledTitleColor)  return sectionMode.disabledTitleColor;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.disabledTitleColor)  return model.disabledTitleColor;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.disabledTitleColor)  return formMode.disabledTitleColor;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.disabledTitleColor)  return model.disabledTitleColor;
     
-    return UIColorHex(aaaaaa);
+    return kJTFormCellDisabledTitleColor;
 }
 
 - (UIColor *)cellDisabledContentColor
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.disabledContentColor)  return rowMode.disabledContentColor;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.disabledContentColor)  return model.disabledContentColor;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.disabledContentColor)  return sectionMode.disabledContentColor;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.disabledContentColor)  return model.disabledContentColor;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.disabledContentColor)  return formMode.disabledContentColor;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.disabledContentColor)  return model.disabledContentColor;
     
-    return UIColorHex(aaaaaa);
+    return kJTFormCellDisabledContentColor;
 }
+
+#pragma mark - config font
 
 - (UIFont *)_formCellTitleFont
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.titleFont)  return rowMode.titleFont;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.titleFont)  return model.titleFont;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.titleFont)  return sectionMode.titleFont;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.titleFont)  return model.titleFont;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.titleFont)  return formMode.titleFont;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.titleFont)  return model.titleFont;
     
-    return [UIFont systemFontOfSize:16.];
+    return kJTFormCellDefaultTitleFont;
 }
 
 - (UIFont *)_formCellContentFont
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.contentFont)  return rowMode.contentFont;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.contentFont)  return model.contentFont;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.contentFont)  return sectionMode.contentFont;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.contentFont)  return model.contentFont;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.contentFont)  return formMode.contentFont;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.contentFont)  return model.contentFont;
     
-    return [UIFont systemFontOfSize:15.];
+    return kJTFormCellDefaultContentFont;
 }
 
 - (UIFont *)_formCellPlaceHlderFont
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.placeHlderFont)  return rowMode.placeHlderFont;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.placeHlderFont)  return model.placeHlderFont;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.placeHlderFont)  return sectionMode.placeHlderFont;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.placeHlderFont)  return model.placeHlderFont;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.placeHlderFont)  return formMode.placeHlderFont;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.placeHlderFont)  return model.placeHlderFont;
     
-    return [UIFont systemFontOfSize:15.];
+    return kJTFormCellDefaultPlaceHolderFont;
 }
 
 - (UIFont *)_formCellDisabledTitleFont
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.disabledTitleFont)  return rowMode.disabledTitleFont;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.disabledTitleFont)  return model.disabledTitleFont;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.disabledTitleFont)  return sectionMode.disabledTitleFont;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.disabledTitleFont)  return model.disabledTitleFont;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.disabledTitleFont)  return formMode.disabledTitleFont;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.disabledTitleFont)  return model.disabledTitleFont;
     
-    return [UIFont systemFontOfSize:16.];
+    return kJTFormCellDisabledTitleFont;
+}
+
+- (UIFont *)_formCellHighLightTitleFont
+{
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.highLightTitleFont)  return model.highLightTitleFont;
+    
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.highLightTitleFont)  return model.highLightTitleFont;
+    
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.highLightTitleFont)  return model.highLightTitleFont;
+    
+    return kJTFormCellDefaultTitleFont;
 }
 
 - (UIFont *)cellDisabledContentFont
 {
-    Ivar rowIvar = JTFormRowIvar();
-    JTFormConfigMode *rowMode = object_getIvar(self.rowDescriptor, rowIvar);
-    if (rowMode.disabledContentFont)  return rowMode.disabledContentFont;
+    JTFormConfigModel *model = JTFormGetConfigModelFromRow(self.rowDescriptor);
+    if (model.disabledContentFont)  return model.disabledContentFont;
     
-    Ivar sectionIvar = JTFormSectionIvar();
-    JTFormConfigMode *sectionMode = object_getIvar(self.rowDescriptor.sectionDescriptor, sectionIvar);
-    if (sectionMode.disabledContentFont)  return sectionMode.disabledContentFont;
+    model = JTFormGetConfigModelFromSection(self.rowDescriptor.sectionDescriptor);
+    if (model.disabledContentFont)  return model.disabledContentFont;
     
-    Ivar formIvar = JTFormIvar();
-    JTFormConfigMode *formMode = object_getIvar(self.rowDescriptor.sectionDescriptor.formDescriptor, formIvar);
-    if (formMode.disabledContentFont)  return formMode.disabledContentFont;
+    model = JTFormGetConfigModelFromForm(self.rowDescriptor.sectionDescriptor.formDescriptor);
+    if (model.disabledContentFont)  return model.disabledContentFont;
     
-    return [UIFont systemFontOfSize:15.];
+    return kJTFormCellDisabledContentFont;
 }
 
-- (void)cellHighLight
-{
-    NSMutableAttributedString *title = [self.titleNode.attributedText mutableCopy];
-    [title addAttribute:NSForegroundColorAttributeName
-                  value:kJTFormHighLightColor
-                  range:[title.string containsString:@"*"] ? NSMakeRange(1, title.length-1) : NSMakeRange(0, title.length)];
-    self.titleNode.attributedText = [title copy];
-}
+- (void)cellHighLight {}
 
-- (void)cellUnHighLight
-{
-    NSMutableAttributedString *title = [self.titleNode.attributedText mutableCopy];
-    [title addAttribute:NSForegroundColorAttributeName
-                  value:[self cellTitleColor]
-                  range:[title.string containsString:@"*"] ? NSMakeRange(1, title.length-1) : NSMakeRange(0, title.length)];
-    self.titleNode.attributedText = [title copy];
-}
+- (void)cellUnHighLight {}
 
 #pragma mark - lazy load
 
@@ -422,4 +424,9 @@ static inline Ivar JTFormIvar() {
     return _imageNode;
 }
 
+
+- (NSString *)description
+{
+    return[NSString stringWithFormat:@"{\orgin:%@\n descriptor:%@\n}\n", [super description], self.rowDescriptor];
+}
 @end

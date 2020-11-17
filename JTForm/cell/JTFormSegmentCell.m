@@ -21,7 +21,6 @@
     
     _segmentNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
         UISegmentedControl *segmentControl = [[UISegmentedControl alloc] init];
-        [segmentControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
         return segmentControl;
     }];
 }
@@ -31,6 +30,7 @@
     [super update];
     
     UISegmentedControl *segmentControl = (UISegmentedControl *)self.segmentNode.view;
+    [segmentControl addTarget:self action:@selector(valueChanged:) forControlEvents:UIControlEventValueChanged];
     segmentControl.enabled = !self.rowDescriptor.disabled;
     [self updateSegmentedControl:segmentControl];
     segmentControl.selectedSegmentIndex = [self selectedIndex];
@@ -64,7 +64,7 @@
 
 - (void)valueChanged:(UISegmentedControl *)sender
 {
-    self.rowDescriptor.value = [self.rowDescriptor.selectorOptions objectAtIndex:sender.selectedSegmentIndex];
+    [self.rowDescriptor manualSetValue:[self.rowDescriptor.selectorOptions objectAtIndex:sender.selectedSegmentIndex]];
 }
 
 #pragma mark - Helper
@@ -73,7 +73,7 @@
 {
     [segmentControl removeAllSegments];
     [self.rowDescriptor.selectorOptions enumerateObjectsUsingBlock:^(JTOptionObject *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [segmentControl insertSegmentWithTitle:[obj cellText] atIndex:idx animated:NO];
+        [segmentControl insertSegmentWithTitle:[obj descriptionForForm] atIndex:idx animated:NO];
     }];
 }
 

@@ -10,19 +10,28 @@
 #import "NSObject+JTAdd.h"
 #import "JTOptionObject.h"
 
+void JTLog(NSString *format, ...) {
+#ifdef DEBUG
+    va_list argptr;
+    va_start(argptr, format);
+    NSLogv(format, argptr);
+    va_end(argptr);
+#endif
+}
+
 @implementation NSObject (JTAdd)
 
-- (id)cellValue
+- (id)valueForForm
 {
-    if ([self isKindOfClass:[NSArray class]]) {
+    if ([self isKindOfClass:[NSArray class]]) { // for mutable select
         NSMutableArray * result = [NSMutableArray array];
         [(NSArray *)self enumerateObjectsUsingBlock:^(id obj, NSUInteger __unused idx, BOOL __unused *stop) {
-            [result addObject:[obj cellValue]];
+            [result addObject:[obj valueForForm]];
         }];
         return result.copy;
     }
     if ([self isKindOfClass:[JTOptionObject class]]) {
-        return [(JTOptionObject *)self formValue];
+        return [(JTOptionObject *)self optionValue];
     }
     return self;
 }
@@ -116,22 +125,24 @@ BOOL JTIsValueEmpty(id object)
     }
 }
 
-- (NSString *)cellText
+- (NSString *)descriptionForForm
 {
-    if ([self isKindOfClass:[NSString class]])
-    {
+    if ([self isKindOfClass:[NSString class]]) {
         return (NSString *)self;
     }
-    else if ([self isKindOfClass:[NSNumber class]])
-    {
+    else if ([self isKindOfClass:[NSDecimalNumber class]]) {
+        return [(NSDecimalNumber *)self descriptionWithLocale:[NSLocale currentLocale]];
+    }
+    else if ([self isKindOfClass:[NSNumber class]]) {
         return [(NSNumber *)self stringValue];
     }
-    else if ([self isKindOfClass:[JTOptionObject class]])
-    {
-        return [(JTOptionObject *)self formDisplayText];
+    else if ([self isKindOfClass:[JTOptionObject class]]) {
+        return [(JTOptionObject *)self optionText];
     }
-    else
-    {
+    else if ([self isKindOfClass:[NSNull class]]) {
+        return nil;
+    }
+    else {
         return self.description;
     }
 }

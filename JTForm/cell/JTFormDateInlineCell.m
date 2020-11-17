@@ -9,8 +9,9 @@
 
 #import "JTFormDateInlineCell.h"
 
-
-@implementation JTFormDateInlineCell
+@implementation JTFormDateInlineCell {
+    JTRowDescriptor *_toRow;
+}
 
 - (void)config
 {
@@ -24,24 +25,19 @@
     self.contentNode.attributedText = [self _cellDisplayContent];
 }
 
-
-
 - (NSAttributedString *)_cellDisplayContent
 {
     BOOL noValue = false;
     NSString *displayContent = nil;
     NSFormatter *formatter = [self _dateFormatterForRowType:self.rowDescriptor.rowType];
     
-    if (self.rowDescriptor.value)
-    {
-        if (formatter)
-        {
+    if (self.rowDescriptor.value) {
+        if (formatter) {
             NSAssert([formatter isKindOfClass:[NSDateFormatter class]],
                      @"valueFormatter is not subclass of NSDateFormatter");
             displayContent = [(NSDateFormatter *)formatter stringFromDate:self.rowDescriptor.value];
         }
-        else
-        {
+        else {
             if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimerInline]) {
                 NSCalendar *calendar = [NSCalendar currentCalendar];
                 NSDateComponents *time = [calendar components:NSCalendarUnitHour | NSCalendarUnitMinute fromDate:self.rowDescriptor.value];
@@ -51,8 +47,7 @@
             }
         }
     }
-    else
-    {
+    else {
         noValue = YES;
         displayContent = self.rowDescriptor.placeHolder;
     }
@@ -69,7 +64,7 @@
     if (self.rowDescriptor.valueFormatter) {
         return self.rowDescriptor.valueFormatter;
     }
-    NSDateFormatter *dateFormatter;
+    NSDateFormatter *dateFormatter = nil;
     if ([self.rowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
         dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.dateFormat = @"yyyy-MM-dd";
@@ -87,64 +82,80 @@
 
 #pragma mark - responder
 
-- (BOOL)cellCanBecomeFirstResponder
+- (void)formCellDidSelected
 {
-    return !self.rowDescriptor.disabled;
-}
-
-- (BOOL)cellBecomeFirstResponder
-{
-    if ([self isFirstResponder]) {
-        return [self resignFirstResponder];
-    } else {
-        if (!self.rowDescriptor.value) {
-            self.rowDescriptor.value = [NSDate date];
-            self.contentNode.attributedText = [self _cellDisplayContent];
+    if (!self.rowDescriptor.disabled) {
+        if (!self.hasInlineCell && !_toRow) {
+            [self showConnectedCell];
+        } else if (self.hasInlineCell && _toRow) {
+            [self hideConnectedCell];
+        } else {
+            // do nothing
         }
-        return [self becomeFirstResponder];
     }
 }
 
-- (BOOL)canBecomeFirstResponder
+- (void)showConnectedCell
 {
-    [super canBecomeFirstResponder];
-    return true;
-}
-
-- (BOOL)becomeFirstResponder
-{
-    [super becomeFirstResponder];
+    self.hasInlineCell = YES;
     
-    NSIndexPath *currentIndexPath = [[self findForm] indexPathForRow:self.rowDescriptor];
-    JTSectionDescriptor *section = [[self findForm] sectionAtIndex:currentIndexPath.section];
+    if (!self.rowDescriptor.value) {
+        [self.rowDescriptor manualSetValue:[NSDate date]];
+        self.contentNode.attributedText = [self _cellDisplayContent];
+    }
+    // insert inline row
     JTRowDescriptor *inlineRow = [JTRowDescriptor rowDescriptorWithTag:nil
-                                                               rowType:[JTForm inlineRowTypesForRowTypes][JTFormRowTypeDateInline]
+                                                               rowType:[JTForm inlineRowTypesForRowTypes][self.rowDescriptor.rowType]
                                                                  title:nil];
-    JTBaseCell<JTFormInlineCellDelegate> *inlineCell = (JTBaseCell<JTFormInlineCellDelegate> *)[inlineRow cellInForm];
-    
+    JTBaseCell<JTFormInlineCellDelegate> *inlineCell = (JTBaseCell<JTFormInlineCellDelegate> *)[inlineRow cellForDescriptor];
     NSAssert([inlineCell conformsToProtocol:@protocol(JTFormInlineCellDelegate)],
              @"inline cell must conform to protocol 'JTFormInlineCellDelegate'");
     inlineCell.connectedRowDescriptor = self.rowDescriptor;
-    
-    [section addRow:inlineRow afterRow:self.rowDescriptor];
-    [[self findForm] ensureRowIsVisible:inlineRow];
+    // 先使用 -updateCell 方法填充好内容，直接计算出布局
+    [inlineCell update];
+
+    [[self findForm] addRows:@[inlineRow] afterRow:self.rowDescriptor];
+    [inlineCell onDidLoad:^(__kindof ASDisplayNode * _Nonnull node) {
+        [[self findForm] ensureRowIsVisible:inlineRow];
+    }];
     [self.findForm beginEditing:self.rowDescriptor];
-    
-    return true;
+    _toRow = inlineRow;
+}
+
+- (void)hideConnectedCell
+{
+    self.hasInlineCell = NO;
+    [self.rowDescriptor.sectionDescriptor removeRow:_toRow];
+    _toRow = nil;
+    [self.findForm endEditing:self.rowDescriptor];
+}
+
+#pragma mark - responder
+
+- (BOOL)canBecomeFirstResponder
+{
+    return false;
+}
+
+- (BOOL)isFirstResponder
+{
+    return false;
 }
 
 - (BOOL)resignFirstResponder
 {
     [super resignFirstResponder];
-    
-    NSIndexPath *currentIndexPath = [[self findForm] indexPathForRow:self.rowDescriptor];
-    NSIndexPath *nextRowPath = [NSIndexPath indexPathForRow:currentIndexPath.row + 1 inSection:currentIndexPath.section];
-    JTRowDescriptor *inlineRow = [self.rowDescriptor.sectionDescriptor.formDescriptor rowAtIndexPath:nextRowPath];
-    if ([inlineRow.rowType isEqualToString:[JTForm inlineRowTypesForRowTypes][JTFormRowTypeDateInline]]) {
-        [self.rowDescriptor.sectionDescriptor removeRow:inlineRow];
+    if (_toRow && self.hasInlineCell) {
+        // @1
+        // 如果使用 firstRespinder 来控制 inlinecell 的显示与隐藏，在滑动时，由于复用 cell ，会调用该 node 的 resignFirstResponder 方法
+        // 如果直接调用 hideConnectedCell 方法，会导致数据源中的单元行数目与实际单元行数目不一致崩溃
+        // 通过调试发现是调用 endupdates 后没有重新调用 numberOfRowsInSection 方法刷新单元行数目
+        
+        // @2
+        // 综合考虑，使用属性 hasInlineCell 来控制 inline 的显示与隐藏，避免在滑动时 inline cell 的自动隐藏造成的其它错误
+        // 所以该方法最好在别的方法里调用，但为了方便，所以我偷个懒写在这里
+        [self hideConnectedCell];
     }
-    [self.findForm endEditing:self.rowDescriptor];
-
     return true;
 }
 
@@ -176,13 +187,14 @@
     contentStack.style.minHeight = ASDimensionMake(30.);
     return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 15., 12., 15.) child:contentStack];
 }
+
 @end
 
 /**
  * 关联行
  */
 @interface _JTFormDateInlineCell : JTBaseCell <JTFormInlineCellDelegate>
-@property (nonatomic, strong) UIDatePicker  *datePicker;
+@property (nonatomic, strong, readonly) UIDatePicker *datePicker;
 @property (nonatomic, strong) ASDisplayNode *datePickerNode;
 @end
 
@@ -194,7 +206,7 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
 
 + (void)load
 {
-    [[JTForm cellClassesForRowTypes] setObject:[_JTFormDateInlineCell class] forKey:_JTFormRowTypeDateInline];
+    [[JTForm cellClassesForRowTypes]    setObject:[_JTFormDateInlineCell class] forKey:_JTFormRowTypeDateInline];
     [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeDateInline];
     [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeTimeInline];
     [[JTForm inlineRowTypesForRowTypes] setObject:_JTFormRowTypeDateInline forKey:JTFormRowTypeDateTimeInline];
@@ -205,13 +217,9 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
 {
     [super config];
     
-    __weak typeof(self) weakSelf = self;
     _datePickerNode = [[ASDisplayNode alloc] initWithViewBlock:^UIView * _Nonnull{
-        __strong typeof(weakSelf) strongSelf = weakSelf;
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
-        datePicker.datePickerMode = UIDatePickerModeDate;
         datePicker.backgroundColor = [UIColor whiteColor];
-        [datePicker addTarget:strongSelf action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
         return datePicker;
     }];
 }
@@ -220,36 +228,69 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
 {
     [super update];
     
-    _datePicker = (UIDatePicker *)_datePickerNode.view;
-    if (_connectedRowDescriptor.value) {
-        [_datePicker setDate:_connectedRowDescriptor.value animated:NO];
-    }
-    JTFormDateInlineCell *connectCell = (JTFormDateInlineCell *)[self.connectedRowDescriptor cellInForm];
-    if (connectCell.minimumDate)    _datePicker.minimumDate = connectCell.minimumDate;
-    if (connectCell.maximumDate)    _datePicker.maximumDate = connectCell.maximumDate;
-    if (connectCell.locale)         _datePicker.locale = connectCell.locale;
+    UIDatePicker *datePicker = (UIDatePicker *)_datePickerNode.view;
+    [datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
+    _datePicker = datePicker;
+    [self setConfigToDatePicker];
     
-    if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
-        _datePicker.datePickerMode = UIDatePickerModeDate;
-    } else if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeTimeInline]) {
-        _datePicker.datePickerMode = UIDatePickerModeTime;
-    } else if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimerInline]) {
-        _datePicker.datePickerMode = UIDatePickerModeCountDownTimer;
-//        _datePicker.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    if (_connectedRowDescriptor.value) {
+        [datePicker setDate:_connectedRowDescriptor.value animated:NO];
     } else {
-        _datePicker.datePickerMode = UIDatePickerModeDateAndTime;
+        _connectedRowDescriptor.value = datePicker.date;
     }
+    [datePicker sizeToFit];
+    self.datePickerNode.style.preferredLayoutSize = ASLayoutSizeMake(ASDimensionMake(datePicker.frame.size.width), ASDimensionMake(datePicker.frame.size.height));
+    [self setNeedsLayout];
 }
 
-+ (CGFloat)formCellHeightForRowDescriptor:(JTRowDescriptor *)row
+- (void)setConfigToDatePicker
 {
-    return kJTFormDateInlineDateHeight;
+    JTFormDateInlineCell *connectCell = (JTFormDateInlineCell *)[self.connectedRowDescriptor cellForDescriptor];
+    if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeDateInline]) {
+        _datePicker.datePickerMode = UIDatePickerModeDate;
+    }
+    else if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeTimeInline]) {
+        _datePicker.datePickerMode = UIDatePickerModeTime;
+    }
+    else if ([_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimerInline]) {
+        _datePicker.datePickerMode = UIDatePickerModeCountDownTimer;
+    }
+    else {
+        _datePicker.datePickerMode = UIDatePickerModeDateAndTime;
+    }
+    
+    if (connectCell.minuteInterval) _datePicker.minuteInterval = [connectCell.minuteInterval integerValue];
+    if (connectCell.minimumDate)    _datePicker.minimumDate    = connectCell.minimumDate;
+    if (connectCell.maximumDate)    _datePicker.maximumDate    = connectCell.maximumDate;
+    if (connectCell.locale)         _datePicker.locale         = connectCell.locale;
+    
+    
+    if (@available(iOS 14.0, *)) {
+        _datePicker.preferredDatePickerStyle = [_connectedRowDescriptor.rowType isEqualToString:JTFormRowTypeCountDownTimerInline] ? UIDatePickerStyleWheels : UIDatePickerStyleInline;
+    } else {
+        if ([_datePicker respondsToSelector:@selector(preferredDatePickerStyle)]) {
+            _datePicker.preferredDatePickerStyle = UIDatePickerStyleWheels;
+        }
+    }
 }
 
 - (ASLayoutSpec *)layoutSpecThatFits:(ASSizeRange)constrainedSize
 {
-    _datePickerNode.style.alignSelf = ASStackLayoutAlignSelfStretch;
-    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsZero child:_datePickerNode];
+    if (!_datePicker) {
+        ASDisplayNode *node = [[ASDisplayNode alloc] init];
+        node.style.layoutPosition = CGPointZero;
+        node.style.preferredLayoutSize = ASLayoutSizeMake(ASDimensionMake(0.), ASDimensionMake(0.));
+        return [ASAbsoluteLayoutSpec absoluteLayoutSpecWithChildren:@[node]];
+    }
+    ASStackLayoutSpec *stack = [ASStackLayoutSpec stackLayoutSpecWithDirection:ASStackLayoutDirectionHorizontal
+                                                                       spacing:0.
+                                                                justifyContent:ASStackLayoutJustifyContentCenter
+                                                                    alignItems:ASStackLayoutAlignItemsCenter
+                                                                      children:@[_datePickerNode]];
+    
+    stack.style.flexGrow = 1.;
+    stack.style.flexShrink = 1.;
+    return [ASInsetLayoutSpec insetLayoutSpecWithInsets:UIEdgeInsetsMake(12., 0., 12., 0.) child:stack];
 }
 
 #pragma mark - action
@@ -257,8 +298,9 @@ NSString * const _JTFormRowTypeDateInline = @"_JTFormRowTypeDateInline";
 - (void)datePickerValueChanged:(UIDatePicker *)sender
 {
     if (self.connectedRowDescriptor) {
-        self.connectedRowDescriptor.value = sender.date;
-        [self.findForm updateRow:self.connectedRowDescriptor];
+        [self.connectedRowDescriptor manualSetValue:sender.date];
+        [self.connectedRowDescriptor updateCell];
     }
 }
+
 @end

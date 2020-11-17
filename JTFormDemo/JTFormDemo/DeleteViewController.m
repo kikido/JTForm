@@ -26,7 +26,7 @@
 #pragma mark - delete
     
     section = [JTSectionDescriptor formSection];
-    section.sectionOptions |= JTFormSectionOptionCanDelete;
+    section.sectionOptions |= JTSectionOptionCanDelete;
     [formDescriptor addSection:section];
     
     row = [JTRowDescriptor rowDescriptorWithTag:@"00" rowType:JTFormRowTypeName title:@"1"];

@@ -13,6 +13,7 @@
 #import "JTFormTextViewCell.h"
 #import "JTFormSelectCell.h"
 #import "JTFormDateCell.h"
+#import "JTFormCompactDateCell.h"
 #import "JTFormDateInlineCell.h"
 #import "JTFromSwitchCell.h"
 #import "JTFormSegmentCell.h"
@@ -32,6 +33,8 @@ typedef NS_ENUM(NSInteger, JTFormErrorCode) {
 };
 
 NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
+NSString *const JTRowDescriptorErrorKey = @"JTRowDescriptorErrorKey";
+
 
 @interface JTFormDescriptor ()
 @property (nonatomic, weak) JTCollectionLayoutInfo *collectionInfo;
@@ -224,8 +227,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JTSectionDescriptor *section = [self.formDescriptor sectionAtIndex:indexPath.section];
-    if (section.sectionOptions & JTFormSectionOptionCanDelete) {
+    JTRowDescriptor *row = [self.formDescriptor rowAtIndexPath:indexPath];
+    if (row.sectionDescriptor.sectionOptions & JTSectionOptionCanDelete && !row.disabled) {
         return UITableViewCellEditingStyleDelete;
     }
     return UITableViewCellEditingStyleNone;
@@ -296,23 +299,23 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     }
 }
 
-- (void)formRowHasBeenAddedAtIndexPath:(NSIndexPath *)indexPath
+- (void)formRowHasBeenAddedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
 {
     ASDisplayNodeAssertMainThread();
     if (_formType == JTFormTypeTable) {
-        [self.tableNode insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableNode insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     } else {
-        [self.collectionNode insertItemsAtIndexPaths:@[indexPath]];
+        [self.collectionNode insertItemsAtIndexPaths:indexPaths];
     }
 }
 
-- (void)formRowHasBeenRemovedAtIndexPath:(NSIndexPath *)indexPath
+- (void)formRowHasBeenRemovedAtIndexPaths:(NSArray<NSIndexPath *> *)indexPaths
 {
     ASDisplayNodeAssertMainThread();
     if (_formType == JTFormTypeTable) {
-        [self.tableNode deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableNode deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
     } else {
-        [self.collectionNode deleteItemsAtIndexPaths:@[indexPath]];
+        [self.collectionNode deleteItemsAtIndexPaths:indexPaths];
     }
 }
 
@@ -336,23 +339,14 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     return self.formDescriptor.formSections.count;
 }
 
-//- (ASCellNode *)tableNode:(ASTableNode *)tableNode nodeForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
-//    JTBaseCell *cell = [rowDescriptor cellInForm];
-//    [rowDescriptor updateUI];
-//
-//    return cell;
-//}
-
 - (ASCellNodeBlock)tableNode:(ASTableNode *)tableNode nodeBlockForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
     return ^{
-        JTBaseCell *cell = [rowDescriptor cellInForm];
+        JTBaseCell *cell = [rowDescriptor cellForDescriptor];
         if (!cell.nodeLoaded) {
             [cell onDidLoad:^(__kindof ASDisplayNode * _Nonnull node) {
-                [rowDescriptor updateUI];
+                [rowDescriptor updateCell];
             }];
         }
         return cell;
@@ -366,8 +360,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
     if (rowDescriptor.disabled) return;
     
-    JTBaseCell *cellNode = [rowDescriptor cellInForm];
-    if ([cellNode cellCanBecomeFirstResponder] && [cellNode cellBecomeFirstResponder]) {}
+    JTBaseCell *cellNode = [rowDescriptor cellForDescriptor];
+    if ([cellNode canBecomeFirstResponder] && [cellNode becomeFirstResponder]) {}
     if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
         [cellNode formCellDidSelected];
     }
@@ -420,12 +414,14 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 {
     JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
     return ^{
-        JTBaseCell *cell = [rowDescriptor cellInForm];
-        if (!cell.nodeLoaded) {
-            [cell onDidLoad:^(__kindof ASDisplayNode * _Nonnull node) {
-                [rowDescriptor updateUI];
-            }];
-        }
+        JTBaseCell *cell = [rowDescriptor cellForDescriptor];
+        // FIXME: test 效率
+        [rowDescriptor updateCell];
+//        if (!cell.nodeLoaded) {
+//            [cell onDidLoad:^(__kindof ASDisplayNode * _Nonnull node) {
+//                [rowDescriptor updateCell];
+//            }];
+//        }
         return cell;
     };
 }
@@ -434,7 +430,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 //{
 //    JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
 //    JTBaseCell *cell = [rowDescriptor cellInForm];
-//    [rowDescriptor updateUI];
+//    [rowDescriptor updateCell];
 //    return cell;
 //}
 
@@ -492,8 +488,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     JTRowDescriptor *rowDescriptor = [self.formDescriptor rowAtIndexPath:indexPath];
     if (rowDescriptor.disabled) return;
     
-    JTBaseCell *cellNode = [rowDescriptor cellInForm];
-    if ([cellNode cellCanBecomeFirstResponder] && [cellNode cellBecomeFirstResponder]) {}
+    JTBaseCell *cellNode = [rowDescriptor cellForDescriptor];
+    if ([cellNode canBecomeFirstResponder] && [cellNode becomeFirstResponder]) {}
     if ([cellNode respondsToSelector:@selector(formCellDidSelected)]) {
         [cellNode formCellDidSelected];
     }
@@ -569,39 +565,46 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _cellClassesForRowTypes = @{
-                                    JTFormRowTypeText               : [JTFormTextFieldCell class],
-                                    JTFormRowTypeName               : [JTFormTextFieldCell class],
-                                    JTFormRowTypeEmail              : [JTFormTextFieldCell class],
-                                    JTFormRowTypeNumber             : [JTFormTextFieldCell class],
-                                    JTFormRowTypeInteger            : [JTFormTextFieldCell class],
-                                    JTFormRowTypeDecimal            : [JTFormTextFieldCell class],
-                                    JTFormRowTypePassword           : [JTFormTextFieldCell class],
-                                    JTFormRowTypePhone              : [JTFormTextFieldCell class],
-                                    JTFormRowTypeURL                : [JTFormTextFieldCell class],
-                                    JTFormRowTypeTextView           : [JTFormTextViewCell class],
-                                    JTFormRowTypeInfo               : [JTFormTextViewCell class],
-                                    JTFormRowTypePushSelect         : [JTFormSelectCell class],
-                                    JTFormRowTypeMultipleSelect     : [JTFormSelectCell class],
-                                    JTFormRowTypeSheetSelect        : [JTFormSelectCell class],
-                                    JTFormRowTypeAlertSelect        : [JTFormSelectCell class],
-                                    JTFormRowTypePickerSelect       : [JTFormSelectCell class],
-                                    JTFormRowTypePushButton         : [JTFormSelectCell class],
-                                    JTFormRowTypeDate               : [JTFormDateCell class],
-                                    JTFormRowTypeTime               : [JTFormDateCell class],
-                                    JTFormRowTypeDateTime           : [JTFormDateCell class],
-                                    JTFormRowTypeCountDownTimer     : [JTFormDateCell class],
-                                    JTFormRowTypeDateInline         : [JTFormDateInlineCell class],
-                                    JTFormRowTypeTimeInline         : [JTFormDateInlineCell class],
-                                    JTFormRowTypeDateTimeInline     : [JTFormDateInlineCell class],
+                                    JTFormRowTypeText                 : [JTFormTextFieldCell class],
+                                    JTFormRowTypeName                 : [JTFormTextFieldCell class],
+                                    JTFormRowTypeEmail                : [JTFormTextFieldCell class],
+                                    JTFormRowTypeNumber               : [JTFormTextFieldCell class],
+                                    JTFormRowTypeInteger              : [JTFormTextFieldCell class],
+                                    JTFormRowTypeDecimal              : [JTFormTextFieldCell class],
+                                    JTFormRowTypePassword             : [JTFormTextFieldCell class],
+                                    JTFormRowTypePhone                : [JTFormTextFieldCell class],
+                                    JTFormRowTypeURL                  : [JTFormTextFieldCell class],
+                                    JTFormRowTypeInfo                 : [JTFormTextFieldCell class],
+                                    JTFormRowTypeTextView             : [JTFormTextViewCell class],
+                                    JTFormRowTypeLongInfo             : [JTFormTextViewCell class],
+                                    JTFormRowTypePushSelect           : [JTFormSelectCell class],
+                                    JTFormRowTypeMultipleSelect       : [JTFormSelectCell class],
+                                    JTFormRowTypeSheetSelect          : [JTFormSelectCell class],
+                                    JTFormRowTypeAlertSelect          : [JTFormSelectCell class],
+                                    JTFormRowTypePickerSelect         : [JTFormSelectCell class],
+                                    JTFormRowTypePushButton           : [JTFormSelectCell class],
+                                    JTFormRowTypeCountDownTimer       : [JTFormDateCell class],
+                                    JTFormRowTypeDateInline           : [JTFormDateInlineCell class],
+                                    JTFormRowTypeTimeInline           : [JTFormDateInlineCell class],
+                                    JTFormRowTypeDateTimeInline       : [JTFormDateInlineCell class],
                                     JTFormRowTypeCountDownTimerInline : [JTFormDateInlineCell class],
-                                    JTFormRowTypeSwitch             : [JTFromSwitchCell class],
-                                    JTFormRowTypeCheck              : [JTFormCheckCell class],
-                                    JTFormRowTypeStepCounter        : [JTFormStepCounterCell class],
-                                    JTFormRowTypeSegmentedControl   : [JTFormSegmentCell class],
-                                    JTFormRowTypeSlider             : [JTFormSliderCell class],
-                                    JTFormRowTypeFloatText          : [JTFormFloatTextCell class]
+                                    JTFormRowTypeSwitch               : [JTFromSwitchCell class],
+                                    JTFormRowTypeCheck                : [JTFormCheckCell class],
+                                    JTFormRowTypeStepCounter          : [JTFormStepCounterCell class],
+                                    JTFormRowTypeSegmentedControl     : [JTFormSegmentCell class],
+                                    JTFormRowTypeSlider               : [JTFormSliderCell class],
+                                    JTFormRowTypeFloatText            : [JTFormFloatTextCell class]
                                     }.mutableCopy;
     });
+    if (@available(iOS 14.0, *)) {
+        [_cellClassesForRowTypes setObject:[JTFormCompactDateCell class] forKey:JTFormRowTypeDate];
+        [_cellClassesForRowTypes setObject:[JTFormCompactDateCell class] forKey:JTFormRowTypeTime];
+        [_cellClassesForRowTypes setObject:[JTFormCompactDateCell class] forKey:JTFormRowTypeDateTime];
+    } else {
+        [_cellClassesForRowTypes setObject:[JTFormDateCell class] forKey:JTFormRowTypeDate];
+        [_cellClassesForRowTypes setObject:[JTFormDateCell class] forKey:JTFormRowTypeTime];
+        [_cellClassesForRowTypes setObject:[JTFormDateCell class] forKey:JTFormRowTypeDateTime];
+    }
     return _cellClassesForRowTypes;
 }
 
@@ -620,13 +623,11 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)ensureRowIsVisible:(JTRowDescriptor *)rowDescriptor
 {
-    JTBaseCell *inlineCell = [rowDescriptor cellInForm];
+    JTBaseCell *inlineCell = [rowDescriptor cellForDescriptor];
     if (inlineCell.isVisible) return;
     
     NSIndexPath *indexPath = [self.formDescriptor indexPathForRowDescriptor:rowDescriptor];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
-    });
+    [self.tableNode scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
 }
 
 #pragma mark - edit text delegate
@@ -635,16 +636,16 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
                             textField:(nullable UITextField *)textField
                      editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    return !row.disabled;
+    return !row.disabled && row.sectionDescriptor.formDescriptor.form;
 }
 
 - (void)textTypeRowDidBeginEditing:(JTRowDescriptor *)row
                          textField:(nullable UITextField *)textField
                   editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
-    NSString *editText = [row editTextValue];
-    textField.text = editText;
-    editableTextNode.textView.text = editText;
+    NSString *editingText = [row editingText];
+    textField.text = editingText;
+    editableTextNode.textView.text = editingText;
     
     [self beginEditing:row];
 }
@@ -658,9 +659,17 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     if (row.maxNumberOfCharacters) {
         NSString *existString = textField ? textField.text : editableTextNode.textView.text;
         NSString *newString = [existString stringByReplacingCharactersInRange:range withString:text];
-        if (newString.length > row.maxNumberOfCharacters.integerValue) {
-            return NO;
+        NSUInteger index = 0;
+        NSUInteger curLength = 0;
+        
+        // 这里 emoji 表情只当做一个字符，而实际上它的 length 是 2 或者 4，如果需要按照 length 判断，请自行修改该方法中的实现
+        while (index < newString.length) {
+            NSRange range = NSMakeRange(index, 1);
+            range = [newString rangeOfComposedCharacterSequencesForRange:range];
+            index += range.length;
+            curLength++;
         }
+        return row.maxNumberOfCharacters.unsignedIntegerValue >= curLength;
     }
     return YES;
 }
@@ -670,23 +679,20 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
                 editableTextNode:(nullable ASEditableTextNode *)editableTextNode
 {
     NSString *text = textField ? textField.text : editableTextNode.textView.text;
+    id value = nil;
     
     if (text.length > 0) {
-        NSString *rowType = row.rowType;
-        if ([rowType isEqualToString:JTFormRowTypeNumber] ||
-            [rowType isEqualToString:JTFormRowTypeDecimal])
-        {
+        if ([row.rowType isEqualToString:JTFormRowTypeDecimal]) {
             // 浮点数
-            row.value = [NSDecimalNumber decimalNumberWithString:text locale:NSLocale.currentLocale];
+            value = [NSDecimalNumber decimalNumberWithString:text locale:NSLocale.currentLocale];
         }
-        else
-        {
-            row.value = text;
+        else {
+            value = text;
         }
-    } else {
-        row.value = nil;
     }
-    NSString *displayText = [row displayTextValue];
+    [row manualSetValue:value];
+
+    NSString *displayText = [row unEditingText];
     textField.text = displayText;
     editableTextNode.textView.text = displayText;
 
@@ -695,12 +701,16 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 - (void)beginEditing:(JTRowDescriptor *)row
 {
-    [[row cellInForm] cellHighLight];
+    JTBaseCell *cell = [row cellForDescriptor];
+    cell.titleNode.attributedText = [cell titleDisplayAttributeString];
+    [cell cellHighLight];
 }
 
 - (void)endEditing:(JTRowDescriptor *)row
 {
-    [[row cellInForm] cellUnHighLight];
+    JTBaseCell *cell = [row cellForDescriptor];
+    cell.titleNode.attributedText = [cell titleDisplayAttributeString];
+    [cell cellUnHighLight];
 }
 
 #pragma mark - get data
@@ -711,7 +721,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     for (JTSectionDescriptor *section in self.formDescriptor.allSections) {
         for (JTRowDescriptor *row in section.allRows) {
             if (row.tag) {
-                [result setObject:row.value ? row.value : [NSNull null] forKey:row.tag];
+                [result setObject:[row rowValueIsEmpty] ? [NSNull null] : row.value forKey:row.tag];
             }
         }
     }
@@ -724,8 +734,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     for (JTSectionDescriptor *section in self.formDescriptor.allSections) {
         for (JTRowDescriptor *row in section.allRows) {
             if (row.tag) {
-                id rowValue = [row.value cellValue];
-                [result setObject:rowValue ? rowValue : [NSNull null] forKey:row.tag];
+                [result setObject:[row rowValueIsEmpty] ? [NSNull null] : [row.value valueForForm] forKey:row.tag];
             }
         }
     }
@@ -740,7 +749,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
         JTFormValidateObject *vObject = [row doValidate];
         if (vObject && !vObject.valid) {
             NSDictionary *userInfo = @{
-                                       NSLocalizedDescriptionKey : vObject.errorMsg
+                                       NSLocalizedDescriptionKey : vObject.errorMsg,
+                                       JTRowDescriptorErrorKey   : row
                                        };
             NSError *error = [[NSError alloc] initWithDomain:JTFormErrorDomain code:JTFormErrorCodeInvalid userInfo:userInfo];
             [result addObject:error];
@@ -758,7 +768,8 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
             JTFormValidateObject *vObject = [row doValidate];
             if (vObject && !vObject.valid) {
                 NSDictionary *userInfo = @{
-                                           NSLocalizedDescriptionKey : vObject.errorMsg
+                                           NSLocalizedDescriptionKey : vObject.errorMsg,
+                                           JTRowDescriptorErrorKey   : row
                                            };
                 NSError *error = [[NSError alloc] initWithDomain:JTFormErrorDomain code:JTFormErrorCodeInvalid userInfo:userInfo];
                 [result addObject:error];
@@ -796,69 +807,63 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 
 #pragma mark - row
 
-- (void)addRow:(JTRowDescriptor *)formRow afterRow:(JTRowDescriptor *)afterRow
-{
-    if (afterRow.sectionDescriptor && [self.formDescriptor.formSections containsObject:afterRow.sectionDescriptor]){
-        [afterRow.sectionDescriptor addRow:formRow afterRow:afterRow];
-    } else{
-        [[self.formDescriptor.formSections lastObject] addRow:formRow];
-    }
-}
-
--(void)addRow:(JTRowDescriptor *)formRow beforeRow:(JTRowDescriptor *)beforeRow
-{
-    if (beforeRow.sectionDescriptor && [self.formDescriptor.formSections containsObject:beforeRow.sectionDescriptor]){
-        [beforeRow.sectionDescriptor addRow:formRow beforeRow:beforeRow];
-    } else{
-        [[self.formDescriptor.formSections lastObject] addRow:formRow];
-    }
-}
-
-- (void)addRow:(JTRowDescriptor *)formRow afterRowWithTag:(NSString *)afterRowTag
-{
-    JTRowDescriptor *afterRow = [self.formDescriptor formRowWithTag:afterRowTag];
-    [self addRow:formRow afterRow:afterRow];
-}
-
-- (void)addRow:(JTRowDescriptor *)formRow beforeRowWithTag:(NSString *)beforeRowTag
-{
-    JTRowDescriptor *beforeRow = [self.formDescriptor formRowWithTag:beforeRowTag];
-    [self addRow:formRow beforeRow:beforeRow];
-}
-
-- (void)addRow:(JTRowDescriptor *)formRow atIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row >=0 &&
-        indexPath.section >= 0 &&
-        indexPath.section < self.formDescriptor.formSections.count)
-    {
-        JTSectionDescriptor *section = self.formDescriptor.formSections[indexPath.section];
-        [section addRow:formRow atIndex:indexPath.row];
-    }
-}
-
-- (void)addRow:(JTRowDescriptor *)formRow
+- (void)addRow:(JTRowDescriptor *)row
 {
     JTSectionDescriptor *section = [self.formDescriptor.formSections lastObject];
-    [section addRow:formRow];
+    [section addRow:row];
+}
+
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows
+{
+    JTSectionDescriptor *section = [self.formDescriptor.formSections lastObject];
+    [section addRows:rows];
+}
+
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows atIndexPath:(NSIndexPath *)indexPath
+{
+    JTSectionDescriptor *section = [self.formDescriptor sectionAtIndex:indexPath.section];
+    [section addRows:rows atIndex:indexPath.row];
+}
+
+-(void)addRows:(NSArray<JTRowDescriptor *> *)rows beforeRow:(JTRowDescriptor *)beforeRow
+{
+    [beforeRow.sectionDescriptor addRows:rows beforeRow:beforeRow];
+}
+
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows afterRow:(JTRowDescriptor *)afterRow
+{
+    [afterRow.sectionDescriptor addRows:rows afterRow:afterRow];
+}
+
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows beforeRowWithTag:(id<NSCopying>)beforeRowTag
+{
+    JTRowDescriptor *beforeRow = [self.formDescriptor formRowWithTag:beforeRowTag];
+    [self addRows:rows beforeRow:beforeRow];
+}
+
+- (void)addRows:(NSArray<JTRowDescriptor *> *)rows afterRowWithTag:(id<NSCopying>)afterRowTag
+{
+    JTRowDescriptor *afterRow = [self.formDescriptor formRowWithTag:afterRowTag];
+    [self addRows:rows afterRow:afterRow];
 }
 
 -(void)removeRow:(JTRowDescriptor *)row
 {
-    if ([self.formDescriptor.formSections containsObject:row.sectionDescriptor]) {
-        [row.sectionDescriptor removeRow:row];
-    }
+    if (!row) return;
+    [row.sectionDescriptor removeRow:row];
+}
+
+-(void)removeRows:(NSArray<JTRowDescriptor *> *)rows
+{
+    [rows enumerateObjectsUsingBlock:^(JTRowDescriptor * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj.sectionDescriptor removeRow:obj];
+    }];
 }
 
 - (void)removeRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row >=0 &&
-        indexPath.section >= 0 &&
-        indexPath.section < self.formDescriptor.formSections.count)
-    {
-        JTSectionDescriptor *section = self.formDescriptor.formSections[indexPath.section];
-        [section removeRowAtIndex:indexPath.row];
-    }
+    JTSectionDescriptor *section = [self.formDescriptor sectionAtIndex:indexPath.section];
+    [section removeRowAtIndex:indexPath.row];
 }
 
 -(void)removeRowByTag:(NSString *)tag
@@ -882,7 +887,7 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
 - (nullable id)findRowValueByTag:(id<NSCopying>)tag
 {
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
-    return [row.value cellValue];
+    return [row.value valueForForm];
 }
 
 - (nullable NSIndexPath *)indexPathForRow:(JTRowDescriptor *)rowDescriptor
@@ -913,35 +918,37 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
         if (!row) return;
 
         row.required = required;
-        [row updateUI];
+        [row updateCell];
     }];
 }
 
-- (void)setRowValue:(nullable id)value byTag:(NSString *)tag
+- (void)manualSetRowValue:(nullable id)value byTag:(NSString *)tag
 {
     JTRowDescriptor *row = [self.formDescriptor formRowWithTag:tag];
-    [row jt_setValue:value];
-    [row updateUI];
+    [row manualSetValue:value];
+    [row updateCell];
 }
 
 - (void)updateRowsByTags:(NSArray<NSString *> *)tags
 {
     [tags enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         JTRowDescriptor *row = [self.formDescriptor formRowWithTag:obj];
-        [row updateUI];
+        [row updateCell];
     }];
 }
 
 - (void)updateRow:(JTRowDescriptor *)rowDescriptor
 {
-    [rowDescriptor updateUI];
+    [rowDescriptor updateCell];
 }
 
 - (void)updateAllRows
 {
     for (JTSectionDescriptor *section in self.formDescriptor.formSections) {
         for (JTRowDescriptor *row in section.formRows) {
-            [row updateUI];
+            if (row.cellExist) {
+                [row updateCell];
+            }
         }
     }
 }
@@ -970,19 +977,24 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self.formDescriptor addSection:section];
 }
 
-- (void)addSection:(JTSectionDescriptor *)section atIndex:(NSInteger)index
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections
 {
-    [self.formDescriptor addSection:section atIndex:index];
+    [self.formDescriptor addSections:sections];
 }
 
-- (void)addSection:(JTSectionDescriptor *)section afterSection:(JTSectionDescriptor *)afterSection
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections atIndex:(NSInteger)index
 {
-    [self.formDescriptor addSection:section afterSection:afterSection];
+    [self.formDescriptor addSections:sections atIndex:index];
 }
 
-- (void)addSection:(JTSectionDescriptor *)section beforeSection:(JTSectionDescriptor *)beforeSection
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections beforeSection:(JTSectionDescriptor *)beforeSection
 {
-    [self.formDescriptor addSection:section beforeSection:beforeSection];
+    [self.formDescriptor addSections:sections beforeSection:beforeSection];
+}
+
+- (void)addSections:(NSArray<JTSectionDescriptor *> *)sections afterSection:(JTSectionDescriptor *)afterSection
+{
+    [self.formDescriptor addSections:sections afterSection:afterSection];
 }
 
 - (void)removeSection:(JTSectionDescriptor *)section
@@ -990,25 +1002,30 @@ NSString *const JTFormErrorDomain = @"JTFormErrorDomain";
     [self.formDescriptor removeSection:section];
 }
 
+- (void)removeSections:(NSArray<JTSectionDescriptor *> *)sections
+{
+    [self.formDescriptor removeSections:sections];
+}
+
 - (void)removeSectionAtIndex:(NSUInteger)index
 {
     [self.formDescriptor removeSectionAtIndex:index];
 }
 
-- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes
+- (void)removeSectionsAtIndexes:(NSIndexSet *)indexSet
 {
-    [self.formDescriptor removeSectionsAtIndexes:indexes];
+    NSArray *sections = [self.formDescriptor sectionsAtIndexes:indexSet];
+    [self.formDescriptor removeSections:sections];
 }
 
 - (nullable JTSectionDescriptor *)sectionAtIndex:(NSUInteger)index
 {
-    if (index<0 || index>=self.formDescriptor.formSections.count) return nil;
-    return self.formDescriptor.formSections[index];
+    return [self.formDescriptor sectionAtIndex:index];
 }
 
 - (NSUInteger)indexForSection:(JTSectionDescriptor *)sectionDescriptor
 {
-    return [self.formDescriptor.formSections indexOfObject:sectionDescriptor];
+    return [self.formDescriptor indexOfSection:sectionDescriptor];
 }
 
 #pragma mark - helper

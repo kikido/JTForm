@@ -18,6 +18,7 @@
 - (void)config
 {
     [super config];
+    
     self.accessoryType = UITableViewCellAccessoryNone;
     _accessoryNode = [[ASImageNode alloc] init];
 }
@@ -31,7 +32,7 @@
 
 - (void)formCellDidSelected
 {
-    self.rowDescriptor.value = @(![self.rowDescriptor.value boolValue]);
+    [self.rowDescriptor manualSetValue:@(![self.rowDescriptor.value boolValue])];
     _accessoryNode.image = [self.rowDescriptor.value boolValue] ? [UIImage imageNamed:@"JTForm.bundle/jt_mark"] : nil;
 }
 

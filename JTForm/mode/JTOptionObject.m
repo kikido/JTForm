@@ -12,26 +12,26 @@
 
 @implementation JTOptionObject
 
-- (instancetype)initWithValue:(id)value displayText:(NSString *)displayText
+- (instancetype)initWithOptionValue:(id)optionValue optionText:(NSString *)optionText
 {
     if (self = [super init]) {
-        _formValue = value;
-        _formDisplayText = displayText;
+        _optionValue = optionValue;
+        _optionText  = optionText;
     }
     return self;
 }
 
-+(JTOptionObject *)formOptionsObjectWithValue:(nullable id)value displayText:(nonnull NSString *)displayText
++ (JTOptionObject *)optionsObjectWithOptionValue:(nullable id)optionValue optionText:(nonnull NSString *)optionText
 {
-    return [[[self class] alloc] initWithValue:value displayText:displayText];
+    return [[[self class] alloc] initWithOptionValue:optionValue optionText:optionText];
 }
 
-+ (NSArray<JTOptionObject *> *)formOptionsObjectsWithValues:(nonnull NSArray *)values displayTexts:(nonnull NSArray *)displayTexts
++ (NSArray<JTOptionObject *> *)optionObjectsWithOptionValues:(nonnull NSArray *)optionValues optionTexts:(nonnull NSArray *)optionTexts
 {
-    NSAssert((values && values.count == displayTexts.count), @"values's count must equal to displayTexts's count");
+    NSAssert((optionValues && optionValues.count == optionTexts.count), @"values's count must equal to displayTexts's count");
     NSMutableArray *temp = @[].mutableCopy;
-    for (NSInteger i = 0; i < values.count; i++) {
-        JTOptionObject *object = [[[self class] alloc] initWithValue:values[i] displayText:displayTexts[i]];
+    for (NSInteger i = 0; i < optionValues.count; i++) {
+        JTOptionObject *object = [[[self class] alloc] initWithOptionValue:optionValues[i] optionText:optionTexts[i]];
         [temp addObject:object];
     }
     return temp.copy;
@@ -42,12 +42,12 @@
     if (![optionObject isKindOfClass:[JTOptionObject class]]) return false;
     if (self == optionObject)                                 return true;
     
-    return [[self cellValue] jt_isEqual:[optionObject cellValue]];
+    return [[self valueForForm] jt_isEqual:[optionObject valueForForm]];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p> text:%@ value:%@", NSStringFromClass([self class]), self, self.formDisplayText, self.formValue];
+    return [NSString stringWithFormat:@"<%@ %p> text:%@ value:%@", NSStringFromClass([self class]), self, self.optionText, self.optionValue];
 }
 
 @end

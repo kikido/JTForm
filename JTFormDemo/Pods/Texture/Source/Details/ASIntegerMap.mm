@@ -9,7 +9,6 @@
 #import "ASIntegerMap.h"
 #import <AsyncDisplayKit/ASAssert.h>
 #import <unordered_map>
-#import <AsyncDisplayKit/NSIndexSet+ASHelpers.h>
 #import <AsyncDisplayKit/ASObjectDescriptionHelpers.h>
 
 /**
@@ -67,12 +66,12 @@
 
   // Descending order, shift deleted ranges left
   [deletions enumerateRangesWithOptions:NSEnumerationReverse usingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-    [indexes shiftIndexesStartingAtIndex:NSMaxRange(range) by:-range.length];
+    [indexes shiftIndexesStartingAtIndex:NSMaxRange(range) by:-range.length]; // 删除 startindex 之前 delta 长度的 indexes
   }];
 
   // Ascending order, shift inserted ranges right
   [insertions enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-    [indexes shiftIndexesStartingAtIndex:range.location by:range.length];
+    [indexes shiftIndexesStartingAtIndex:range.location by:range.length]; // 在 (startindex， delta) 之间插入空位
   }];
 
   __block NSInteger oldIndex = 0;
